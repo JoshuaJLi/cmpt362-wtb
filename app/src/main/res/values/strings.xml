@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Where\'s The Bus</string>
+    <string name="title_home">Home</string>
+    <string name="title_trips">Trips</string>
+    <string name="title_nearby">Nearby</string>
+    <string name="title_settings">Settings</string>
+</resources>
