@@ -74,7 +74,7 @@ class HomeFragment : Fragment() {
 
     private fun setUpFab() {
         binding.fabNewFav.setOnClickListener {
-            Snackbar.make(it, "New Favorite Bus Stop Added", Snackbar.LENGTH_LONG).show()
+            AddFavBottomSheet().show(parentFragmentManager, AddFavBottomSheet.TAG)
         }
     }
 
