@@ -4,14 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:clipChildren="false"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.home.HomeFragment"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_fav_stops"
-        android:padding="30dp"
-        android:layout_marginTop="50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">

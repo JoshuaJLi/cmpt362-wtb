@@ -39,9 +39,13 @@
                     app:layout_anchor="@id/search_bar_bus"/>
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Maybe a list of suggested bus stops can go here, like recently searched busses or nearby" />
+
 
                 <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
-
         </LinearLayout>
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
