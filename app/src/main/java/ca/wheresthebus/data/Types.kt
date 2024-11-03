@@ -4,4 +4,4 @@ package ca.wheresthebus.data
 // see https://kotlinlang.org/docs/inline-classes.html
 
 @JvmInline
-value class BusCode(val id : Int)
+value class BusCode(val id : String)

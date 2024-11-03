@@ -1,0 +1,46 @@
+package ca.wheresthebus.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import ca.wheresthebus.R
+import ca.wheresthebus.data.BusStop
+
+class FavStopAdapter(
+    private val dataSet: Array<BusStop>) : RecyclerView.Adapter<FavStopAdapter.FavStopViewHolder>() {
+
+        inner class FavStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val nickname: TextView = view.findViewById(R.id.text_stop_nickname)
+        private val id: TextView = view.findViewById(R.id.text_stop_id)
+        private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
+
+        fun bind(stop: BusStop) {
+            nickname.text = stop.nickname
+            id.text = stop.code.id
+            upcoming.text = stop.location.toString()
+        }
+
+        init {
+            view.setOnClickListener {
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavStopViewHolder {
+        LayoutInflater.from(parent.context).inflate(R.layout.item_fav_bus, parent, false).let {
+            return FavStopViewHolder(it)
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return dataSet.size
+    }
+
+    override fun onBindViewHolder(holder: FavStopViewHolder, position: Int) {
+        dataSet[position].let {
+            holder.bind(it)
+        }
+    }
+}
