@@ -6,17 +6,18 @@ import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 
 
-// Requires some sort of coodinates
-data class BusStop(
+// Requires some sort of coordinates
+data class BusStop constructor(
     val code : StopCode,
     val id : StopId,
     val name: String,
     val location : Location,
-    val schedules : List<Schedule>) {
+    val schedules : List<Schedule>
+) {
 
    @RequiresApi(Build.VERSION_CODES.O)
    //TODO: proof of concept
    fun getNextSchedules(time : LocalDateTime) : List<Schedule> {
         return schedules.filter {s -> s.day >= time.dayOfWeek}
-    }
+   }
 }

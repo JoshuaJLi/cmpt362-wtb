@@ -18,55 +18,52 @@ class GtfsStaticService(private val context : Context) {
     }
 
     fun parseStaticDataToDb() {
-        readStops()
+        // add stops into BusStop hashmap
+//        val stopsMap : MutableMap<String, BusStop.Builder> = getStopsAsHashmap()
 
-        // Create BusStop object
-
-        // Add BusStop object to database
-        // addToDb(busStop)
+        // add schedules from stop_times.txt into hashmap
+//        addSchedulesToHashmap(stopsMap)
+        // add hashmap values into db
+//        addStopsToDb()
     }
 
-    private fun addToDb(busStop : BusStop) {
-
-    }
-
-    private fun readCalendar() {
-        
-    }
-
-    private fun readStops() {
-        val inputStream : InputStream = context.assets.open("stop_times.txt")
-        val reader : Reader = BufferedReader(InputStreamReader(inputStream))
-
-        val timeTaken = measureTimeMillis {
-            reader.useLines { lines ->
-                for (line in lines) {
-                    val firstColumn = line.split(",")[0]  // Assuming CSV format
-//                    Log.d("MyTag", "First column value: $firstColumn")
-                    // Process the first column value if needed, e.g., store it in a list or perform calculations
-                }
-            }
-        }
-
-        val location = Location("dummy")
-        location.latitude = 3.0
-        location.longitude = 6.0
-
-        val busStop = BusStop(StopCode("4"), StopId("5"), "test", location, listOf())
-
-        Log.d("MyTag", "Time taken to process the file: $timeTaken ms")
-    }
-
-    private fun sortFile(fileName : String, fieldToSort : String) : Boolean {
-        
-        return true
-    }
-
-    private fun readStopTimes() {
+    private fun addStopsToDb() {
 
     }
 
-    private fun readTrips() {
+    private fun getStopsAsHashmap() {
+//        val stopsMap = mutableMapOf<String, BusStop.Builder>()
+//
+//        val inputStream : InputStream = context.assets.open("stops.txt")
+//        val reader : Reader = BufferedReader(InputStreamReader(inputStream))
+//
+//        reader.useLines { lines ->
+//            lines.forEach { line ->
+//                val fields = line.split(",")
+//
+//                val stopId = fields[0]
+//                val stopCode = fields[1]
+//                val stopName = fields[2]
+//                val stopLat = fields[4].toDouble()
+//                val stopLon = fields[5].toDouble()
+//                val location : Location = Location("stop").apply {
+//                    latitude = stopLat
+//                    longitude = stopLon
+//                }
+//
+//                val builder = BusStop.Builder()
+//                    .setCode(StopCode(stopCode))
+//                    .setId(StopId(stopId))
+//                    .setName(stopName)
+//                    .setLocation(location)
+//
+//                stopsMap[stopId] = builder
+//            }
+//        }
+//        return stopsMap
+    }
+
+    private fun addSchedulesToHashmap() {
 
     }
 }
