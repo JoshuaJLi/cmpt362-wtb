@@ -1,4 +1,4 @@
-package ca.wheresthebus.service.location
+package ca.wheresthebus.service
 
 /**
  * Service to grab the user's current location.

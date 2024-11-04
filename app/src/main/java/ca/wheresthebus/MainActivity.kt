@@ -8,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import ca.wheresthebus.databinding.ActivityMainBinding
+import ca.wheresthebus.service.GtfsStaticService
 import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
