@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  File defines the list of supported NFC tags the app should respond to  -->
+    <!--  According to: https://www.lenrek.net/experiments/compass-tickets/ -->
+    <!--  Compass Cards use RF interface: ISO/IEC 14443 Type A   -->
+    <tech-list>
+        <tech>android.nfc.tech.NfcA</tech>
+    </tech-list>
+</resources>
