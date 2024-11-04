@@ -3,13 +3,13 @@ package ca.wheresthebus
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import ca.wheresthebus.databinding.ActivityMainBinding
+import ca.wheresthebus.service.NfcService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
         setUpNavBar()
 
         if (isStartedByNFC(intent)) {
-            Toast.makeText(this, "App was started by tapping compass card", Toast.LENGTH_LONG).show()
-            // Kick off logic specific to NFC tap
+            NfcService.handleTap(this)
+            moveTaskToBack(true)
         }
 
     }
