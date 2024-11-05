@@ -5,7 +5,7 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
 // Represents stop_times and trips
-class StopTime : RealmObject {
+class MongoStopTime : RealmObject {
     @PrimaryKey var _id: ObjectId = ObjectId()
     //var arrivalTime: LocalDateTime? = null
     var arrivalTime: Long = 0L

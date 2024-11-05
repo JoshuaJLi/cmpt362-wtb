@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.db.MyMongoDBApp
-import ca.wheresthebus.data.mongo_model.BusStop
-import ca.wheresthebus.data.mongo_model.FavouriteStop
+import ca.wheresthebus.data.mongo_model.MongoBusStop
+import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,8 +26,8 @@ class HomeViewModel : ViewModel() {
     val text: LiveData<String> = _text
 
     // NOTE: each view model for each frag can query for different class objects from the db when required
-    val favouriteStops = realm
-        .query<FavouriteStop>(
+    val mongoFavouriteStops = realm
+        .query<MongoFavouriteStop>(
             // use this to filter entries in the view model; ex:
             //"teacher.address.fullName CONTAINS $0", "John" queries any teachers named John
         )
@@ -41,12 +41,12 @@ class HomeViewModel : ViewModel() {
             emptyList()
         )
 
-    var favStopDetails: FavouriteStop? by mutableStateOf(null)
+    var favStopDetails: MongoFavouriteStop? by mutableStateOf(null)
         private set
 
     // populate view model here; perhaps have a function to load the favourite stops in the db later?
     init {
-        val favStopsInDb = realm.query<FavouriteStop>().find()
+        val favStopsInDb = realm.query<MongoFavouriteStop>().find()
 
         if (favStopsInDb.isEmpty()) {
             createDummyEntries()
@@ -83,15 +83,15 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun insertFavStop(favouriteStop: FavouriteStop) {
+    fun insertFavStop(mongoFavouriteStop: MongoFavouriteStop) {
         viewModelScope.launch {
             realm.write {
-                copyToRealm(favouriteStop, updatePolicy = UpdatePolicy.ALL)
+                copyToRealm(mongoFavouriteStop, updatePolicy = UpdatePolicy.ALL)
             }
         }
     }
 
-    fun insertBusStop(newStop: BusStop) {
+    fun insertBusStop(newStop: MongoBusStop) {
         viewModelScope.launch {
             realm.write {
                 copyToRealm(newStop, updatePolicy = UpdatePolicy.ALL)

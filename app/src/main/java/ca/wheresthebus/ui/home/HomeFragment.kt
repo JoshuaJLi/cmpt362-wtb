@@ -10,7 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.adapter.FavStopAdapter
-import ca.wheresthebus.data.mongo_model.BusStop
+import ca.wheresthebus.data.model.BusStop
+import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import io.realm.kotlin.ext.realmListOf
 
@@ -52,8 +53,8 @@ class HomeFragment : Fragment() {
             newLocation.latitude = (49.0123)
             newLocation.longitude = (-123.2354)
             //val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, realmListOf(), realmListOf())
-            val busStop = BusStop("12345", "34567", "Pee St @ Poo Ave", 49.0123, -123.2354, realmListOf(), realmListOf())
-            homeViewModel.insertBusStop(busStop)
+            val mongoBusStop = MongoBusStop("12345", "34567", "Pee St @ Poo Ave", 49.0123, -123.2354, realmListOf(), realmListOf())
+            homeViewModel.insertBusStop(mongoBusStop)
         }
     }
 
