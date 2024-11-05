@@ -19,7 +19,12 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
 
-private val realm = MyMongoDBApp.realm
+    private val realm = MyMongoDBApp.realm
+    private val _text = MutableLiveData<String>().apply {
+        value = "This is home Fragment"
+    }
+    val text: LiveData<String> = _text
+
     // NOTE: each view model for each frag can query for different class objects from the db when required
     val favouriteStops = realm
         .query<FavouriteStop>(
