@@ -8,5 +8,5 @@ class MongoFavouriteStop : RealmObject {
     @PrimaryKey var _id: ObjectId = ObjectId()
     var nickname: String = ""
     var mongoBusStop: MongoBusStop? = null
-    var route: Route? = null
+    var mongoRoute: MongoRoute? = null
 }

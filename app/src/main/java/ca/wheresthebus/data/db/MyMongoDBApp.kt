@@ -3,7 +3,7 @@ package ca.wheresthebus.data.db
 import android.app.Application
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
-import ca.wheresthebus.data.mongo_model.Route
+import ca.wheresthebus.data.mongo_model.MongoRoute
 import ca.wheresthebus.data.mongo_model.MongoSchedule
 import ca.wheresthebus.data.mongo_model.MongoStopTime
 import io.realm.kotlin.Realm
@@ -17,7 +17,7 @@ class MyMongoDBApp: Application() {
                     schema = setOf(
                         MongoBusStop::class,
                         MongoFavouriteStop::class,
-                        Route::class,
+                        MongoRoute::class,
                         MongoSchedule::class,
                         MongoStopTime::class
                     )

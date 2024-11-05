@@ -7,7 +7,7 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
 // Represents routes
-class Route : RealmObject {
+class MongoRoute : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     // route_id
