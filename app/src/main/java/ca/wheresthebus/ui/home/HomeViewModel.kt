@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.db.MyMongoDBApp
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
@@ -87,6 +88,14 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             realm.write {
                 copyToRealm(favouriteStop, updatePolicy = UpdatePolicy.ALL)
+            }
+        }
+    }
+
+    fun insertBusStop(newStop: BusStop) {
+        viewModelScope.launch {
+            realm.write {
+                copyToRealm(newStop, updatePolicy = UpdatePolicy.ALL)
             }
         }
     }

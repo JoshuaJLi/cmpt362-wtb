@@ -9,9 +9,9 @@ import org.mongodb.kbson.ObjectId
 
 class FavouriteStop : RealmObject {
     @PrimaryKey var _id: ObjectId = ObjectId()
-    val nickname: String = ""
-    val busStop: BusStop? = null
-    val route: Route? = null
+    var nickname: String = ""
+    var busStop: BusStop? = null
+    var route: Route? = null
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStops() : List<StopTime> {
         //return busStop.getBusTimes(route.id)

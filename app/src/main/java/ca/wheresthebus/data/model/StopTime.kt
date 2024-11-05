@@ -13,10 +13,11 @@ import java.time.LocalDateTime
 // Represents stop_times and trips
 class StopTime : RealmObject {
     @PrimaryKey var _id: ObjectId = ObjectId()
-    val arrivalTime: LocalDateTime? = null
+    //var arrivalTime: LocalDateTime? = null
+    var arrivalTime: Long = 0L
     //stop_id
-    val id : StopId? = null
-    val routeId: RouteId? = null
-    val serviceId : ServiceId? = null
-    val tripId : TripId? = null
+    var id : String = ""
+    var routeId: String = ""
+    var serviceId : String = ""
+    var tripId : String = ""
 }

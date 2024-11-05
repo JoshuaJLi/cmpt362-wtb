@@ -7,7 +7,8 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 
 class Schedule : RealmObject {
-    @PrimaryKey val _id: ObjectId = ObjectId()
-    val day : DayOfWeek? = null
-    val time : LocalTime? = null
+    @PrimaryKey var _id: ObjectId = ObjectId()
+    var day : String = ""
+    //var time : LocalTime? = null
+    var time: Long = 0L // store this as system.timeinmillis and convert?
 }

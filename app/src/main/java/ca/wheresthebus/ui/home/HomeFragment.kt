@@ -20,8 +20,10 @@ import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.Schedule
 import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.TripId
+import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.model.StopTime
 import ca.wheresthebus.databinding.FragmentHomeBinding
+import io.realm.kotlin.ext.realmListOf
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -60,6 +62,12 @@ class HomeFragment : Fragment() {
     private fun setUpFab() {
         binding.fabNewFav.setOnClickListener {
             AddFavBottomSheet().show(parentFragmentManager, AddFavBottomSheet.TAG)
+            val newLocation = Location("passive")
+            newLocation.latitude = (49.0123)
+            newLocation.longitude = (-123.2354)
+            //val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, realmListOf(), realmListOf())
+            val busStop = BusStop("12345", "34567", "Pee St @ Poo Ave", 49.0123, -123.2354, realmListOf(), realmListOf())
+            homeViewModel.insertBusStop(busStop)
         }
     }
 

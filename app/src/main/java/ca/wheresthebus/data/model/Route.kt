@@ -14,8 +14,10 @@ class Route : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     // route_id
-    val id : RouteId? = null
-    val shortName : String = "John"
-    val longName : String = "Doe"
-    val tripIds : RealmList<TripId> = realmListOf()
+    //var id : RouteId? = null
+    var id: String = ""
+    var shortName : String = "John"
+    var longName : String = "Doe"
+    //var tripIds : RealmList<TripId> = realmListOf()
+    var tripIds: RealmList<String> = realmListOf()
 }

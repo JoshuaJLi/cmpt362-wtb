@@ -11,21 +11,22 @@ import io.realm.kotlin.RealmConfiguration
 
 class MyMongoDBApp: Application() {
     companion object {
-        lateinit var realm: Realm
+        val realm: Realm by lazy {
+            Realm.open(
+                configuration = RealmConfiguration.create(
+                    schema = setOf(
+                        BusStop::class,
+                        FavouriteStop::class,
+                        Route::class,
+                        Schedule::class,
+                        StopTime::class
+                    )
+                )
+            )
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
-        realm = Realm.open(
-            configuration = RealmConfiguration.create(
-                schema = setOf(
-                    BusStop::class,
-                    FavouriteStop::class,
-                    Route::class,
-                    Schedule::class,
-                    StopTime::class
-                )
-            )
-        )
     }
 }
