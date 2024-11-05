@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
-import ca.wheresthebus.data.model.BusStop
+import ca.wheresthebus.data.mongo_model.BusStop
 
 class FavStopAdapter(
     private val dataSet: Array<BusStop>

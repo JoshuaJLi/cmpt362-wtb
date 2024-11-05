@@ -1,11 +1,11 @@
 package ca.wheresthebus.data.db
 
 import android.app.Application
-import ca.wheresthebus.data.model.BusStop
-import ca.wheresthebus.data.model.FavouriteStop
-import ca.wheresthebus.data.model.Route
-import ca.wheresthebus.data.model.Schedule
-import ca.wheresthebus.data.model.StopTime
+import ca.wheresthebus.data.mongo_model.BusStop
+import ca.wheresthebus.data.mongo_model.FavouriteStop
+import ca.wheresthebus.data.mongo_model.Route
+import ca.wheresthebus.data.mongo_model.Schedule
+import ca.wheresthebus.data.mongo_model.StopTime
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 

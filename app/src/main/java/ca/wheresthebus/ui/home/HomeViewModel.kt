@@ -8,11 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.db.MyMongoDBApp
-import ca.wheresthebus.data.model.BusStop
-import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.mongo_model.BusStop
+import ca.wheresthebus.data.mongo_model.FavouriteStop
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
-import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
