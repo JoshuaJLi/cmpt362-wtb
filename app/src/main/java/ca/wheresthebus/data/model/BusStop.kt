@@ -34,8 +34,10 @@ class BusStop : RealmObject {
             return listOf()
         }
 
+//        val nextBuses = nextBuses.filter { route.tripIds.contains(it.tripId) }
+//            .filter { it.arrivalTime > currentTime }
         val nextBuses = nextBuses.filter { route.tripIds.contains(it.tripId) }
-            .filter { it.arrivalTime > currentTime }
+            .filter { it.arrivalTime!! > currentTime }
         return nextBuses
     }
 }
