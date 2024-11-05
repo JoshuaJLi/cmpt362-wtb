@@ -1,9 +1,9 @@
 package ca.wheresthebus.data.db
 
-import ca.wheresthebus.data.model.BusStop
+import ca.wheresthebus.data.mongo_model.MongoBusStop
 
 interface Database {
-    fun getStops() : List<BusStop>
+    fun getStops() : List<MongoBusStop>
 
     fun addFav()
 }
