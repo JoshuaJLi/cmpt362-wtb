@@ -56,7 +56,4 @@ dependencies {
 
     implementation(libs.google.material)
     implementation("io.realm.kotlin:library-base:1.11.0")
-    implementation("androidx.compose.ui:ui:1.5.0")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
 }
