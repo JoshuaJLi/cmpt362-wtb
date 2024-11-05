@@ -55,4 +55,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.google.material)
+    implementation("io.realm.kotlin:library-base:1.11.0")
 }
