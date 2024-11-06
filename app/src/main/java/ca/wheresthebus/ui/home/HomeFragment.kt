@@ -2,9 +2,12 @@ package ca.wheresthebus.ui.home
 
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.model.BusStop
+import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
+import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import io.realm.kotlin.ext.realmListOf
+import kotlinx.coroutines.flow.firstOrNull
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -44,6 +50,11 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    suspend fun getFavStopsList(): List<MongoFavouriteStop> {
+        return mainDBViewModel.mongoFavouriteStops.firstOrNull() ?: emptyList()
+    }
+    // at jonathan, this is function to get the favourite stops but maybe needs adapter to convert to reg FavouriteStop object
+
     private fun setUpFab() {
         binding.fabNewFav.setOnClickListener {
             AddFavBottomSheet().show(parentFragmentManager, AddFavBottomSheet.TAG)
@@ -51,8 +62,19 @@ class HomeFragment : Fragment() {
             newLocation.latitude = (49.0123)
             newLocation.longitude = (-123.2354)
             //val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, realmListOf(), realmListOf())
-            val mongoBusStop = MongoBusStop("12345", "34567", "Pee St @ Poo Ave", 49.0123, -123.2354, realmListOf(), realmListOf())
-            mainDBViewModel.insertBusStop(mongoBusStop)
+            val mongoBusStop = MongoBusStop(
+                "12345",
+                "34568",
+                "Pee St @ Poo Ave",
+                49.0123,
+                -123.2354,
+                realmListOf(),
+                realmListOf()
+            )
+            mainDBViewModel.insertMongoBusStop(mongoBusStop)
+            val test = mainDBViewModel.getBusStopByCode("34568")?.name.toString()
+            Log.d("favStopQueryTest", test)
+            mainDBViewModel.addFavouriteStop(mongoBusStop, "my fav stop!")
         }
     }
 

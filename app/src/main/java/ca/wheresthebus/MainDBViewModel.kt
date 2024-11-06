@@ -1,5 +1,6 @@
 package ca.wheresthebus
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.db.MyMongoDBApp
+import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import io.realm.kotlin.UpdatePolicy
@@ -31,6 +33,7 @@ class MainDBViewModel : ViewModel() {
             // use this to filter entries in the view model; ex:
             //"teacher.address.fullName CONTAINS $0", "John" queries any teachers named John
         )
+        .find() // gets all the favourite stops and returns it as a StateFlow<List<MongoFavouriteStop>
         .asFlow()
         .map { results ->
             results.list.toList()
@@ -53,13 +56,13 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-//    fun showCourseDetails(course: Course) {
-//        courseDetails = course
-//    }
-//
-//    fun hideCourseDetails() {
-//        courseDetails = null
-//    }
+    fun showFavStopDetails(favouriteStop: MongoFavouriteStop) {
+        favStopDetails = favouriteStop
+    }
+
+    fun hideCourseDetails() {
+        favStopDetails = null
+    }
 
     // function that creates the sample entries
     private fun createDummyEntries() {
@@ -70,7 +73,7 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    fun deleteFavStop() {
+    fun deleteMongoFavStop() {
         viewModelScope.launch {
             realm.write {
                 //TODO: adapt later
@@ -79,22 +82,43 @@ class MainDBViewModel : ViewModel() {
 //                delete(latestCourse)
 //
 //                courseDetails = null
+                val favStop = favStopDetails ?: return@write
+                delete(favStop)
+                favStopDetails = null
             }
         }
     }
-
-    fun insertFavStop(mongoFavouriteStop: MongoFavouriteStop) {
+    // TODO @Jonathan: have this function take in a normal FavouriteBusStop and then convert it accordingly
+    fun insertMongoFavStop(mongoFavouriteStop: MongoFavouriteStop) {
         viewModelScope.launch {
             realm.write {
                 copyToRealm(mongoFavouriteStop, updatePolicy = UpdatePolicy.ALL)
             }
         }
     }
-
-    fun insertBusStop(newStop: MongoBusStop) {
+    // TODO @Jonathan: have this function take in a normal bus stop and then convert it accordingly
+    fun insertMongoBusStop(newStop: MongoBusStop) {
         viewModelScope.launch {
             realm.write {
                 copyToRealm(newStop, updatePolicy = UpdatePolicy.ALL)
+            }
+        }
+    }
+
+    // function to return bus stops by entering the stop code
+    // TODO @Jonathan: have this function return a normal bus stop instead maybe?
+    fun getBusStopByCode(stopCode: String) : MongoBusStop? {
+        return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
+    }
+
+    // function to add a favourite stop (add route/mongo route parameter later??)
+    // TODO @Jonathan: have this function take in a normal bus stop and then convert it accordingly
+    fun addFavouriteStop(mongoBusStop: MongoBusStop, nickname: String) {
+        viewModelScope.launch {
+            //convert here: ...
+            val newFavouriteStop = MongoFavouriteStop(nickname, mongoBusStop, null)
+            realm.write {
+                copyToRealm(newFavouriteStop, updatePolicy = UpdatePolicy.ALL)
             }
         }
     }
