@@ -3,6 +3,8 @@ package ca.wheresthebus
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.os.Bundle
+import androidx.activity.viewModels
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -11,11 +13,13 @@ import androidx.navigation.ui.setupWithNavController
 import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.NfcService
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import ca.wheresthebus.ui.home.HomeViewModel
 import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
