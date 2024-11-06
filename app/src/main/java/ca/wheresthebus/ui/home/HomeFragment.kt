@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
     private lateinit var stopAdapter: FavStopAdapter
     private lateinit var stopsView : RecyclerView
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var mainDBViewModel: MainDBViewModel
 
     val busStops : Array<BusStop> = arrayOf()
 
@@ -35,7 +35,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        homeViewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
+        mainDBViewModel = ViewModelProvider(requireActivity()).get(MainDBViewModel::class.java)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
             newLocation.longitude = (-123.2354)
             //val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, realmListOf(), realmListOf())
             val mongoBusStop = MongoBusStop("12345", "34567", "Pee St @ Poo Ave", 49.0123, -123.2354, realmListOf(), realmListOf())
-            homeViewModel.insertBusStop(mongoBusStop)
+            mainDBViewModel.insertBusStop(mongoBusStop)
         }
     }
 
