@@ -1,9 +1,15 @@
 package ca.wheresthebus
 
+import android.app.NotificationManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -12,6 +18,7 @@ import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.NfcService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import android.Manifest
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,11 +32,28 @@ class MainActivity : AppCompatActivity() {
 
         setUpNavBar()
 
+        requestNotificationPermission()
+
         if (isStartedByNFC(intent)) {
             NfcService.handleTap(this)
             moveTaskToBack(true)
         }
 
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                // Request the permission
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    101
+                )
+            }
+        }
     }
 
     private fun isStartedByNFC(intent: Intent?): Boolean {
