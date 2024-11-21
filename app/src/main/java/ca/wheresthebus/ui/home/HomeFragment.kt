@@ -6,8 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,10 +19,8 @@ import ca.wheresthebus.data.TripId
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route
-import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
-import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.firstOrNull
 
 class HomeFragment : Fragment() {
@@ -57,7 +53,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpObservers() {
-        mainDBViewModel._busStopsList.observe(requireActivity()) { favouriteStops ->
+        mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { favouriteStops ->
             Log.d("favStopsListUpdated", favouriteStops.toString())
         }
     }
