@@ -7,10 +7,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.data.model.BusStop
+import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 
 class FavStopAdapter(
-    private val dataSet: Array<BusStop>
+    private val dataSet: ArrayList<FavouriteStop>
 ) : RecyclerView.Adapter<FavStopAdapter.FavStopViewHolder>() {
 
     inner class FavStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -18,9 +19,9 @@ class FavStopAdapter(
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
 
-        fun bind(stop: BusStop) {
-            id.text = stop.code.value
-            upcoming.text = stop.location.toString()
+        fun bind(stop: FavouriteStop) {
+            id.text = stop.busStop.code.value
+            upcoming.text = stop.busStop.location.toString()
         }
 
         init {

@@ -35,7 +35,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var mainDBViewModel: MainDBViewModel
 
-    val busStops : Array<BusStop> = arrayOf()
+    val busStops : ArrayList<FavouriteStop> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +55,9 @@ class HomeFragment : Fragment() {
     private fun setUpObservers() {
         mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { favouriteStops ->
             Log.d("favStopsListUpdated", favouriteStops.toString())
+            busStops.clear()
+            busStops.addAll(favouriteStops)
+            stopAdapter.notifyDataSetChanged()
         }
     }
 
