@@ -40,6 +40,22 @@ class ModelFactory() {
         )
     }
 
+    fun toFavouriteBusStop(mongoFavouriteStop: MongoFavouriteStop): FavouriteStop {
+        return FavouriteStop(
+            nickname = mongoFavouriteStop.nickname,
+            busStop = toBusStop(mongoFavouriteStop.mongoBusStop!!),
+            route = toRoute(mongoFavouriteStop.mongoRoute!!)
+        )
+    }
+
+    fun toMongoFavouriteStop(favouriteStop: FavouriteStop) : MongoFavouriteStop {
+        return MongoFavouriteStop(
+            nickname = favouriteStop.nickname,
+            mongoBusStop = toMongoBusStop(favouriteStop.busStop),
+            mongoRoute = toMongoRoute(favouriteStop.route)
+        )
+    }
+
     private fun toRoute(mongoRoute: MongoRoute): Route {
         return Route(
             id = RouteId(mongoRoute.id),

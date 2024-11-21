@@ -52,7 +52,14 @@ class HomeFragment : Fragment() {
 
         setUpAdapter()
         setUpFab()
+        setUpObservers()
         return root
+    }
+
+    private fun setUpObservers() {
+        mainDBViewModel._busStopsList.observe(requireActivity()) { favouriteStops ->
+            Log.d("favStopsListUpdated", favouriteStops.toString())
+        }
     }
 
     suspend fun getFavStopsList(): List<MongoFavouriteStop> {
@@ -70,8 +77,9 @@ class HomeFragment : Fragment() {
             val route2 = Route(RouteId("2"), "POO", "Number 2", testListTripIds)
             val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, arrayListOf(route1, route2))
             mainDBViewModel.insertBusStop(busStop)
-            val test = mainDBViewModel.getBusStopByCode("34567")?.name.toString()
-            Log.d("favStopQueryTest", test)
+            mainDBViewModel.addFavouriteStop(FavouriteStop("hello", busStop, route1))
+            val test = mainDBViewModel.getBusStopByCode("34567")
+            Log.d("favStopQueryTest", test.toString())
         }
     }
 

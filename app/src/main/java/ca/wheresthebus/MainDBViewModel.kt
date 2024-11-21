@@ -11,6 +11,8 @@ import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
+import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
@@ -30,6 +32,12 @@ class MainDBViewModel : ViewModel() {
         value = "This is home Fragment"
     }
     val text: LiveData<String> = _text
+
+    val _busStopsList = MutableLiveData<MutableList<FavouriteStop>>()
+
+    init {
+        loadFavouriteStopsFromDatabase()
+    }
 
     // NOTE: each view model for each frag can query for different class objects from the db when required
     val mongoFavouriteStops = realm
@@ -144,18 +152,38 @@ class MainDBViewModel : ViewModel() {
 
     // function to return bus stops by entering the stop code
     // TODO @Jonathan: have this function return a normal bus stop instead maybe?
-    fun getBusStopByCode(stopCode: String) : MongoBusStop? {
+    fun getBusStopByCode(stopCode: String) : BusStop? {
         return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
+            ?.let { modelFactory.toBusStop(it) }
+    }
+
+    fun loadFavouriteStopsFromDatabase() {
+        _busStopsList.postValue(mutableListOf())
+        val updatedList = mutableListOf<FavouriteStop>()
+        val allMongoFavStops = realm.query<MongoFavouriteStop>().find()
+        for (mongoBusStop in allMongoFavStops) {
+//            _busStopsList.value?.apply {
+//                addLast(modelFactory.toFavouriteBusStop(mongoBusStop))
+//                _busStopsList.postValue(this)
+//            }
+            updatedList.add(modelFactory.toFavouriteBusStop(mongoBusStop))
+            _busStopsList.postValue(updatedList)
+        }
     }
 
     // function to add a favourite stop (add route/mongo route parameter later??)
     // TODO @Jonathan: have this function take in a normal bus stop and then convert it accordingly
-    fun addFavouriteStop(mongoBusStop: MongoBusStop, nickname: String) {
+    fun addFavouriteStop(favouriteStop: FavouriteStop) {
         viewModelScope.launch {
-            //convert here: ...
-            val newFavouriteStop = MongoFavouriteStop(nickname, mongoBusStop, null)
+            val updatedList = _busStopsList.value?.toMutableList() ?: mutableListOf()
+
+            // Add the new favouriteStop to the list
+            updatedList.add(favouriteStop)
+
+            // Post the updated list back to LiveData
+            _busStopsList.postValue(updatedList)
             realm.write {
-                copyToRealm(newFavouriteStop, updatePolicy = UpdatePolicy.ALL)
+                copyToRealm(modelFactory.toMongoFavouriteStop(favouriteStop), updatePolicy = UpdatePolicy.ALL)
             }
         }
     }
