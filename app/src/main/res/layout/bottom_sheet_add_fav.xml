@@ -22,27 +22,25 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 />
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
+            <!-- SearchBar at the top -->
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/search_bar_bus"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <com.google.android.material.search.SearchBar
-                    android:id="@+id/search_bar_bus"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_fav_search"
-                    />
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_fav_search"
+                app:layout_scrollFlags="scroll|enterAlways" />
 
-                <com.google.android.material.search.SearchView
-                    android:id="@+id/search_view_bus"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_anchor="@id/search_bar_bus"/>
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-            <TextView
+            <!-- RecyclerView to display list, fills the remaining space -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Maybe a list of suggested bus stops can go here, like recently searched busses or nearby" />
+                app:layout_behavior="androidx.coordinatorlayout.widget.CoordinatorLayout$LayoutParams" />
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Maybe a list of suggested bus stops can go here, like recently searched busses or nearby" />-->
 
 
                 <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
