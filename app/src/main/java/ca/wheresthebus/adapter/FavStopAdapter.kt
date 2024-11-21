@@ -19,7 +19,7 @@ class FavStopAdapter(
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
 
         fun bind(stop: BusStop) {
-            id.text = stop.code.id
+            id.text = stop.code.value
             upcoming.text = stop.location.toString()
         }
 

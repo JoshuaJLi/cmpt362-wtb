@@ -1,6 +1,6 @@
 package ca.wheresthebus
 
-import androidx.compose.runtime.collectAsState
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,11 +10,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
-import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
+import ca.wheresthebus.data.mongo_model.MongoRoute
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -108,7 +109,33 @@ class MainDBViewModel : ViewModel() {
 
     fun insertBusStop(newStop: BusStop) {
         viewModelScope.launch {
-            var mongoStopToInsert: MongoBusStop
+            var mongoStopToInsert = MongoBusStop()
+            val stopId = newStop.id
+            Log.d("stopid?", stopId.toString())
+            mongoStopToInsert.id = newStop.id.value
+            mongoStopToInsert.code = newStop.code.value
+            mongoStopToInsert.name = newStop.name
+            mongoStopToInsert.lat = newStop.location.latitude
+            mongoStopToInsert.lng = newStop.location.longitude
+            val realmListOfMongoRoutes = realmListOf<MongoRoute>()
+            val realmListOfTripIds = realmListOf<String>()
+            realm.write {
+                newStop.routes.forEach { route ->
+                    val mongoRoute = MongoRoute().apply {
+                        id = route.id.toString()
+                        shortName = route.shortName
+                        longName = route.longName
+                        for (id in route.tripIds) {
+                            realmListOfTripIds.add(id.value)
+                        }
+                        tripIds = realmListOfTripIds
+                    }
+                    realmListOfMongoRoutes.add(mongoRoute)
+                    realmListOfTripIds.clear()
+                }
+                mongoStopToInsert.mongoRoutes = realmListOfMongoRoutes
+                copyToRealm(mongoStopToInsert, updatePolicy = UpdatePolicy.ALL)
+            }
         }
     }
 

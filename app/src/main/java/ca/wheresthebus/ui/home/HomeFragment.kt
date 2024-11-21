@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
+import ca.wheresthebus.data.StopCode
+import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
@@ -61,19 +63,10 @@ class HomeFragment : Fragment() {
             val newLocation = Location("passive")
             newLocation.latitude = (49.0123)
             newLocation.longitude = (-123.2354)
-            //val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, realmListOf(), realmListOf())
-            val mongoBusStop = MongoBusStop(
-                "12345",
-                "34568",
-                "Pee St @ Poo Ave",
-                49.0123,
-                -123.2354,
-                realmListOf()
-            )
-            mainDBViewModel.insertMongoBusStop(mongoBusStop)
-            val test = mainDBViewModel.getBusStopByCode("34568")?.name.toString()
-            Log.d("favStopQueryTest", test)
-            mainDBViewModel.addFavouriteStop(mongoBusStop, "my fav stop!")
+            val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, realmListOf())
+            mainDBViewModel.insertBusStop(busStop)
+            //val test = mainDBViewModel.getBusStopByCode("34567")?.name.toString()
+            //Log.d("favStopQueryTest", test)
         }
     }
 

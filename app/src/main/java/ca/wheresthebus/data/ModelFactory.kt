@@ -31,8 +31,8 @@ class ModelFactory {
     @RequiresApi(Build.VERSION_CODES.O)
     fun toMongoBusStop(busStop: BusStop): MongoBusStop {
         return MongoBusStop(
-            id = busStop.id.id,
-            code = busStop.code.id,
+            id = busStop.id.value,
+            code = busStop.code.value,
             name = busStop.name,
             lat = busStop.location.latitude,
             lng = busStop.location.longitude,
@@ -51,10 +51,10 @@ class ModelFactory {
 
     fun toMongoRoute(route: Route): MongoRoute {
         return MongoRoute().apply {
-            id = route.id.id
+            id = route.id.value
             shortName = route.shortName
             longName = route.longName
-            tripIds = route.tripIds.map { it.id }.toRealmList()
+            tripIds = route.tripIds.map { it.value }.toRealmList()
         }
     }
 
@@ -76,10 +76,10 @@ class ModelFactory {
     fun toMongoStopTime(stopTime: StopTime): MongoStopTime {
         return MongoStopTime().apply {
             arrivalTime = stopTime.arrivalTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            id = stopTime.id.id
-            routeId = stopTime.routeId.id
-            serviceId = stopTime.serviceId.id
-            tripId = stopTime.tripId.id
+            id = stopTime.id.value
+            routeId = stopTime.routeId.value
+            serviceId = stopTime.serviceId.value
+            tripId = stopTime.tripId.value
         }
     }
 }
