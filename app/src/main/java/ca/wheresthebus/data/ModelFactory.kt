@@ -24,7 +24,6 @@ class ModelFactory {
             code = StopCode(mongoBusStop.code),
             name = mongoBusStop.name,
             location = location,
-            nextBuses = mongoBusStop.nextBuses.map { toStopTime(it) },
             routes = mongoBusStop.mongoRoutes.map { toRoute(it) }
         )
     }
@@ -37,7 +36,6 @@ class ModelFactory {
             name = busStop.name,
             lat = busStop.location.latitude,
             lng = busStop.location.longitude,
-            nextBuses = busStop.nextBuses.map { toMongoStopTime(it) }.toRealmList(),
             mongoRoutes = busStop.routes.map { toMongoRoute(it) }.toRealmList()
         )
     }

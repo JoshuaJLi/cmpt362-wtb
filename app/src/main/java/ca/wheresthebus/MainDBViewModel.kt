@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.db.MyMongoDBApp
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
@@ -88,7 +89,7 @@ class MainDBViewModel : ViewModel() {
             }
         }
     }
-    // TODO @Jonathan: have this function take in a normal FavouriteBusStop and then convert it accordingly
+
     fun insertMongoFavStop(mongoFavouriteStop: MongoFavouriteStop) {
         viewModelScope.launch {
             realm.write {
@@ -102,6 +103,12 @@ class MainDBViewModel : ViewModel() {
             realm.write {
                 copyToRealm(newStop, updatePolicy = UpdatePolicy.ALL)
             }
+        }
+    }
+
+    fun insertBusStop(newStop: BusStop) {
+        viewModelScope.launch {
+            var mongoStopToInsert: MongoBusStop
         }
     }
 

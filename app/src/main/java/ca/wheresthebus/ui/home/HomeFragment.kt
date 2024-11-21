@@ -68,7 +68,6 @@ class HomeFragment : Fragment() {
                 "Pee St @ Poo Ave",
                 49.0123,
                 -123.2354,
-                realmListOf(),
                 realmListOf()
             )
             mainDBViewModel.insertMongoBusStop(mongoBusStop)

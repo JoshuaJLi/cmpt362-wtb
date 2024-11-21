@@ -8,8 +8,5 @@ data class FavouriteStop(
     val busStop: BusStop,
     val route: Route
 ) {
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getStops() : List<StopTime> {
-        return busStop.getBusTimes(route.id)
-    }
+
 }

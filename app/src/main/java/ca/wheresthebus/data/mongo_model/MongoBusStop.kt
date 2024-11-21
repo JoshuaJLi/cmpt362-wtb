@@ -16,11 +16,10 @@ class MongoBusStop : RealmObject {
     //var location: Location? = null,
     var lat: Double = 0.0
     var lng: Double = 0.0
-    var nextBuses: RealmList<MongoStopTime> = realmListOf()
     var mongoRoutes: RealmList<MongoRoute> = realmListOf()
 
     //Primary (EMPTY) constructor
-    constructor() : this("", "", "", 0.0, 0.0, realmListOf(), realmListOf()) {
+    constructor() : this("", "", "", 0.0, 0.0, realmListOf()) {
 
     }
     //Secondary constructor
@@ -31,7 +30,6 @@ class MongoBusStop : RealmObject {
         //var location: Location? = null,
         lat: Double = 0.0,
         lng: Double = 0.0,
-        nextBuses: RealmList<MongoStopTime> = realmListOf(),
         mongoRoutes: RealmList<MongoRoute> = realmListOf()
     ) {
         this.id = id
@@ -39,7 +37,6 @@ class MongoBusStop : RealmObject {
         this.name = name
         this.lat = lat
         this.lng = lng
-        this.nextBuses = nextBuses
         this.mongoRoutes = mongoRoutes
     }
 }
