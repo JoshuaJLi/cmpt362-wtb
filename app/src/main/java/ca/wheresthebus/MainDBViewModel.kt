@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.mongo_model.MongoBusStop
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 class MainDBViewModel : ViewModel() {
 
     private val realm = MyMongoDBApp.realm
+    private val modelFactory = ModelFactory()
     private val _text = MutableLiveData<String>().apply {
         value = "This is home Fragment"
     }
@@ -109,32 +111,33 @@ class MainDBViewModel : ViewModel() {
 
     fun insertBusStop(newStop: BusStop) {
         viewModelScope.launch {
-            var mongoStopToInsert = MongoBusStop()
-            val stopId = newStop.id
-            Log.d("stopid?", stopId.toString())
-            mongoStopToInsert.id = newStop.id.value
-            mongoStopToInsert.code = newStop.code.value
-            mongoStopToInsert.name = newStop.name
-            mongoStopToInsert.lat = newStop.location.latitude
-            mongoStopToInsert.lng = newStop.location.longitude
-            val realmListOfMongoRoutes = realmListOf<MongoRoute>()
-            val realmListOfTripIds = realmListOf<String>()
+//            var mongoStopToInsert = MongoBusStop()
+//            val stopId = newStop.id
+//            Log.d("stopid?", stopId.toString())
+//            mongoStopToInsert.id = newStop.id.value
+//            mongoStopToInsert.code = newStop.code.value
+//            mongoStopToInsert.name = newStop.name
+//            mongoStopToInsert.lat = newStop.location.latitude
+//            mongoStopToInsert.lng = newStop.location.longitude
+//            val realmListOfMongoRoutes = realmListOf<MongoRoute>()
+//            val realmListOfTripIds = realmListOf<String>()
             realm.write {
-                newStop.routes.forEach { route ->
-                    val mongoRoute = MongoRoute().apply {
-                        id = route.id.toString()
-                        shortName = route.shortName
-                        longName = route.longName
-                        for (id in route.tripIds) {
-                            realmListOfTripIds.add(id.value)
-                        }
-                        tripIds = realmListOfTripIds
-                    }
-                    realmListOfMongoRoutes.add(mongoRoute)
-                    realmListOfTripIds.clear()
-                }
-                mongoStopToInsert.mongoRoutes = realmListOfMongoRoutes
-                copyToRealm(mongoStopToInsert, updatePolicy = UpdatePolicy.ALL)
+//                newStop.routes.forEach { route ->
+//                    val mongoRoute = MongoRoute().apply {
+//                        id = route.id.toString()
+//                        shortName = route.shortName
+//                        longName = route.longName
+//                        for (id in route.tripIds) {
+//                            realmListOfTripIds.add(id.value)
+//                        }
+//                        tripIds = realmListOfTripIds
+//                    }
+//                    realmListOfMongoRoutes.add(mongoRoute)
+//                    realmListOfTripIds.clear()
+//                }
+//                mongoStopToInsert.mongoRoutes = realmListOfMongoRoutes
+//                copyToRealm(mongoStopToInsert, updatePolicy = UpdatePolicy.ALL)
+                copyToRealm(modelFactory.toMongoBusStop(newStop), updatePolicy = UpdatePolicy.ALL)
             }
         }
     }

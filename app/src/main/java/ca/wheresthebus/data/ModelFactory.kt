@@ -10,7 +10,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class ModelFactory {
+class ModelFactory() {
     
     @RequiresApi(Build.VERSION_CODES.O)
     fun toBusStop(mongoBusStop: MongoBusStop): BusStop {

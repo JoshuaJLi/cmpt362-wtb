@@ -14,10 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
+import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.TripId
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
@@ -55,7 +58,6 @@ class HomeFragment : Fragment() {
     suspend fun getFavStopsList(): List<MongoFavouriteStop> {
         return mainDBViewModel.mongoFavouriteStops.firstOrNull() ?: emptyList()
     }
-    // at jonathan, this is function to get the favourite stops but maybe needs adapter to convert to reg FavouriteStop object
 
     private fun setUpFab() {
         binding.fabNewFav.setOnClickListener {
@@ -63,10 +65,13 @@ class HomeFragment : Fragment() {
             val newLocation = Location("passive")
             newLocation.latitude = (49.0123)
             newLocation.longitude = (-123.2354)
-            val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, realmListOf())
+            val testListTripIds = arrayListOf<TripId>(TripId("11"), TripId("12"), TripId("14"))
+            val route1 = Route(RouteId("1"), "PEE", "Number 1", testListTripIds)
+            val route2 = Route(RouteId("2"), "POO", "Number 2", testListTripIds)
+            val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, arrayListOf(route1, route2))
             mainDBViewModel.insertBusStop(busStop)
-            //val test = mainDBViewModel.getBusStopByCode("34567")?.name.toString()
-            //Log.d("favStopQueryTest", test)
+            val test = mainDBViewModel.getBusStopByCode("34567")?.name.toString()
+            Log.d("favStopQueryTest", test)
         }
     }
 
