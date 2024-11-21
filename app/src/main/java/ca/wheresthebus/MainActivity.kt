@@ -25,7 +25,7 @@ import android.Manifest
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val mainDBViewModel: MainDBViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
