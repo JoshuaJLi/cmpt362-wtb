@@ -1,5 +1,7 @@
 package ca.wheresthebus
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -113,6 +115,7 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun insertBusStop(newStop: BusStop) {
         viewModelScope.launch {
 //            var mongoStopToInsert = MongoBusStop()
@@ -148,6 +151,7 @@ class MainDBViewModel : ViewModel() {
 
     // function to return bus stops by entering the stop code
     // TODO @Jonathan: have this function return a normal bus stop instead maybe?
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getBusStopByCode(stopCode: String) : BusStop? {
         return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
             ?.let { modelFactory.toBusStop(it) }
@@ -182,5 +186,15 @@ class MainDBViewModel : ViewModel() {
                 copyToRealm(modelFactory.toMongoFavouriteStop(favouriteStop), updatePolicy = UpdatePolicy.ALL)
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun searchByCode(code: String): ArrayList<BusStop> {
+        val updatedList = ArrayList<BusStop>()
+        val listOfMongoStops = realm.query<MongoBusStop>("code CONTAINS[c] $0", code).find().take(5)
+        for (mongoStop in listOfMongoStops) {
+            updatedList.add(modelFactory.toBusStop(mongoStop))
+        }
+        return updatedList
     }
 }
