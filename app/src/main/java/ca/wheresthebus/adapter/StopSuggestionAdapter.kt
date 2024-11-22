@@ -1,11 +1,15 @@
 package ca.wheresthebus.adapter
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -16,13 +20,15 @@ import ca.wheresthebus.R
 import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.model.Route
 
 class StopSuggestionAdapter(
     private val suggestedStops: ArrayList<BusStop>,
     private val mainDBViewModel: MainDBViewModel,
-    private val modelFactory: ModelFactory
+    private val modelFactory: ModelFactory,
+    private val context: Context
 ) : RecyclerView.Adapter<StopSuggestionAdapter.SuggestedStopViewHolder>() {
-
+    private val routeShortNames = ArrayList<String>()
     @RequiresApi(Build.VERSION_CODES.O)
     inner class SuggestedStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val stopName: TextView = view.findViewById(R.id.suggested_stop_name)
@@ -32,7 +38,7 @@ class StopSuggestionAdapter(
         fun bind(stop: BusStop) {
             stopName.text = stop.name
             stopCode.text = stop.code.value
-            val routeShortNames = ArrayList<String>()
+
             for (route in stop.routes) {
                 routeShortNames.add(route.shortName)
             }
@@ -46,13 +52,29 @@ class StopSuggestionAdapter(
                 val customView = LayoutInflater.from(view.context).inflate(R.layout.dialog_add_fav_stop, null)
                 builder.setView(customView)
                 val nicknameEditText: EditText = customView.findViewById(R.id.nicknameEditText)
-                val routeEditText: EditText = customView.findViewById(R.id.routeEditTextField)
+                val routesSpinner: Spinner = customView.findViewById(R.id.routeChoiceSpinner)
+                val routesAdapter = ArrayAdapter<String>(context, R.layout.route_spinner_item, routeShortNames)
+                var selectedRoute: Route? = null
+                routesSpinner.adapter = routesAdapter
+                routesSpinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        selectedRoute = mainDBViewModel.searchForRouteByShortName(routeShortNames[position])
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>) {
+                        selectedRoute = null
+                    }
+                })
                 builder.setTitle("Add Favourite Stop!").setNegativeButton("Cancel") { _, _ ->
                     // Handle the negative button click
                 }.setPositiveButton("Ok") { _, _ ->
-                    val selectedRoute = mainDBViewModel.searchForRouteByShortName(routeEditText.text.toString())
                     if (selectedRoute != null) {
-                        val newFavouriteStop = FavouriteStop(nicknameEditText.text.toString(), selectedStop, selectedRoute)
+                        val newFavouriteStop = FavouriteStop(nicknameEditText.text.toString(), selectedStop, selectedRoute!!)
                         mainDBViewModel.insertFavouriteStop(newFavouriteStop)
                     } else {
                         Toast.makeText(view.context, "This route does not stop here, try again.", Toast.LENGTH_LONG).show()

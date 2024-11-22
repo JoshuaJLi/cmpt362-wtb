@@ -50,7 +50,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         val root: View = binding.root
         stopSuggestionsView = binding.recyclerViewSuggestions
         stopSuggestionsView.layoutManager = LinearLayoutManager(context)
-        stopSuggestionAdapter = StopSuggestionAdapter(suggestedStops, mainDBViewModel, modelFactory)
+        stopSuggestionAdapter = StopSuggestionAdapter(suggestedStops, mainDBViewModel, modelFactory, requireContext())
         stopSuggestionsView.adapter = stopSuggestionAdapter
         //used for testing
         nearbyStops.add(mainDBViewModel.getBusStopByCode("55234")!!)
@@ -80,7 +80,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
 //                false
 //            }
             val nearbySuggestionsRecyclerView = binding.recyclerViewNearbySuggestions
-            val nearbyAdapter = StopSuggestionAdapter(nearbyStops, mainDBViewModel, modelFactory)
+            val nearbyAdapter = StopSuggestionAdapter(nearbyStops, mainDBViewModel, modelFactory, requireContext())
             nearbySuggestionsRecyclerView.layoutManager = LinearLayoutManager(context)
             nearbySuggestionsRecyclerView.adapter = nearbyAdapter
             //Todo: populate suggestedStops array with the nearby stops and notify.
