@@ -1,5 +1,6 @@
 package ca.wheresthebus
 
+import android.location.Location
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,8 +9,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.wheresthebus.data.RouteId
+import ca.wheresthebus.data.ScheduledTripId
+import ca.wheresthebus.data.StopCode
+import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.db.MyMongoDBApp
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.model.Route
+import ca.wheresthebus.data.model.Schedule
+import ca.wheresthebus.data.model.ScheduledTrip
+import ca.wheresthebus.data.model.StopTime
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import io.realm.kotlin.UpdatePolicy
@@ -18,6 +28,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 class MainDBViewModel : ViewModel() {
 
@@ -121,5 +133,25 @@ class MainDBViewModel : ViewModel() {
                 copyToRealm(newFavouriteStop, updatePolicy = UpdatePolicy.ALL)
             }
         }
+    }
+
+    fun getTrips(): ArrayList<ScheduledTrip> {
+        val trips = ArrayList<ScheduledTrip>()
+
+        val schedule = Schedule(DayOfWeek.SUNDAY, LocalTime.now())
+        val stop = BusStop(StopId("test"), StopCode("test"), "But stop", Location("Test"), ArrayList<StopTime>(), ArrayList<Route>())
+        val route= Route(RouteId("test"), "20", "20", ArrayList())
+        val favouriteStop = FavouriteStop("Newtown", stop, route)
+
+        val stops = ArrayList<FavouriteStop>()
+        val schedules = ArrayList<Schedule>()
+        schedules.add(schedule)
+        stops.add(favouriteStop)
+
+        val trip = ScheduledTrip(ScheduledTripId("test"), "A Trip", stops, schedules)
+
+        trips.add(trip)
+
+        return trips
     }
 }
