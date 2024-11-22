@@ -7,12 +7,20 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import ca.wheresthebus.MainDBViewModel
+import ca.wheresthebus.adapter.TripAdapter
 import ca.wheresthebus.databinding.FragmentTripsBinding
 
 class TripsFragment : Fragment() {
 
     private var _binding: FragmentTripsBinding? = null
     private lateinit var tripsViewModel : TripsViewModel
+    private lateinit var mainDBViewModel: MainDBViewModel
+
+    private lateinit var tripAdapter: TripAdapter
+    private lateinit var tripsView : RecyclerView
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -28,11 +36,22 @@ class TripsFragment : Fragment() {
         _binding = FragmentTripsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        tripsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+
+        mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
+
+        setUpAdapter()
         return root
+    }
+
+    private fun setUpAdapter() {
+        val trips = mainDBViewModel.getTrips()
+        tripAdapter = TripAdapter(trips)
+        tripsView = binding.recyclerTrips
+
+        tripsView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = tripAdapter
+        }
     }
 
     override fun onDestroyView() {
