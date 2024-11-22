@@ -66,14 +66,6 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    fun showFavStopDetails(favouriteStop: MongoFavouriteStop) {
-        favStopDetails = favouriteStop
-    }
-
-    fun hideCourseDetails() {
-        favStopDetails = null
-    }
-
     // function that creates the sample entries
     private fun createDummyEntries() {
         viewModelScope.launch {
@@ -87,11 +79,6 @@ class MainDBViewModel : ViewModel() {
         viewModelScope.launch {
             realm.write {
                 //TODO: adapt later
-//                val course = courseDetails ?: return@write
-//                val latestCourse = findLatest(course) ?: return@write
-//                delete(latestCourse)
-//
-//                courseDetails = null
                 val favStop = favStopDetails ?: return@write
                 delete(favStop)
                 favStopDetails = null
@@ -118,32 +105,7 @@ class MainDBViewModel : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun insertBusStop(newStop: BusStop) {
         viewModelScope.launch {
-//            var mongoStopToInsert = MongoBusStop()
-//            val stopId = newStop.id
-//            Log.d("stopid?", stopId.toString())
-//            mongoStopToInsert.id = newStop.id.value
-//            mongoStopToInsert.code = newStop.code.value
-//            mongoStopToInsert.name = newStop.name
-//            mongoStopToInsert.lat = newStop.location.latitude
-//            mongoStopToInsert.lng = newStop.location.longitude
-//            val realmListOfMongoRoutes = realmListOf<MongoRoute>()
-//            val realmListOfTripIds = realmListOf<String>()
             realm.write {
-//                newStop.routes.forEach { route ->
-//                    val mongoRoute = MongoRoute().apply {
-//                        id = route.id.toString()
-//                        shortName = route.shortName
-//                        longName = route.longName
-//                        for (id in route.tripIds) {
-//                            realmListOfTripIds.add(id.value)
-//                        }
-//                        tripIds = realmListOfTripIds
-//                    }
-//                    realmListOfMongoRoutes.add(mongoRoute)
-//                    realmListOfTripIds.clear()
-//                }
-//                mongoStopToInsert.mongoRoutes = realmListOfMongoRoutes
-//                copyToRealm(mongoStopToInsert, updatePolicy = UpdatePolicy.ALL)
                 copyToRealm(modelFactory.toMongoBusStop(newStop), updatePolicy = UpdatePolicy.ALL)
             }
         }
@@ -162,10 +124,6 @@ class MainDBViewModel : ViewModel() {
         val updatedList = mutableListOf<FavouriteStop>()
         val allMongoFavStops = realm.query<MongoFavouriteStop>().find()
         for (mongoBusStop in allMongoFavStops) {
-//            _busStopsList.value?.apply {
-//                addLast(modelFactory.toFavouriteBusStop(mongoBusStop))
-//                _busStopsList.postValue(this)
-//            }
             updatedList.add(modelFactory.toFavouriteBusStop(mongoBusStop))
             _favouriteBusStopsList.postValue(updatedList)
         }
