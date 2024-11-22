@@ -35,7 +35,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var mainDBViewModel: MainDBViewModel
 
-    val busStops : ArrayList<FavouriteStop> = arrayListOf()
+    private val favouriteStopsList : ArrayList<FavouriteStop> = arrayListOf()
+    private val allBusStops : ArrayList<BusStop> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,10 +54,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpObservers() {
+        // when the app opens, the favourite stops list is updated.
         mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { favouriteStops ->
             Log.d("favStopsListUpdated", favouriteStops.toString())
-            busStops.clear()
-            busStops.addAll(favouriteStops)
+            favouriteStopsList.clear()
+            favouriteStopsList.addAll(favouriteStops)
             stopAdapter.notifyDataSetChanged()
         }
     }
@@ -76,14 +78,14 @@ class HomeFragment : Fragment() {
             val route2 = Route(RouteId("2"), "POO", "Number 2", testListTripIds)
             val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, arrayListOf(route1, route2))
             mainDBViewModel.insertBusStop(busStop)
-            mainDBViewModel.addFavouriteStop(FavouriteStop("hello", busStop, route1))
+            mainDBViewModel.insertFavouriteStop(FavouriteStop("hello", busStop, route1))
             val test = mainDBViewModel.getBusStopByCode("34567")
             Log.d("favStopQueryTest", test.toString())
         }
     }
 
     private fun setUpAdapter() {
-        stopAdapter = FavStopAdapter(busStops)
+        stopAdapter = FavStopAdapter(favouriteStopsList)
         stopsView = binding.recyclerFavStops
 
         stopsView.apply {

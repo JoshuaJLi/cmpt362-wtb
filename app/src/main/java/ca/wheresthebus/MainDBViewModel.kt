@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MainDBViewModel : ViewModel() {
 
     private val realm = MyMongoDBApp.realm
@@ -33,7 +34,11 @@ class MainDBViewModel : ViewModel() {
 
     val _favouriteBusStopsList = MutableLiveData<MutableList<FavouriteStop>>()
 
+    // change to LiveData instead of MutableLiveDataLater, since we will only be accessing this part of the DB?
+    val _allBusStopsList = MutableLiveData<MutableList<BusStop>>()
+
     init {
+        loadStopsIntoDatabase()
         loadFavouriteStopsFromDatabase()
     }
 
@@ -86,22 +91,6 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    fun insertMongoFavStop(mongoFavouriteStop: MongoFavouriteStop) {
-        viewModelScope.launch {
-            realm.write {
-                copyToRealm(mongoFavouriteStop, updatePolicy = UpdatePolicy.ALL)
-            }
-        }
-    }
-    // TODO @Jonathan: have this function take in a normal bus stop and then convert it accordingly
-    fun insertMongoBusStop(newStop: MongoBusStop) {
-        viewModelScope.launch {
-            realm.write {
-                copyToRealm(newStop, updatePolicy = UpdatePolicy.ALL)
-            }
-        }
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun insertBusStop(newStop: BusStop) {
         viewModelScope.launch {
@@ -119,19 +108,37 @@ class MainDBViewModel : ViewModel() {
             ?.let { modelFactory.toBusStop(it) }
     }
 
-    fun loadFavouriteStopsFromDatabase() {
+    private fun loadFavouriteStopsFromDatabase() {
         _favouriteBusStopsList.postValue(mutableListOf())
         val updatedList = mutableListOf<FavouriteStop>()
         val allMongoFavStops = realm.query<MongoFavouriteStop>().find()
         for (mongoBusStop in allMongoFavStops) {
             updatedList.add(modelFactory.toFavouriteBusStop(mongoBusStop))
-            _favouriteBusStopsList.postValue(updatedList)
         }
+        _favouriteBusStopsList.postValue(updatedList)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun loadStopsIntoDatabase() {
+        // if initially run, we load in all the stops in the db
+        if (realm.query<MongoBusStop>().find().isEmpty()) {
+            // load all the bus stops into the database
+            var stopToAdd = MongoBusStop()
+            // stopToAdd.id = ...
+            // stopToAdd.code = ...
+        }
+        _allBusStopsList.postValue(mutableListOf())
+        val convertedBusStopList = mutableListOf<BusStop>()
+        val allMongoBusStops = realm.query<MongoBusStop>().find()
+        for (mongoBusStop in allMongoBusStops) {
+            convertedBusStopList.add(modelFactory.toBusStop(mongoBusStop))
+        }
+        _allBusStopsList.postValue(convertedBusStopList)
     }
 
     // function to add a favourite stop (add route/mongo route parameter later??)
     // TODO @Jonathan: have this function take in a normal bus stop and then convert it accordingly
-    fun addFavouriteStop(favouriteStop: FavouriteStop) {
+    fun insertFavouriteStop(favouriteStop: FavouriteStop) {
         viewModelScope.launch {
             val updatedList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
 
