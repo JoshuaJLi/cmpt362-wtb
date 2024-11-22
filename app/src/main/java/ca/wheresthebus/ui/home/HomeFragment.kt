@@ -1,17 +1,20 @@
 package ca.wheresthebus.ui.home
 
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
+import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.StopId
@@ -36,7 +39,8 @@ class HomeFragment : Fragment() {
     private lateinit var mainDBViewModel: MainDBViewModel
 
     private val favouriteStopsList : ArrayList<FavouriteStop> = arrayListOf()
-    private val allBusStops : ArrayList<BusStop> = arrayListOf()
+    //private val allBusStops : ArrayList<BusStop> = arrayListOf()
+    private lateinit var modelFactory: ModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +48,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         mainDBViewModel = ViewModelProvider(requireActivity()).get(MainDBViewModel::class.java)
+        modelFactory = ModelFactory()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -53,6 +58,7 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setUpObservers() {
         // when the app opens, the favourite stops list is updated.
         mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { favouriteStops ->
@@ -63,10 +69,12 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getFavStopsList(): List<MongoFavouriteStop> {
         return mainDBViewModel.mongoFavouriteStops.firstOrNull() ?: emptyList()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setUpFab() {
         binding.fabNewFav.setOnClickListener {
             AddFavBottomSheet().show(parentFragmentManager, AddFavBottomSheet.TAG)

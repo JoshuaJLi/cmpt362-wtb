@@ -54,9 +54,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
                 searchBarBus.setText(searchViewBus.text)
                 suggestedStops.clear()
                 suggestedStops.addAll(mainDBViewModel.searchByCode(searchViewBus.text.toString()))
-                Log.d("suggestedStops", suggestedStops.toString())
                 stopSuggestionAdapter.notifyDataSetChanged()
-                Log.d("size", stopSuggestionAdapter.itemCount.toString())
                 false
             }
 

@@ -20,7 +20,11 @@ class StopSuggestionAdapter(
         fun bind(stop: BusStop) {
             stopName.text = stop.name
             stopCode.text = stop.code.value
-            routesAtStop.text = stop.location.toString()
+            val routeShortNames = ArrayList<String>()
+            for (route in stop.routes) {
+                routeShortNames.add(route.shortName)
+            }
+            routesAtStop.text = routeShortNames.joinToString(", ")
         }
 
         init {

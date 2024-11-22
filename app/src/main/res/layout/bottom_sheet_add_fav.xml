@@ -34,7 +34,6 @@
                 android:id="@+id/recycler_view_suggestions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/holo_blue_bright"
                 app:layout_behavior="androidx.coordinatorlayout.widget.CoordinatorLayout$LayoutParams" />
 
             <com.google.android.material.search.SearchView
