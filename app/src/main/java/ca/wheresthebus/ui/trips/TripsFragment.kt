@@ -12,6 +12,7 @@ import ca.wheresthebus.databinding.FragmentTripsBinding
 class TripsFragment : Fragment() {
 
     private var _binding: FragmentTripsBinding? = null
+    private lateinit var tripsViewModel : TripsViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,14 +23,13 @@ class TripsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(TripsViewModel::class.java)
+        tripsViewModel = ViewModelProvider(this)[TripsViewModel::class.java]
 
         _binding = FragmentTripsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
+        tripsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
