@@ -1,5 +1,6 @@
 package ca.wheresthebus.ui.home
 
+import android.graphics.ColorSpace.Model
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
 import ca.wheresthebus.adapter.StopSuggestionAdapter
+import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.databinding.BottomSheetAddFavBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -29,6 +31,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
     private var suggestedStops: ArrayList<BusStop> = arrayListOf()
 
     private lateinit var mainDBViewModel: MainDBViewModel
+    private lateinit var modelFactory: ModelFactory
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -38,12 +41,12 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
     ): View {
         inflater.inflate(R.layout.bottom_sheet_add_fav, container, false)
         mainDBViewModel = ViewModelProvider(requireActivity()).get(MainDBViewModel::class.java)
-
+        modelFactory = ModelFactory()
         _binding = BottomSheetAddFavBinding.inflate(inflater, container, false)
         val root: View = binding.root
         stopSuggestionsView = binding.recyclerViewSuggestions
         stopSuggestionsView.layoutManager = LinearLayoutManager(context)
-        stopSuggestionAdapter = StopSuggestionAdapter(suggestedStops)
+        stopSuggestionAdapter = StopSuggestionAdapter(suggestedStops, mainDBViewModel, modelFactory)
         stopSuggestionsView.adapter = stopSuggestionAdapter
 
         binding.apply {

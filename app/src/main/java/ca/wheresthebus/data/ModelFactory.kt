@@ -40,6 +40,7 @@ class ModelFactory() {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun toFavouriteBusStop(mongoFavouriteStop: MongoFavouriteStop): FavouriteStop {
         return FavouriteStop(
             nickname = mongoFavouriteStop.nickname,
@@ -48,6 +49,7 @@ class ModelFactory() {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun toMongoFavouriteStop(favouriteStop: FavouriteStop) : MongoFavouriteStop {
         return MongoFavouriteStop(
             nickname = favouriteStop.nickname,
@@ -56,7 +58,7 @@ class ModelFactory() {
         )
     }
 
-    private fun toRoute(mongoRoute: MongoRoute): Route {
+    fun toRoute(mongoRoute: MongoRoute): Route {
         return Route(
             id = RouteId(mongoRoute.id),
             shortName = mongoRoute.shortName,

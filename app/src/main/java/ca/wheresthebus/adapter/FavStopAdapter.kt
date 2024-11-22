@@ -20,8 +20,15 @@ class FavStopAdapter(
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
 
         fun bind(stop: FavouriteStop) {
-            nickname.text = stop.nickname
-            id.text = stop.busStop.code.value
+            nickname.text = buildString {
+                append(stop.route.shortName)
+                append(" - ")
+                append(stop.nickname)
+            }
+            id.text = buildString {
+                append("Stop Code: ")
+                append(stop.busStop.code.value)
+            }
             //todo: fixate with the live views.
             upcoming.text = stop.busStop.location.toString()
         }

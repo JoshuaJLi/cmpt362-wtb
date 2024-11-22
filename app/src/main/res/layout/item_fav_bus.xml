@@ -17,6 +17,7 @@
             android:id="@+id/text_stop_nickname"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textSize="28sp"
             android:text="Stop Nickname"
             />
         <TextView
