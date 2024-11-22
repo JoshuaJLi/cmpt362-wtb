@@ -6,11 +6,11 @@ import org.mongodb.kbson.ObjectId
 
 // Represents stop_times and trips
 class MongoStopTime : RealmObject {
-    @PrimaryKey var _id: ObjectId = ObjectId()
+    //@PrimaryKey var _id: ObjectId = ObjectId()
     //var arrivalTime: LocalDateTime? = null
     var arrivalTime: Long = 0L
     //stop_id
-    var id : String = ""
+    @PrimaryKey var id : String = ""
     var routeId: String = ""
     var serviceId : String = ""
     var tripId : String = ""

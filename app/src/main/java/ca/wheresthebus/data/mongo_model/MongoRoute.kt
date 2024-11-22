@@ -8,11 +8,10 @@ import org.mongodb.kbson.ObjectId
 
 // Represents routes
 class MongoRoute : RealmObject {
-    @PrimaryKey
-    var _id: ObjectId = ObjectId()
+    //@PrimaryKey var _id: ObjectId = ObjectId()
     // route_id
     //var id : RouteId? = null
-    var id: String = ""
+    @PrimaryKey var id: String = ""
     var shortName : String = "John"
     var longName : String = "Doe"
     //var tripIds : RealmList<TripId> = realmListOf()

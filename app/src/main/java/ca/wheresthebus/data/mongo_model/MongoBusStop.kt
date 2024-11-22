@@ -9,8 +9,8 @@ import org.mongodb.kbson.ObjectId
 // Each realm object has to have its own EMPTY constructor.
 class MongoBusStop : RealmObject {
     //default required for realm objects
-    @PrimaryKey var _id: ObjectId = ObjectId()
-    var id: String = ""
+    //@PrimaryKey var _id: ObjectId = ObjectId()
+    @PrimaryKey var id: String = ""
     var code: String = ""
     var name: String = ""
     //var location: Location? = null,
