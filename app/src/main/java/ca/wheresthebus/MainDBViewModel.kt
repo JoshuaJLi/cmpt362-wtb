@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.O)
 class MainDBViewModel : ViewModel() {
 
     private val realm = MyMongoDBApp.realm
@@ -138,7 +137,6 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun insertBusStop(newStop: BusStop) {
         viewModelScope.launch {
             realm.write {
@@ -149,7 +147,6 @@ class MainDBViewModel : ViewModel() {
 
     // function to return bus stops by entering the stop code
     // TODO @Jonathan: have this function return a normal bus stop instead maybe?
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getBusStopByCode(stopCode: String) : BusStop? {
         return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
             ?.let { modelFactory.toBusStop(it) }
@@ -165,7 +162,6 @@ class MainDBViewModel : ViewModel() {
         _favouriteBusStopsList.postValue(updatedList)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun loadStopsIntoDatabase() {
         // if initially run, we load in all the stops in the db
         if (realm.query<MongoBusStop>().find().isEmpty()) {
@@ -200,7 +196,6 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun searchByCode(code: String): ArrayList<BusStop> {
         val updatedList = ArrayList<BusStop>()
         val listOfMongoStops = realm.query<MongoBusStop>("code CONTAINS[c] $0", code).find().take(5)

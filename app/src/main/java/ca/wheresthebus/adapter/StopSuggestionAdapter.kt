@@ -29,7 +29,6 @@ class StopSuggestionAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<StopSuggestionAdapter.SuggestedStopViewHolder>() {
     private val routeShortNames = ArrayList<String>()
-    @RequiresApi(Build.VERSION_CODES.O)
     inner class SuggestedStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val stopName: TextView = view.findViewById(R.id.suggested_stop_name)
         private val stopCode: TextView = view.findViewById(R.id.suggested_stop_code)
@@ -84,7 +83,6 @@ class StopSuggestionAdapter(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuggestedStopViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_suggested_bus, parent, false)
         return SuggestedStopViewHolder(view)
@@ -94,7 +92,6 @@ class StopSuggestionAdapter(
         return suggestedStops.size
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: SuggestedStopViewHolder, position: Int) {
         suggestedStops[position].let {
             holder.bind(it)

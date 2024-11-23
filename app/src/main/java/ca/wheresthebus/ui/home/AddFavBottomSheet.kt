@@ -37,7 +37,6 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
     private lateinit var mainDBViewModel: MainDBViewModel
     private lateinit var modelFactory: ModelFactory
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,31 +53,8 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         stopSuggestionsView.adapter = stopSuggestionAdapter
         //used for testing
         nearbyStops.add(mainDBViewModel.getBusStopByCode("55234")!!)
-//        sv = view?.findViewById(R.id.search_view_bus)!!
-//        nearbyStopsSuggestions = view?.findViewById(R.id.recycler_view_nearby_suggestions)!!
-//        sv.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                // Perform search
-//                checkForEmptyResults(query)
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                // Handle text changes
-//                checkForEmptyResults(newText)
-//                return true
-//            }
-//        })
         binding.apply {
             searchViewBus.setupWithSearchBar(searchBarBus)
-//            searchViewBus.editText.setOnEditorActionListener { v, actionId, event ->
-//                //searchViewBus.hide()
-//                searchBarBus.setText(searchViewBus.text)
-//                suggestedStops.clear()
-//                suggestedStops.addAll(mainDBViewModel.searchByCode(searchViewBus.text.toString()))
-//                stopSuggestionAdapter.notifyDataSetChanged()
-//                false
-//            }
             val nearbySuggestionsRecyclerView = binding.recyclerViewNearbySuggestions
             val nearbyAdapter = StopSuggestionAdapter(nearbyStops, mainDBViewModel, modelFactory, requireContext())
             nearbySuggestionsRecyclerView.layoutManager = LinearLayoutManager(context)
