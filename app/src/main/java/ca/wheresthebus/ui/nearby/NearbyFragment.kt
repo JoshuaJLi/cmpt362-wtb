@@ -1,8 +1,15 @@
 package ca.wheresthebus.ui.nearby
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,72 +68,96 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, savedInstanceState);
+        loadStopsFromCSV();
+        initializeLocationProvider();
+        setupMapFragment();
+        getLocationPermissions();
+    }
+
+    private fun loadStopsFromCSV() {
         val minput = InputStreamReader(context?.assets?.open("stops.csv"))
         val reader = BufferedReader(minput)
 
-        var line : String?
-        var displayData : String = ""
-        while (reader.readLine().also { line = it } != null){
-            val row : List<String> = line!!.split(",")
-//            var newStop = Stop(row[1], row[2], row[4], row[5])
-//            stopList.add(newStop)
-//            displayData = displayData + row[4] + "\t" + row[5] + "\n"
+        var line: String?
+        while (reader.readLine().also { line = it } != null) {
+            val row: List<String> = line!!.split(",")
             try {
-                val stopId = row[1] // Change index based on your CSV structure
+                val stopId = row[1]
                 val stopName = row[2]
-                val stopLat = row[4].toDouble() // Make sure this column has valid numeric values
-                val stopLon = row[5].toDouble() // Make sure this column has valid numeric values
+                val stopLat = row[4].toDouble()
+                val stopLon = row[5].toDouble()
 
-                // Create a new Stop object
                 val newStop = Stop(stopId, stopName, stopLat, stopLon)
                 stopList.add(newStop)
             } catch (e: NumberFormatException) {
                 println("Failed to parse row: ${line}. Error: ${e.message}")
-                // Handle the error or skip the row
             } catch (e: IndexOutOfBoundsException) {
                 println("Row has insufficient columns: $line")
             }
         }
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+    private fun initializeLocationProvider() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
+
+    private fun setupMapFragment() {
         val mapFragment = childFragmentManager
             .findFragmentById(R.id.poopy) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-//        val goButton: Button = view.findViewById(R.id.getNextBusButton)
-//        val stopNumberInput: EditText = view.findViewById(R.id.stopNumberInputField)
-//        goButton.setOnClickListener() {
-//            Toast.makeText(requireContext(), stopNumberInput.text, Toast.LENGTH_SHORT).show()
-//        }
-        getLocationPermissions()
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        // Get the last known location
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                // Get the location's latitude and longitude
-                val currentLatLng = LatLng(location.latitude, location.longitude)
 
-                // Add a marker at the current location
-                mMap.addMarker(MarkerOptions().position(currentLatLng).title("Current Location"))
-                // Move the camera to the current location
-                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                val sfu = LatLng(49.2791, -122.9202)
-                mMap.addMarker(MarkerOptions().position(sfu).title("SFU"))
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sfu, 15f))
-            } else {
-                // Handle case where location is null
-                // You might want to notify the user or provide a default location
+        // give the map some time to load, then grab the user's current location
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Get the last known location
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    // Get the location's latitude and longitude
+                    val currentLatLng = LatLng(location.latitude, location.longitude)
+
+                    Toast.makeText(context, "Current location: ${currentLatLng.latitude}, ${currentLatLng.longitude}", Toast.LENGTH_SHORT).show()
+
+                    // Add a marker at the current location
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(currentLatLng)
+                            .title("Current Location")
+                            .snippet("Your current location")
+                            .draggable(true)
+                    )
+                    // add a circle radius around the user's location
+                    var userRadius = mMap.addCircle(
+                        com.google.android.gms.maps.model.CircleOptions()
+                            .center(currentLatLng)
+                            .radius(1000.0)
+                            .strokeWidth(3f)
+                            .strokeColor(Color.BLUE)
+                            .fillColor(Color.argb(25, 0, 0, 255))
+                    )
+                    userRadius.isVisible = true;
+
+                    // Move the camera to the current location
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                    val sfu = LatLng(49.2791, -122.9202)
+                    mMap.addMarker(MarkerOptions().position(sfu).title("SFU"))
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sfu, 15f))
+
+                    // Move the camera to the current location
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+
+                } else {
+                    // Handle case where location is null
+                    // You might want to notify the user or provide a default location
+                }
             }
-        }
-        // Add a marker at a specific location and move the camera to it.
-//        val sydney = LatLng(stopList[12].latitude.toDouble(), stopList[12].longitude.toDouble())
-//        mMap.addMarker(MarkerOptions().position(sydney).title("Lol"))
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        }, 2000);
+
+
         for (stop in stopList) {
             val newStopLatLng = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble())
             mMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.stopNumber + " - " + stop.stopName))
@@ -138,6 +169,7 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 101)
+
             return
         }
     }
