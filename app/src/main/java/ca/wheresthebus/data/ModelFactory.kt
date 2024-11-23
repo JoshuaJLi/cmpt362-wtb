@@ -63,7 +63,6 @@ class ModelFactory() {
             id = RouteId(mongoRoute.id),
             shortName = mongoRoute.shortName,
             longName = mongoRoute.longName,
-            tripIds = mongoRoute.tripIds.map { TripId(it) }
         )
     }
 
@@ -72,7 +71,6 @@ class ModelFactory() {
             id = route.id.value
             shortName = route.shortName
             longName = route.longName
-            tripIds = route.tripIds.map { it.value }.toRealmList()
         }
     }
 

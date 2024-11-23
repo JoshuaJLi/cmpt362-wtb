@@ -18,7 +18,6 @@ import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.StopId
-import ca.wheresthebus.data.TripId
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route

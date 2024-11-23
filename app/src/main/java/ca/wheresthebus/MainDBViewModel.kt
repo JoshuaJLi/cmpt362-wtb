@@ -2,7 +2,6 @@ package ca.wheresthebus
 
 import android.location.Location
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,7 +14,6 @@ import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.StopId
-import ca.wheresthebus.data.TripId
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
@@ -80,14 +78,14 @@ class MainDBViewModel : ViewModel() {
     }
 
     // function that creates the sample entries
+    // todo: remove after real data loaded in
     private fun createDummyEntries() {
         viewModelScope.launch {
             val newLocation = Location("passive")
             newLocation.latitude = (49.0123)
             newLocation.longitude = (-123.2354)
-            val testListTripIds = arrayListOf<TripId>(TripId("11"), TripId("12"), TripId("14"))
-            val route1 = Route(RouteId("1"), "PEE", "Number 1", testListTripIds)
-            val route2 = Route(RouteId("2"), "POO", "Number 2", testListTripIds)
+            val route1 = Route(RouteId("1"), "PEE", "Number 1")
+            val route2 = Route(RouteId("2"), "POO", "Number 2")
             val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, arrayListOf(route1, route2))
             insertBusStop(busStop)
 
@@ -106,16 +104,11 @@ class MainDBViewModel : ViewModel() {
             val testLocation5 = Location("passive")
             testLocation5.latitude = 49.1989
             testLocation5.longitude = -123.1989
-            val testTripIds1 = arrayListOf(TripId("11"), TripId("12"), TripId("14"))
-            val testTripIds2 = arrayListOf(TripId("15"), TripId("16"), TripId("17"))
-            val testTripIds3 = arrayListOf(TripId("18"), TripId("19"), TripId("20"))
-            val testTripIds4 = arrayListOf(TripId("21"), TripId("22"), TripId("23"))
-            val testTripIds5 = arrayListOf(TripId("24"), TripId("25"), TripId("25"))
-            val testRoute1 = Route(RouteId("01"), "013", "taylor swift", testTripIds1)
-            val testRoute2 = Route(RouteId("02"), "505", "rihanna", testTripIds2)
-            val testRoute3 = Route(RouteId("03"), "802", "post malone", testTripIds3)
-            val testRoute4 = Route(RouteId("04"), "999", "the weeknd", testTripIds4)
-            val testRoute5 = Route(RouteId("05"), "24K", "bruno mars", testTripIds5)
+            val testRoute1 = Route(RouteId("01"), "013", "taylor swift")
+            val testRoute2 = Route(RouteId("02"), "505", "rihanna")
+            val testRoute3 = Route(RouteId("03"), "802", "post malone")
+            val testRoute4 = Route(RouteId("04"), "999", "the weeknd")
+            val testRoute5 = Route(RouteId("05"), "24K", "bruno mars")
             insertBusStop(BusStop(StopId("1"), StopCode("55234"), "1989 St @ TTPD Ave", testLocation1, arrayListOf(testRoute1, testRoute3)))
             insertBusStop(BusStop(StopId("2"), StopCode("23199"), "Disturbia St @ Umbrella Ave", testLocation2, arrayListOf(testRoute2, testRoute4)))
             insertBusStop(BusStop(StopId("3"), StopCode("11111"), "Circles St @ F1-Trillion Blvd", testLocation3, arrayListOf(testRoute1, testRoute3)))
