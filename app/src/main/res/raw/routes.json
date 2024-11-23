@@ -1,1162 +1,1162 @@
 [
   {
-    "route_id":10232,
-    "route_short_name":"256",
-    "route_long_name":"Whitby Estate\/Park Royal\/Spuraway"
+    "id":10232,
+    "shortName":"256",
+    "longName":"Whitby Estate\/Park Royal\/Spuraway"
   },
   {
-    "route_id":11201,
-    "route_short_name":"033",
-    "route_long_name":"29th Avenue Station\/UBC"
+    "id":11201,
+    "shortName":"033",
+    "longName":"29th Avenue Station\/UBC"
   },
   {
-    "route_id":11692,
-    "route_short_name":"364",
-    "route_long_name":"Langley Centre\/Scottsdale"
+    "id":11692,
+    "shortName":"364",
+    "longName":"Langley Centre\/Scottsdale"
   },
   {
-    "route_id":11693,
-    "route_short_name":"388",
-    "route_long_name":"22nd St Station\/Carvolth Exchange"
+    "id":11693,
+    "shortName":"388",
+    "longName":"22nd St Station\/Carvolth Exchange"
   },
   {
-    "route_id":11696,
-    "route_short_name":"609",
-    "route_long_name":"South Delta Exchange\/Ladner Exchange"
+    "id":11696,
+    "shortName":"609",
+    "longName":"South Delta Exchange\/Ladner Exchange"
   },
   {
-    "route_id":12940,
-    "route_short_name":"595",
-    "route_long_name":"Maple Meadows Station\/Langley Centre"
+    "id":12940,
+    "shortName":"595",
+    "longName":"Maple Meadows Station\/Langley Centre"
   },
   {
-    "route_id":13684,
-    "route_short_name":"414",
-    "route_long_name":"Richmond Oval\/Brighouse Station"
+    "id":13684,
+    "shortName":"414",
+    "longName":"Richmond Oval\/Brighouse Station"
   },
   {
-    "route_id":16717,
-    "route_short_name":"209",
-    "route_long_name":"Upper Lynn Valley\/Burrard Station"
+    "id":16717,
+    "shortName":"209",
+    "longName":"Upper Lynn Valley\/Burrard Station"
   },
   {
-    "route_id":16718,
-    "route_short_name":"014",
-    "route_long_name":"Hastings\/UBC"
+    "id":16718,
+    "shortName":"014",
+    "longName":"Hastings\/UBC"
   },
   {
-    "route_id":16719,
-    "route_short_name":"109",
-    "route_long_name":"New Westminster Station\/Lougheed Station"
+    "id":16719,
+    "shortName":"109",
+    "longName":"New Westminster Station\/Lougheed Station"
   },
   {
-    "route_id":17707,
-    "route_short_name":"337",
-    "route_long_name":"Fraser Heights\/Guildford\/Surrey Centre"
+    "id":17707,
+    "shortName":"337",
+    "longName":"Fraser Heights\/Guildford\/Surrey Centre"
   },
   {
-    "route_id":18213,
-    "route_short_name":"231",
-    "route_long_name":"Harbourside\/Lonsdale Quay"
+    "id":18213,
+    "shortName":"231",
+    "longName":"Harbourside\/Lonsdale Quay"
   },
   {
-    "route_id":18705,
-    "route_short_name":"531",
-    "route_long_name":"White Rock Centre\/Willowbrook"
+    "id":18705,
+    "shortName":"531",
+    "longName":"White Rock Centre\/Willowbrook"
   },
   {
-    "route_id":20667,
-    "route_short_name":"555",
-    "route_long_name":"Carvolth Exchange\/Lougheed Station"
+    "id":20667,
+    "shortName":"555",
+    "longName":"Carvolth Exchange\/Lougheed Station"
   },
   {
-    "route_id":22638,
-    "route_short_name":"188",
-    "route_long_name":"Coquitlam Central Station\/Port Coquitlam Station"
+    "id":22638,
+    "shortName":"188",
+    "longName":"Coquitlam Central Station\/Port Coquitlam Station"
   },
   {
-    "route_id":22639,
-    "route_short_name":"227",
-    "route_long_name":"Lynn Valley\/Phibbs Exchange"
+    "id":22639,
+    "shortName":"227",
+    "longName":"Lynn Valley\/Phibbs Exchange"
   },
   {
-    "route_id":23384,
-    "route_short_name":"503",
-    "route_long_name":"Aldergrove\/Surrey Central Station"
+    "id":23384,
+    "shortName":"503",
+    "longName":"Aldergrove\/Surrey Central Station"
   },
   {
-    "route_id":29038,
-    "route_short_name":"342",
-    "route_long_name":"Langley Centre\/Newton Exchange"
+    "id":29038,
+    "shortName":"342",
+    "longName":"Langley Centre\/Newton Exchange"
   },
   {
-    "route_id":29039,
-    "route_short_name":"864",
-    "route_long_name":"Lord Tweedsmuir School"
+    "id":29039,
+    "shortName":"864",
+    "longName":"Lord Tweedsmuir School"
   },
   {
-    "route_id":29040,
-    "route_short_name":"840",
-    "route_long_name":"Brookswood School"
+    "id":29040,
+    "shortName":"840",
+    "longName":"Brookswood School"
   },
   {
-    "route_id":30036,
-    "route_short_name":"170",
-    "route_long_name":"Port Coquitlam Station\/Port Coquitlam South"
+    "id":30036,
+    "shortName":"170",
+    "longName":"Port Coquitlam Station\/Port Coquitlam South"
   },
   {
-    "route_id":30037,
-    "route_short_name":"171",
-    "route_long_name":"Coquitlam Central Station\/Fremont"
+    "id":30037,
+    "shortName":"171",
+    "longName":"Coquitlam Central Station\/Fremont"
   },
   {
-    "route_id":30038,
-    "route_short_name":"172",
-    "route_long_name":"Coquitlam Central Station\/Riverside"
+    "id":30038,
+    "shortName":"172",
+    "longName":"Coquitlam Central Station\/Riverside"
   },
   {
-    "route_id":30039,
-    "route_short_name":"173",
-    "route_long_name":"Coquitlam Central Station\/Cedar"
+    "id":30039,
+    "shortName":"173",
+    "longName":"Coquitlam Central Station\/Cedar"
   },
   {
-    "route_id":30040,
-    "route_short_name":"174",
-    "route_long_name":"Coquitlam Central Station\/Rocklin"
+    "id":30040,
+    "shortName":"174",
+    "longName":"Coquitlam Central Station\/Rocklin"
   },
   {
-    "route_id":30041,
-    "route_short_name":"175",
-    "route_long_name":"Coquitlam Central Station\/Meridian"
+    "id":30041,
+    "shortName":"175",
+    "longName":"Coquitlam Central Station\/Meridian"
   },
   {
-    "route_id":30043,
-    "route_short_name":"180",
-    "route_long_name":"Moody Centre Station\/Lougheed Station"
+    "id":30043,
+    "shortName":"180",
+    "longName":"Moody Centre Station\/Lougheed Station"
   },
   {
-    "route_id":30044,
-    "route_short_name":"181",
-    "route_long_name":"Moody Centre Station\/Ioco"
+    "id":30044,
+    "shortName":"181",
+    "longName":"Moody Centre Station\/Ioco"
   },
   {
-    "route_id":30045,
-    "route_short_name":"182",
-    "route_long_name":"Moody Centre Station\/Belcarra"
+    "id":30045,
+    "shortName":"182",
+    "longName":"Moody Centre Station\/Belcarra"
   },
   {
-    "route_id":30046,
-    "route_short_name":"183",
-    "route_long_name":"Moody Centre Station\/Coquitlam Central Station"
+    "id":30046,
+    "shortName":"183",
+    "longName":"Moody Centre Station\/Coquitlam Central Station"
   },
   {
-    "route_id":30047,
-    "route_short_name":"184",
-    "route_long_name":"Moody Centre Station\/Noons Creek"
+    "id":30047,
+    "shortName":"184",
+    "longName":"Moody Centre Station\/Noons Creek"
   },
   {
-    "route_id":30048,
-    "route_short_name":"185",
-    "route_long_name":"Coquitlam Central Station\/Lansdowne"
+    "id":30048,
+    "shortName":"185",
+    "longName":"Coquitlam Central Station\/Lansdowne"
   },
   {
-    "route_id":30049,
-    "route_short_name":"186",
-    "route_long_name":"Coquitlam Central Station\/Hampton Park"
+    "id":30049,
+    "shortName":"186",
+    "longName":"Coquitlam Central Station\/Hampton Park"
   },
   {
-    "route_id":30050,
-    "route_short_name":"187",
-    "route_long_name":"Coquitlam Central Station\/Parkway Blvd"
+    "id":30050,
+    "shortName":"187",
+    "longName":"Coquitlam Central Station\/Parkway Blvd"
   },
   {
-    "route_id":30051,
-    "route_short_name":"189",
-    "route_long_name":"Coquitlam Central Station\/Lafarge Park"
+    "id":30051,
+    "shortName":"189",
+    "longName":"Coquitlam Central Station\/Lafarge Park"
   },
   {
-    "route_id":30055,
-    "route_short_name":"023",
-    "route_long_name":"Main St Station\/English Bay"
+    "id":30055,
+    "shortName":"023",
+    "longName":"Main St Station\/English Bay"
   },
   {
-    "route_id":30584,
-    "route_short_name":"191",
-    "route_long_name":"Coquitlam Central Station\/Princeton"
+    "id":30584,
+    "shortName":"191",
+    "longName":"Coquitlam Central Station\/Princeton"
   },
   {
-    "route_id":31816,
-    "route_short_name":"360",
-    "route_long_name":"Ocean Park\/Peace Arch Hospital"
+    "id":31816,
+    "shortName":"360",
+    "longName":"Ocean Park\/Peace Arch Hospital"
   },
   {
-    "route_id":31817,
-    "route_short_name":"361",
-    "route_long_name":"Ocean Park\/White Rock Centre"
+    "id":31817,
+    "shortName":"361",
+    "longName":"Ocean Park\/White Rock Centre"
   },
   {
-    "route_id":31818,
-    "route_short_name":"362",
-    "route_long_name":"Seaside\/White Rock Centre"
+    "id":31818,
+    "shortName":"362",
+    "longName":"Seaside\/White Rock Centre"
   },
   {
-    "route_id":31819,
-    "route_short_name":"363",
-    "route_long_name":"Southpoint\/Peace Arch Hospital"
+    "id":31819,
+    "shortName":"363",
+    "longName":"Southpoint\/Peace Arch Hospital"
   },
   {
-    "route_id":31820,
-    "route_short_name":"372",
-    "route_long_name":"Clayton Heights\/Langley Centre"
+    "id":31820,
+    "shortName":"372",
+    "longName":"Clayton Heights\/Langley Centre"
   },
   {
-    "route_id":31821,
-    "route_short_name":"733",
-    "route_long_name":"Rock Ridge\/Haney Place\/Port Haney Station"
+    "id":31821,
+    "shortName":"733",
+    "longName":"Rock Ridge\/Haney Place\/Port Haney Station"
   },
   {
-    "route_id":31822,
-    "route_short_name":"741",
-    "route_long_name":"Anderson Creek\/Haney Place\/Port Haney St"
+    "id":31822,
+    "shortName":"741",
+    "longName":"Anderson Creek\/Haney Place\/Port Haney St"
   },
   {
-    "route_id":32799,
-    "route_short_name":"119",
-    "route_long_name":"Edmonds Station\/Metrotown Station"
+    "id":32799,
+    "shortName":"119",
+    "longName":"Edmonds Station\/Metrotown Station"
   },
   {
-    "route_id":33292,
-    "route_short_name":"133",
-    "route_long_name":"Holdom Station\/Edmonds Station"
+    "id":33292,
+    "shortName":"133",
+    "longName":"Holdom Station\/Edmonds Station"
   },
   {
-    "route_id":33538,
-    "route_short_name":"068",
-    "route_long_name":"UBC Exchange\/Wesbrook Village"
+    "id":33538,
+    "shortName":"068",
+    "longName":"UBC Exchange\/Wesbrook Village"
   },
   {
-    "route_id":34042,
-    "route_short_name":"745",
-    "route_long_name":"Haney Place\/Cottonwood"
+    "id":34042,
+    "shortName":"745",
+    "longName":"Haney Place\/Cottonwood"
   },
   {
-    "route_id":34043,
-    "route_short_name":"746",
-    "route_long_name":"Haney Place\/Albion"
+    "id":34043,
+    "shortName":"746",
+    "longName":"Haney Place\/Albion"
   },
   {
-    "route_id":34044,
-    "route_short_name":"560",
-    "route_long_name":"Murrayville\/Langley Centre"
+    "id":34044,
+    "shortName":"560",
+    "longName":"Murrayville\/Langley Centre"
   },
   {
-    "route_id":34045,
-    "route_short_name":"561",
-    "route_long_name":"Langley Centre\/Brookswood"
+    "id":34045,
+    "shortName":"561",
+    "longName":"Langley Centre\/Brookswood"
   },
   {
-    "route_id":34540,
-    "route_short_name":"719",
-    "route_long_name":"Meadowtown\/Fraser Way"
+    "id":34540,
+    "shortName":"719",
+    "longName":"Meadowtown\/Fraser Way"
   },
   {
-    "route_id":34541,
-    "route_short_name":"722",
-    "route_long_name":"Meadowtown\/Bonson"
+    "id":34541,
+    "shortName":"722",
+    "longName":"Meadowtown\/Bonson"
   },
   {
-    "route_id":34542,
-    "route_short_name":"406",
-    "route_long_name":"Richmond Brighouse Station\/Steveston"
+    "id":34542,
+    "shortName":"406",
+    "longName":"Richmond Brighouse Station\/Steveston"
   },
   {
-    "route_id":34543,
-    "route_short_name":"408",
-    "route_long_name":"Brighouse\/Ironwood\/Riverport"
+    "id":34543,
+    "shortName":"408",
+    "longName":"Brighouse\/Ironwood\/Riverport"
   },
   {
-    "route_id":34544,
-    "route_short_name":"282",
-    "route_long_name":"Mt Gardner\/Snug Cove"
+    "id":34544,
+    "shortName":"282",
+    "longName":"Mt Gardner\/Snug Cove"
   },
   {
-    "route_id":36799,
-    "route_short_name":"249",
-    "route_long_name":"Lonsdale Quay\/Delbrook"
+    "id":36799,
+    "shortName":"249",
+    "longName":"Lonsdale Quay\/Delbrook"
   },
   {
-    "route_id":37807,
-    "route_short_name":"R5",
-    "route_long_name":"Hastings St"
+    "id":37807,
+    "shortName":"R5",
+    "longName":"Hastings St"
   },
   {
-    "route_id":37808,
-    "route_short_name":"R1",
-    "route_long_name":"King George Blvd"
+    "id":37808,
+    "shortName":"R1",
+    "longName":"King George Blvd"
   },
   {
-    "route_id":37809,
-    "route_short_name":"R3",
-    "route_long_name":"Lougheed Hwy"
+    "id":37809,
+    "shortName":"R3",
+    "longName":"Lougheed Hwy"
   },
   {
-    "route_id":37810,
-    "route_short_name":"R4",
-    "route_long_name":"41st Ave"
+    "id":37810,
+    "shortName":"R4",
+    "longName":"41st Ave"
   },
   {
-    "route_id":38311,
-    "route_short_name":"R2",
-    "route_long_name":"Marine Dr"
+    "id":38311,
+    "shortName":"R2",
+    "longName":"Marine Dr"
   },
   {
-    "route_id":39304,
-    "route_short_name":"031",
-    "route_long_name":"Metrotown Station\/River District"
+    "id":39304,
+    "shortName":"031",
+    "longName":"Metrotown Station\/River District"
   },
   {
-    "route_id":39305,
-    "route_short_name":"222",
-    "route_long_name":"Metrotown Station\/Phibbs Exchange"
+    "id":39305,
+    "shortName":"222",
+    "longName":"Metrotown Station\/Phibbs Exchange"
   },
   {
-    "route_id":39307,
-    "route_short_name":"245",
-    "route_long_name":"Phibbs\/Capilano"
+    "id":39307,
+    "shortName":"245",
+    "longName":"Phibbs\/Capilano"
   },
   {
-    "route_id":40855,
-    "route_short_name":"350",
-    "route_long_name":"White Rock Centre\/Crescent Beach"
+    "id":40855,
+    "shortName":"350",
+    "longName":"White Rock Centre\/Crescent Beach"
   },
   {
-    "route_id":44845,
-    "route_short_name":"900",
-    "route_long_name":"Bike Bus\/Bike Bus"
+    "id":44845,
+    "shortName":"900",
+    "longName":"Bike Bus\/Bike Bus"
   },
   {
-    "route_id":45596,
-    "route_short_name":"080",
-    "route_long_name":"Marine Dr Station\/River District"
+    "id":45596,
+    "shortName":"080",
+    "longName":"Marine Dr Station\/River District"
   },
   {
-    "route_id":46099,
-    "route_short_name":"102",
-    "route_long_name":"New Westminster Station\/Victoria  Hill"
+    "id":46099,
+    "shortName":"102",
+    "longName":"New Westminster Station\/Victoria  Hill"
   },
   {
-    "route_id":46604,
-    "route_short_name":"R6",
-    "route_long_name":"Scott Rd"
+    "id":46604,
+    "shortName":"R6",
+    "longName":"Scott Rd"
   },
   {
-    "route_id":6612,
-    "route_short_name":"002",
-    "route_long_name":"Macdonald\/Burrard Station"
+    "id":6612,
+    "shortName":"002",
+    "longName":"Macdonald\/Burrard Station"
   },
   {
-    "route_id":6613,
-    "route_short_name":"003",
-    "route_long_name":"Main\/Waterfront Station"
+    "id":6613,
+    "shortName":"003",
+    "longName":"Main\/Waterfront Station"
   },
   {
-    "route_id":6614,
-    "route_short_name":"004",
-    "route_long_name":"Powell\/Downtown\/UBC"
+    "id":6614,
+    "shortName":"004",
+    "longName":"Powell\/Downtown\/UBC"
   },
   {
-    "route_id":6615,
-    "route_short_name":"005",
-    "route_long_name":"Robson\/Downtown"
+    "id":6615,
+    "shortName":"005",
+    "longName":"Robson\/Downtown"
   },
   {
-    "route_id":6616,
-    "route_short_name":"006",
-    "route_long_name":"Davie\/Downtown"
+    "id":6616,
+    "shortName":"006",
+    "longName":"Davie\/Downtown"
   },
   {
-    "route_id":6617,
-    "route_short_name":"007",
-    "route_long_name":"Nanaimo Station\/Dunbar"
+    "id":6617,
+    "shortName":"007",
+    "longName":"Nanaimo Station\/Dunbar"
   },
   {
-    "route_id":6618,
-    "route_short_name":"008",
-    "route_long_name":"Fraser\/Waterfront Station"
+    "id":6618,
+    "shortName":"008",
+    "longName":"Fraser\/Waterfront Station"
   },
   {
-    "route_id":6619,
-    "route_short_name":"009",
-    "route_long_name":"Boundary\/Commercial-Broadway\/Granville\/Alma\/UBC"
+    "id":6619,
+    "shortName":"009",
+    "longName":"Boundary\/Commercial-Broadway\/Granville\/Alma\/UBC"
   },
   {
-    "route_id":6620,
-    "route_short_name":"010",
-    "route_long_name":"Granville\/Waterfront Station"
+    "id":6620,
+    "shortName":"010",
+    "longName":"Granville\/Waterfront Station"
   },
   {
-    "route_id":6621,
-    "route_short_name":"015",
-    "route_long_name":"Cambie\/Olympic Village Station"
+    "id":6621,
+    "shortName":"015",
+    "longName":"Cambie\/Olympic Village Station"
   },
   {
-    "route_id":6622,
-    "route_short_name":"016",
-    "route_long_name":"29th Avenue Station\/Arbutus"
+    "id":6622,
+    "shortName":"016",
+    "longName":"29th Avenue Station\/Arbutus"
   },
   {
-    "route_id":6623,
-    "route_short_name":"017",
-    "route_long_name":"Downtown\/Oak"
+    "id":6623,
+    "shortName":"017",
+    "longName":"Downtown\/Oak"
   },
   {
-    "route_id":6624,
-    "route_short_name":"019",
-    "route_long_name":"Metrotown Station\/Stanley Park"
+    "id":6624,
+    "shortName":"019",
+    "longName":"Metrotown Station\/Stanley Park"
   },
   {
-    "route_id":6625,
-    "route_short_name":"020",
-    "route_long_name":"Victoria\/Downtown"
+    "id":6625,
+    "shortName":"020",
+    "longName":"Victoria\/Downtown"
   },
   {
-    "route_id":6626,
-    "route_short_name":"022",
-    "route_long_name":"Knight\/Downtown"
+    "id":6626,
+    "shortName":"022",
+    "longName":"Knight\/Downtown"
   },
   {
-    "route_id":6627,
-    "route_short_name":"025",
-    "route_long_name":"Brentwood Station\/UBC"
+    "id":6627,
+    "shortName":"025",
+    "longName":"Brentwood Station\/UBC"
   },
   {
-    "route_id":6628,
-    "route_short_name":"026",
-    "route_long_name":"Joyce Station\/29th Avenue Station"
+    "id":6628,
+    "shortName":"026",
+    "longName":"Joyce Station\/29th Avenue Station"
   },
   {
-    "route_id":6629,
-    "route_short_name":"027",
-    "route_long_name":"Kootenay Loop\/Joyce Station"
+    "id":6629,
+    "shortName":"027",
+    "longName":"Kootenay Loop\/Joyce Station"
   },
   {
-    "route_id":6630,
-    "route_short_name":"028",
-    "route_long_name":"Phibbs Exchange\/Joyce Station"
+    "id":6630,
+    "shortName":"028",
+    "longName":"Phibbs Exchange\/Joyce Station"
   },
   {
-    "route_id":6631,
-    "route_short_name":"029",
-    "route_long_name":"Elliott\/29th Avenue Station"
+    "id":6631,
+    "shortName":"029",
+    "longName":"Elliott\/29th Avenue Station"
   },
   {
-    "route_id":6633,
-    "route_short_name":"041",
-    "route_long_name":"Joyce Station\/Crown"
+    "id":6633,
+    "shortName":"041",
+    "longName":"Joyce Station\/Crown"
   },
   {
-    "route_id":6635,
-    "route_short_name":"044",
-    "route_long_name":"UBC\/Downtown"
+    "id":6635,
+    "shortName":"044",
+    "longName":"UBC\/Downtown"
   },
   {
-    "route_id":6636,
-    "route_short_name":"049",
-    "route_long_name":"Metrotown Station\/Dunbar Loop\/UBC"
+    "id":6636,
+    "shortName":"049",
+    "longName":"Metrotown Station\/Dunbar Loop\/UBC"
   },
   {
-    "route_id":6637,
-    "route_short_name":"050",
-    "route_long_name":"Waterfront Station\/False Creek South"
+    "id":6637,
+    "shortName":"050",
+    "longName":"Waterfront Station\/False Creek South"
   },
   {
-    "route_id":6638,
-    "route_short_name":"084",
-    "route_long_name":"UBC\/VCC-Clark Station"
+    "id":6638,
+    "shortName":"084",
+    "longName":"UBC\/VCC-Clark Station"
   },
   {
-    "route_id":6641,
-    "route_short_name":"099",
-    "route_long_name":"Commercial-Broadway\/UBC (B-Line)"
+    "id":6641,
+    "shortName":"099",
+    "longName":"Commercial-Broadway\/UBC (B-Line)"
   },
   {
-    "route_id":6642,
-    "route_short_name":"100",
-    "route_long_name":"22nd St Station\/Marpole Loop"
+    "id":6642,
+    "shortName":"100",
+    "longName":"22nd St Station\/Marpole Loop"
   },
   {
-    "route_id":6643,
-    "route_short_name":"101",
-    "route_long_name":"Lougheed Station\/22nd St Station"
+    "id":6643,
+    "shortName":"101",
+    "longName":"Lougheed Station\/22nd St Station"
   },
   {
-    "route_id":6644,
-    "route_short_name":"104",
-    "route_long_name":"22nd St Station\/Annacis Island"
+    "id":6644,
+    "shortName":"104",
+    "longName":"22nd St Station\/Annacis Island"
   },
   {
-    "route_id":6645,
-    "route_short_name":"106",
-    "route_long_name":"New Westminster Station\/Edmonds Station"
+    "id":6645,
+    "shortName":"106",
+    "longName":"New Westminster Station\/Edmonds Station"
   },
   {
-    "route_id":6646,
-    "route_short_name":"110",
-    "route_long_name":"Lougheed Station\/Metrotown Station"
+    "id":6646,
+    "shortName":"110",
+    "longName":"Lougheed Station\/Metrotown Station"
   },
   {
-    "route_id":6647,
-    "route_short_name":"112",
-    "route_long_name":"Edmonds Station\/New West Station"
+    "id":6647,
+    "shortName":"112",
+    "longName":"Edmonds Station\/New West Station"
   },
   {
-    "route_id":6648,
-    "route_short_name":"116",
-    "route_long_name":"Edmonds Station\/Metrotown Station"
+    "id":6648,
+    "shortName":"116",
+    "longName":"Edmonds Station\/Metrotown Station"
   },
   {
-    "route_id":6649,
-    "route_short_name":"123",
-    "route_long_name":"New West Station\/Brentwood Station"
+    "id":6649,
+    "shortName":"123",
+    "longName":"New West Station\/Brentwood Station"
   },
   {
-    "route_id":6650,
-    "route_short_name":"129",
-    "route_long_name":"Patterson Station\/Holdom Station"
+    "id":6650,
+    "shortName":"129",
+    "longName":"Patterson Station\/Holdom Station"
   },
   {
-    "route_id":6651,
-    "route_short_name":"130",
-    "route_long_name":"Metrotown\/Pender\/Kootenay"
+    "id":6651,
+    "shortName":"130",
+    "longName":"Metrotown\/Pender\/Kootenay"
   },
   {
-    "route_id":6652,
-    "route_short_name":"134",
-    "route_long_name":"Lake City Station\/Brentwood Station"
+    "id":6652,
+    "shortName":"134",
+    "longName":"Lake City Station\/Brentwood Station"
   },
   {
-    "route_id":6654,
-    "route_short_name":"136",
-    "route_long_name":"Lougheed Station\/Brentwood Station"
+    "id":6654,
+    "shortName":"136",
+    "longName":"Lougheed Station\/Brentwood Station"
   },
   {
-    "route_id":6656,
-    "route_short_name":"143",
-    "route_long_name":"Burquitlam Station\/SFU"
+    "id":6656,
+    "shortName":"143",
+    "longName":"Burquitlam Station\/SFU"
   },
   {
-    "route_id":6657,
-    "route_short_name":"144",
-    "route_long_name":"SFU\/Metrotown Station"
+    "id":6657,
+    "shortName":"144",
+    "longName":"SFU\/Metrotown Station"
   },
   {
-    "route_id":6658,
-    "route_short_name":"145",
-    "route_long_name":"SFU\/Production Station"
+    "id":6658,
+    "shortName":"145",
+    "longName":"SFU\/Production Station"
   },
   {
-    "route_id":6659,
-    "route_short_name":"151",
-    "route_long_name":"Coquitlam Central Station\/Burquitlam Station"
+    "id":6659,
+    "shortName":"151",
+    "longName":"Coquitlam Central Station\/Burquitlam Station"
   },
   {
-    "route_id":6660,
-    "route_short_name":"152",
-    "route_long_name":"Coquitlam Central Station\/Lougheed Station"
+    "id":6660,
+    "shortName":"152",
+    "longName":"Coquitlam Central Station\/Lougheed Station"
   },
   {
-    "route_id":6661,
-    "route_short_name":"153",
-    "route_long_name":"Coquitlam Central Station\/Braid Station"
+    "id":6661,
+    "shortName":"153",
+    "longName":"Coquitlam Central Station\/Braid Station"
   },
   {
-    "route_id":6662,
-    "route_short_name":"128",
-    "route_long_name":"Braid Station\/22nd Street Station"
+    "id":6662,
+    "shortName":"128",
+    "longName":"Braid Station\/22nd Street Station"
   },
   {
-    "route_id":6663,
-    "route_short_name":"155",
-    "route_long_name":"Braid Station\/22nd Street  Station"
+    "id":6663,
+    "shortName":"155",
+    "longName":"Braid Station\/22nd Street  Station"
   },
   {
-    "route_id":6664,
-    "route_short_name":"156",
-    "route_long_name":"Braid Station\/Lougheed Station"
+    "id":6664,
+    "shortName":"156",
+    "longName":"Braid Station\/Lougheed Station"
   },
   {
-    "route_id":6665,
-    "route_short_name":"157",
-    "route_long_name":"Burquitlam Station\/Lougheed Station"
+    "id":6665,
+    "shortName":"157",
+    "longName":"Burquitlam Station\/Lougheed Station"
   },
   {
-    "route_id":6666,
-    "route_short_name":"159",
-    "route_long_name":"Coquitlam Central Station\/Braid Station"
+    "id":6666,
+    "shortName":"159",
+    "longName":"Coquitlam Central Station\/Braid Station"
   },
   {
-    "route_id":6667,
-    "route_short_name":"160",
-    "route_long_name":"Port Coquitlam Station\/Kootenay Loop"
+    "id":6667,
+    "shortName":"160",
+    "longName":"Port Coquitlam Station\/Kootenay Loop"
   },
   {
-    "route_id":6668,
-    "route_short_name":"169",
-    "route_long_name":"Coquitlam Central Station\/Braid Station"
+    "id":6668,
+    "shortName":"169",
+    "longName":"Coquitlam Central Station\/Braid Station"
   },
   {
-    "route_id":6672,
-    "route_short_name":"210",
-    "route_long_name":"Upper Lynn Valley\/Burrard Station"
+    "id":6672,
+    "shortName":"210",
+    "longName":"Upper Lynn Valley\/Burrard Station"
   },
   {
-    "route_id":6673,
-    "route_short_name":"211",
-    "route_long_name":"Seymour\/Phibbs Exchange\/Burrard Station"
+    "id":6673,
+    "shortName":"211",
+    "longName":"Seymour\/Phibbs Exchange\/Burrard Station"
   },
   {
-    "route_id":6674,
-    "route_short_name":"212",
-    "route_long_name":"Deep Cove\/Phibbs Exchange"
+    "id":6674,
+    "shortName":"212",
+    "longName":"Deep Cove\/Phibbs Exchange"
   },
   {
-    "route_id":6675,
-    "route_short_name":"214",
-    "route_long_name":"Blueridge\/Phibbs Exchange\/Burrard Station"
+    "id":6675,
+    "shortName":"214",
+    "longName":"Blueridge\/Phibbs Exchange\/Burrard Station"
   },
   {
-    "route_id":6676,
-    "route_short_name":"228",
-    "route_long_name":"Lynn Valley\/Lonsdale Quay"
+    "id":6676,
+    "shortName":"228",
+    "longName":"Lynn Valley\/Lonsdale Quay"
   },
   {
-    "route_id":6677,
-    "route_short_name":"229",
-    "route_long_name":"Lynn Valley\/Lonsdale Quay"
+    "id":6677,
+    "shortName":"229",
+    "longName":"Lynn Valley\/Lonsdale Quay"
   },
   {
-    "route_id":6678,
-    "route_short_name":"230",
-    "route_long_name":"Upper Lonsdale\/Lonsdale Quay"
+    "id":6678,
+    "shortName":"230",
+    "longName":"Upper Lonsdale\/Lonsdale Quay"
   },
   {
-    "route_id":6679,
-    "route_short_name":"232",
-    "route_long_name":"Grouse Mountain Mountain\/Phibbs Exchange"
+    "id":6679,
+    "shortName":"232",
+    "longName":"Grouse Mountain Mountain\/Phibbs Exchange"
   },
   {
-    "route_id":6680,
-    "route_short_name":"236",
-    "route_long_name":"Grouse Mountain Mountain\/Lonsdale Quay"
+    "id":6680,
+    "shortName":"236",
+    "longName":"Grouse Mountain Mountain\/Lonsdale Quay"
   },
   {
-    "route_id":6682,
-    "route_short_name":"240",
-    "route_long_name":"Lynn Valley\/Downtown"
+    "id":6682,
+    "shortName":"240",
+    "longName":"Lynn Valley\/Downtown"
   },
   {
-    "route_id":6683,
-    "route_short_name":"241",
-    "route_long_name":"Upper Lonsdale\/Downtown"
+    "id":6683,
+    "shortName":"241",
+    "longName":"Upper Lonsdale\/Downtown"
   },
   {
-    "route_id":6685,
-    "route_short_name":"246",
-    "route_long_name":"Highland\/Downtown"
+    "id":6685,
+    "shortName":"246",
+    "longName":"Highland\/Downtown"
   },
   {
-    "route_id":6686,
-    "route_short_name":"247",
-    "route_long_name":"Grouse Mountain Mountain\/Downtown"
+    "id":6686,
+    "shortName":"247",
+    "longName":"Grouse Mountain Mountain\/Downtown"
   },
   {
-    "route_id":6687,
-    "route_short_name":"250",
-    "route_long_name":"Horseshoe Bay\/Dundarave\/Vancouver"
+    "id":6687,
+    "shortName":"250",
+    "longName":"Horseshoe Bay\/Dundarave\/Vancouver"
   },
   {
-    "route_id":6688,
-    "route_short_name":"251",
-    "route_long_name":"Queens\/Park Royal"
+    "id":6688,
+    "shortName":"251",
+    "longName":"Queens\/Park Royal"
   },
   {
-    "route_id":6689,
-    "route_short_name":"252",
-    "route_long_name":"Inglewood\/Park Royal"
+    "id":6689,
+    "shortName":"252",
+    "longName":"Inglewood\/Park Royal"
   },
   {
-    "route_id":6690,
-    "route_short_name":"253",
-    "route_long_name":"Caulfeild\/Vancouver\/Park Royal"
+    "id":6690,
+    "shortName":"253",
+    "longName":"Caulfeild\/Vancouver\/Park Royal"
   },
   {
-    "route_id":6691,
-    "route_short_name":"254",
-    "route_long_name":"British Properties\/Park Royal\/Van"
+    "id":6691,
+    "shortName":"254",
+    "longName":"British Properties\/Park Royal\/Van"
   },
   {
-    "route_id":6692,
-    "route_short_name":"255",
-    "route_long_name":"Dundarave\/Capilano University"
+    "id":6692,
+    "shortName":"255",
+    "longName":"Dundarave\/Capilano University"
   },
   {
-    "route_id":6693,
-    "route_short_name":"257",
-    "route_long_name":"Horseshoe Bay\/Vancouver Express"
+    "id":6693,
+    "shortName":"257",
+    "longName":"Horseshoe Bay\/Vancouver Express"
   },
   {
-    "route_id":6698,
-    "route_short_name":"301",
-    "route_long_name":"Newton Exchange\/Brighouse Station"
+    "id":6698,
+    "shortName":"301",
+    "longName":"Newton Exchange\/Brighouse Station"
   },
   {
-    "route_id":6699,
-    "route_short_name":"311",
-    "route_long_name":"Scottsdale\/Bridgeport Station"
+    "id":6699,
+    "shortName":"311",
+    "longName":"Scottsdale\/Bridgeport Station"
   },
   {
-    "route_id":6700,
-    "route_short_name":"312",
-    "route_long_name":"Scottsdale\/Scott Road Station"
+    "id":6700,
+    "shortName":"312",
+    "longName":"Scottsdale\/Scott Road Station"
   },
   {
-    "route_id":6701,
-    "route_short_name":"314",
-    "route_long_name":"Surrey Central\/Sunbury"
+    "id":6701,
+    "shortName":"314",
+    "longName":"Surrey Central\/Sunbury"
   },
   {
-    "route_id":6702,
-    "route_short_name":"316",
-    "route_long_name":"Surrey Central Station\/Scottsdale"
+    "id":6702,
+    "shortName":"316",
+    "longName":"Surrey Central Station\/Scottsdale"
   },
   {
-    "route_id":6703,
-    "route_short_name":"319",
-    "route_long_name":"Scott Station\/Newton Exchange\/Scottsdale"
+    "id":6703,
+    "shortName":"319",
+    "longName":"Scott Station\/Newton Exchange\/Scottsdale"
   },
   {
-    "route_id":6704,
-    "route_short_name":"320",
-    "route_long_name":"Langley\/Fleetwood\/Surrey Central Station"
+    "id":6704,
+    "shortName":"320",
+    "longName":"Langley\/Fleetwood\/Surrey Central Station"
   },
   {
-    "route_id":6705,
-    "route_short_name":"321",
-    "route_long_name":"White Rock\/Newton\/Surrey Central Station"
+    "id":6705,
+    "shortName":"321",
+    "longName":"White Rock\/Newton\/Surrey Central Station"
   },
   {
-    "route_id":6706,
-    "route_short_name":"323",
-    "route_long_name":"Newton Exchange\/Surrey Central Station"
+    "id":6706,
+    "shortName":"323",
+    "longName":"Newton Exchange\/Surrey Central Station"
   },
   {
-    "route_id":6707,
-    "route_short_name":"324",
-    "route_long_name":"Newton Exchange\/Surrey Central Station"
+    "id":6707,
+    "shortName":"324",
+    "longName":"Newton Exchange\/Surrey Central Station"
   },
   {
-    "route_id":6708,
-    "route_short_name":"325",
-    "route_long_name":"Newton Exchange\/Surrey Central Station"
+    "id":6708,
+    "shortName":"325",
+    "longName":"Newton Exchange\/Surrey Central Station"
   },
   {
-    "route_id":6709,
-    "route_short_name":"326",
-    "route_long_name":"Guildford\/Surrey Central Station"
+    "id":6709,
+    "shortName":"326",
+    "longName":"Guildford\/Surrey Central Station"
   },
   {
-    "route_id":6710,
-    "route_short_name":"329",
-    "route_long_name":"Surrey Central Station\/Scottsdale"
+    "id":6710,
+    "shortName":"329",
+    "longName":"Surrey Central Station\/Scottsdale"
   },
   {
-    "route_id":6712,
-    "route_short_name":"335",
-    "route_long_name":"Newton\/Surrey Central Station"
+    "id":6712,
+    "shortName":"335",
+    "longName":"Newton\/Surrey Central Station"
   },
   {
-    "route_id":6713,
-    "route_short_name":"340",
-    "route_long_name":"Scottsdale\/22nd St Station"
+    "id":6713,
+    "shortName":"340",
+    "longName":"Scottsdale\/22nd St Station"
   },
   {
-    "route_id":6714,
-    "route_short_name":"345",
-    "route_long_name":"King George Station\/White Rock Centre"
+    "id":6714,
+    "shortName":"345",
+    "longName":"King George Station\/White Rock Centre"
   },
   {
-    "route_id":6715,
-    "route_short_name":"351",
-    "route_long_name":"White Rock Centre\/Bridgeport Station"
+    "id":6715,
+    "shortName":"351",
+    "longName":"White Rock Centre\/Bridgeport Station"
   },
   {
-    "route_id":6716,
-    "route_short_name":"352",
-    "route_long_name":"Ocean Park\/Bridgeport Station"
+    "id":6716,
+    "shortName":"352",
+    "longName":"Ocean Park\/Bridgeport Station"
   },
   {
-    "route_id":6717,
-    "route_short_name":"354",
-    "route_long_name":"White Rock South\/Bridgeport Station"
+    "id":6717,
+    "shortName":"354",
+    "longName":"White Rock South\/Bridgeport Station"
   },
   {
-    "route_id":6718,
-    "route_short_name":"391",
-    "route_long_name":"Scottsdale\/Scott Road Station"
+    "id":6718,
+    "shortName":"391",
+    "longName":"Scottsdale\/Scott Road Station"
   },
   {
-    "route_id":6719,
-    "route_short_name":"393",
-    "route_long_name":"Newton Exchange\/Surrey Central Station"
+    "id":6719,
+    "shortName":"393",
+    "longName":"Newton Exchange\/Surrey Central Station"
   },
   {
-    "route_id":6720,
-    "route_short_name":"394",
-    "route_long_name":"White Rock\/King George Station Express"
+    "id":6720,
+    "shortName":"394",
+    "longName":"White Rock\/King George Station Express"
   },
   {
-    "route_id":6721,
-    "route_short_name":"395",
-    "route_long_name":"Langley Centre\/King George Station"
+    "id":6721,
+    "shortName":"395",
+    "longName":"Langley Centre\/King George Station"
   },
   {
-    "route_id":6722,
-    "route_short_name":"401",
-    "route_long_name":"Richmond-Brighouse Station\/One Road"
+    "id":6722,
+    "shortName":"401",
+    "longName":"Richmond-Brighouse Station\/One Road"
   },
   {
-    "route_id":6723,
-    "route_short_name":"402",
-    "route_long_name":"Two Road\/Brighouse Station"
+    "id":6723,
+    "shortName":"402",
+    "longName":"Two Road\/Brighouse Station"
   },
   {
-    "route_id":6724,
-    "route_short_name":"403",
-    "route_long_name":"Bridgeport Station\/Three Road"
+    "id":6724,
+    "shortName":"403",
+    "longName":"Bridgeport Station\/Three Road"
   },
   {
-    "route_id":6725,
-    "route_short_name":"404",
-    "route_long_name":"Four Road\/Brighouse Station"
+    "id":6725,
+    "shortName":"404",
+    "longName":"Four Road\/Brighouse Station"
   },
   {
-    "route_id":6726,
-    "route_short_name":"405",
-    "route_long_name":"Five Road\/Cambie"
+    "id":6726,
+    "shortName":"405",
+    "longName":"Five Road\/Cambie"
   },
   {
-    "route_id":6727,
-    "route_short_name":"407",
-    "route_long_name":"Gilbert\/Bridgeport"
+    "id":6727,
+    "shortName":"407",
+    "longName":"Gilbert\/Bridgeport"
   },
   {
-    "route_id":6728,
-    "route_short_name":"410",
-    "route_long_name":"Richmond-Brighouse Station\/22nd St Station"
+    "id":6728,
+    "shortName":"410",
+    "longName":"Richmond-Brighouse Station\/22nd St Station"
   },
   {
-    "route_id":6730,
-    "route_short_name":"430",
-    "route_long_name":"Metrotown\/Brighouse Station"
+    "id":6730,
+    "shortName":"430",
+    "longName":"Metrotown\/Brighouse Station"
   },
   {
-    "route_id":6737,
-    "route_short_name":"501",
-    "route_long_name":"Langley Centre\/Surrey Central Station"
+    "id":6737,
+    "shortName":"501",
+    "longName":"Langley Centre\/Surrey Central Station"
   },
   {
-    "route_id":6738,
-    "route_short_name":"502",
-    "route_long_name":"Langley Centre\/Surrey Central Station"
+    "id":6738,
+    "shortName":"502",
+    "longName":"Langley Centre\/Surrey Central Station"
   },
   {
-    "route_id":6739,
-    "route_short_name":"509",
-    "route_long_name":"Walnut Grove\/Surrey Central Station"
+    "id":6739,
+    "shortName":"509",
+    "longName":"Walnut Grove\/Surrey Central Station"
   },
   {
-    "route_id":6741,
-    "route_short_name":"601",
-    "route_long_name":"South Delta\/Boundary Bay\/Bridgeport"
+    "id":6741,
+    "shortName":"601",
+    "longName":"South Delta\/Boundary Bay\/Bridgeport"
   },
   {
-    "route_id":6742,
-    "route_short_name":"602",
-    "route_long_name":"Tsawwassen Heights\/Bridgeport"
+    "id":6742,
+    "shortName":"602",
+    "longName":"Tsawwassen Heights\/Bridgeport"
   },
   {
-    "route_id":6743,
-    "route_short_name":"603",
-    "route_long_name":"Beach Grove\/Bridgeport"
+    "id":6743,
+    "shortName":"603",
+    "longName":"Beach Grove\/Bridgeport"
   },
   {
-    "route_id":6744,
-    "route_short_name":"604",
-    "route_long_name":"English Bluff\/Bridgeport"
+    "id":6744,
+    "shortName":"604",
+    "longName":"English Bluff\/Bridgeport"
   },
   {
-    "route_id":6745,
-    "route_short_name":"606",
-    "route_long_name":"Ladner Ring"
+    "id":6745,
+    "shortName":"606",
+    "longName":"Ladner Ring"
   },
   {
-    "route_id":6746,
-    "route_short_name":"608",
-    "route_long_name":"Ladner Ring"
+    "id":6746,
+    "shortName":"608",
+    "longName":"Ladner Ring"
   },
   {
-    "route_id":6747,
-    "route_short_name":"620",
-    "route_long_name":"Tsawwassen Ferry\/Bridgeport Station"
+    "id":6747,
+    "shortName":"620",
+    "longName":"Tsawwassen Ferry\/Bridgeport Station"
   },
   {
-    "route_id":6748,
-    "route_short_name":"640",
-    "route_long_name":"Ladner Exchange\/Scott Road Station"
+    "id":6748,
+    "shortName":"640",
+    "longName":"Ladner Exchange\/Scott Road Station"
   },
   {
-    "route_id":6749,
-    "route_short_name":"701",
-    "route_long_name":"Haney\/Maple Ridge East\/Coquitlam Station"
+    "id":6749,
+    "shortName":"701",
+    "longName":"Haney\/Maple Ridge East\/Coquitlam Station"
   },
   {
-    "route_id":6754,
-    "route_short_name":"855",
-    "route_long_name":"Elgin Park School Special"
+    "id":6754,
+    "shortName":"855",
+    "longName":"Elgin Park School Special"
   },
   {
-    "route_id":6761,
-    "route_short_name":"880",
-    "route_long_name":"Windsor School Specials"
+    "id":6761,
+    "shortName":"880",
+    "longName":"Windsor School Specials"
   },
   {
-    "route_id":6762,
-    "route_short_name":"881",
-    "route_long_name":"Carson Graham School Specials"
+    "id":6762,
+    "shortName":"881",
+    "longName":"Carson Graham School Specials"
   },
   {
-    "route_id":6776,
-    "route_short_name":"131",
-    "route_long_name":"Hastings @ Gilmore\/Kootenay Loop"
+    "id":6776,
+    "shortName":"131",
+    "longName":"Hastings @ Gilmore\/Kootenay Loop"
   },
   {
-    "route_id":6777,
-    "route_short_name":"280",
-    "route_long_name":"Bluewater\/Snug Cove"
+    "id":6777,
+    "shortName":"280",
+    "longName":"Bluewater\/Snug Cove"
   },
   {
-    "route_id":6778,
-    "route_short_name":"281",
-    "route_long_name":"Eagle Cliff\/Snug Cove"
+    "id":6778,
+    "shortName":"281",
+    "longName":"Eagle Cliff\/Snug Cove"
   },
   {
-    "route_id":6779,
-    "route_short_name":"262",
-    "route_long_name":"Lions Bay\/Caulfeild"
+    "id":6779,
+    "shortName":"262",
+    "longName":"Lions Bay\/Caulfeild"
   },
   {
-    "route_id":6780,
-    "route_short_name":"215",
-    "route_long_name":"Indian River\/Phibbs Exchange"
+    "id":6780,
+    "shortName":"215",
+    "longName":"Indian River\/Phibbs Exchange"
   },
   {
-    "route_id":6790,
-    "route_short_name":"103",
-    "route_long_name":"New Westminster Station\/Quayside"
+    "id":6790,
+    "shortName":"103",
+    "longName":"New Westminster Station\/Quayside"
   },
   {
-    "route_id":6796,
-    "route_short_name":"105",
-    "route_long_name":"Uptown\/New Westminster Station"
+    "id":6796,
+    "shortName":"105",
+    "longName":"Uptown\/New Westminster Station"
   },
   {
-    "route_id":6799,
-    "route_short_name":"743",
-    "route_long_name":"Haney Place\/Maple Meadows Station\/Meadowtown"
+    "id":6799,
+    "shortName":"743",
+    "longName":"Haney Place\/Maple Meadows Station\/Meadowtown"
   },
   {
-    "route_id":6800,
-    "route_short_name":"744",
-    "route_long_name":"Haney Place\/Maple Meadows Station\/Meadowtown"
+    "id":6800,
+    "shortName":"744",
+    "longName":"Haney Place\/Maple Meadows Station\/Meadowtown"
   },
   {
-    "route_id":6804,
-    "route_short_name":"748",
-    "route_long_name":"Thornhill\/Haney Place"
+    "id":6804,
+    "shortName":"748",
+    "longName":"Thornhill\/Haney Place"
   },
   {
-    "route_id":6805,
-    "route_short_name":"749",
-    "route_long_name":"Ruskin\/Haney Place"
+    "id":6805,
+    "shortName":"749",
+    "longName":"Ruskin\/Haney Place"
   },
   {
-    "route_id":6806,
-    "route_short_name":"148",
-    "route_long_name":"Royal Oak Station\/Edmonds Station"
+    "id":6806,
+    "shortName":"148",
+    "longName":"Royal Oak Station\/Edmonds Station"
   },
   {
-    "route_id":6811,
-    "route_short_name":"146",
-    "route_long_name":"Metrotown Station\/Suncrest"
+    "id":6811,
+    "shortName":"146",
+    "longName":"Metrotown Station\/Suncrest"
   },
   {
-    "route_id":6814,
-    "route_short_name":"562",
-    "route_long_name":"Langley Centre\/Walnut Grove"
+    "id":6814,
+    "shortName":"562",
+    "longName":"Langley Centre\/Walnut Grove"
   },
   {
-    "route_id":6815,
-    "route_short_name":"563",
-    "route_long_name":"Langley Centre\/Fernridge"
+    "id":6815,
+    "shortName":"563",
+    "longName":"Langley Centre\/Fernridge"
   },
   {
-    "route_id":6816,
-    "route_short_name":"564",
-    "route_long_name":"Langley Centre\/Willowbrook"
+    "id":6816,
+    "shortName":"564",
+    "longName":"Langley Centre\/Willowbrook"
   },
   {
-    "route_id":6817,
-    "route_short_name":"147",
-    "route_long_name":"Metrotown Station\/Edmonds Station"
+    "id":6817,
+    "shortName":"147",
+    "longName":"Metrotown Station\/Edmonds Station"
   },
   {
-    "route_id":6818,
-    "route_short_name":"371",
-    "route_long_name":"Surrey Central\/Scott Rd Station"
+    "id":6818,
+    "shortName":"371",
+    "longName":"Surrey Central\/Scott Rd Station"
   },
   {
-    "route_id":6819,
-    "route_short_name":"373",
-    "route_long_name":"Guildford\/Surrey Central Station"
+    "id":6819,
+    "shortName":"373",
+    "longName":"Guildford\/Surrey Central Station"
   },
   {
-    "route_id":6821,
-    "route_short_name":"322",
-    "route_long_name":"Newton Exchange\/Scottsdale"
+    "id":6821,
+    "shortName":"322",
+    "longName":"Newton Exchange\/Scottsdale"
   },
   {
-    "route_id":6822,
-    "route_short_name":"310",
-    "route_long_name":"Scottsdale\/Ladner"
+    "id":6822,
+    "shortName":"310",
+    "longName":"Scottsdale\/Ladner"
   },
   {
-    "route_id":6823,
-    "route_short_name":"616",
-    "route_long_name":"Ladner South\/Ladner Exchange"
+    "id":6823,
+    "shortName":"616",
+    "longName":"Ladner South\/Ladner Exchange"
   },
   {
-    "route_id":6825,
-    "route_short_name":"618",
-    "route_long_name":"Ladner North\/Ladner Exchange"
+    "id":6825,
+    "shortName":"618",
+    "longName":"Ladner North\/Ladner Exchange"
   },
   {
-    "route_id":6827,
-    "route_short_name":"412",
-    "route_long_name":"Bridgeport Station\/Sea Island South"
+    "id":6827,
+    "shortName":"412",
+    "longName":"Bridgeport Station\/Sea Island South"
   },
   {
-    "route_id":6828,
-    "route_short_name":"413",
-    "route_long_name":"Riverport\/Steveston"
+    "id":6828,
+    "shortName":"413",
+    "longName":"Riverport\/Steveston"
   },
   {
-    "route_id":6829,
-    "route_short_name":"416",
-    "route_long_name":"East Cambie\/Brighouse Station"
+    "id":6829,
+    "shortName":"416",
+    "longName":"East Cambie\/Brighouse Station"
   },
   {
-    "route_id":6830,
-    "route_short_name":"N10",
-    "route_long_name":"Downtown\/Richmond NightBus"
+    "id":6830,
+    "shortName":"N10",
+    "longName":"Downtown\/Richmond NightBus"
   },
   {
-    "route_id":6831,
-    "route_short_name":"N15",
-    "route_long_name":"Downtown\/Cambie NightBus"
+    "id":6831,
+    "shortName":"N15",
+    "longName":"Downtown\/Cambie NightBus"
   },
   {
-    "route_id":6833,
-    "route_short_name":"N17",
-    "route_long_name":"Downtown\/UBC NightBus"
+    "id":6833,
+    "shortName":"N17",
+    "longName":"Downtown\/UBC NightBus"
   },
   {
-    "route_id":6834,
-    "route_short_name":"N19",
-    "route_long_name":"Downtown\/Surrey Central Station NightBus"
+    "id":6834,
+    "shortName":"N19",
+    "longName":"Downtown\/Surrey Central Station NightBus"
   },
   {
-    "route_id":6835,
-    "route_short_name":"N20",
-    "route_long_name":"Downtown\/Victoria NightBus"
+    "id":6835,
+    "shortName":"N20",
+    "longName":"Downtown\/Victoria NightBus"
   },
   {
-    "route_id":6836,
-    "route_short_name":"N22",
-    "route_long_name":"Downtown\/Macdonald NightBus"
+    "id":6836,
+    "shortName":"N22",
+    "longName":"Downtown\/Macdonald NightBus"
   },
   {
-    "route_id":6837,
-    "route_short_name":"N24",
-    "route_long_name":"Downtown\/Lynn Valley NightBus"
+    "id":6837,
+    "shortName":"N24",
+    "longName":"Downtown\/Lynn Valley NightBus"
   },
   {
-    "route_id":6838,
-    "route_short_name":"N35",
-    "route_long_name":"Downtown\/SFU NightBus"
+    "id":6838,
+    "shortName":"N35",
+    "longName":"Downtown\/SFU NightBus"
   },
   {
-    "route_id":6840,
-    "route_short_name":"N8",
-    "route_long_name":"Downtown\/Fraser NightBus"
+    "id":6840,
+    "shortName":"N8",
+    "longName":"Downtown\/Fraser NightBus"
   },
   {
-    "route_id":6841,
-    "route_short_name":"N9",
-    "route_long_name":"Downtown\/Lougheed Station\/Coquitlam Central Station"
+    "id":6841,
+    "shortName":"N9",
+    "longName":"Downtown\/Lougheed Station\/Coquitlam Central Station"
   },
   {
-    "route_id":6843,
-    "route_short_name":"614",
-    "route_long_name":"English Bluff\/South Delta Exchange"
+    "id":6843,
+    "shortName":"614",
+    "longName":"English Bluff\/South Delta Exchange"
   },
   {
-    "route_id":6844,
-    "route_short_name":"619",
-    "route_long_name":"Boundary Bay\/South Delta Recreation Centre"
+    "id":6844,
+    "shortName":"619",
+    "longName":"Boundary Bay\/South Delta Recreation Centre"
   },
   {
-    "route_id":7224,
-    "route_short_name":"791",
-    "route_long_name":"Haney Place\/Braid Station"
+    "id":7224,
+    "shortName":"791",
+    "longName":"Haney Place\/Braid Station"
   },
   {
-    "route_id":7321,
-    "route_short_name":"375",
-    "route_long_name":"White Rock\/White Rock South\/Guildford"
+    "id":7321,
+    "shortName":"375",
+    "longName":"White Rock\/White Rock South\/Guildford"
   },
   {
-    "route_id":7322,
-    "route_short_name":"132",
-    "route_long_name":"Capitol Hill\/Hastings @ Gilmore"
+    "id":7322,
+    "shortName":"132",
+    "longName":"Capitol Hill\/Hastings @ Gilmore"
   },
   {
-    "route_id":8286,
-    "route_short_name":"370",
-    "route_long_name":"Cloverdale\/Willowbrook"
+    "id":8286,
+    "shortName":"370",
+    "longName":"Cloverdale\/Willowbrook"
   },
   {
-    "route_id":8289,
-    "route_short_name":"865",
-    "route_long_name":"Samuel Robertson"
+    "id":8289,
+    "shortName":"865",
+    "longName":"Samuel Robertson"
   },
   {
-    "route_id":8290,
-    "route_short_name":"341",
-    "route_long_name":"Guildford\/Newton Exchange"
+    "id":8290,
+    "shortName":"341",
+    "longName":"Guildford\/Newton Exchange"
   },
   {
-    "route_id":9745,
-    "route_short_name":"418",
-    "route_long_name":"Kingswood\/22nd St Station"
+    "id":9745,
+    "shortName":"418",
+    "longName":"Kingswood\/22nd St Station"
   }
 ]

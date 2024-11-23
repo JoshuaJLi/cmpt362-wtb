@@ -36,9 +36,9 @@ object Utils {
                 // add Routes
                 routes.forEach { obj ->
                     val realmRoute = MongoRoute(
-                        id = obj.route_id.toString(), // should ids be ints??
-                        shortName = obj.route_short_name,
-                        longName = obj.route_long_name
+                        id = obj.id.toString(),
+                        shortName = obj.shortName,
+                        longName = obj.longName
                     )
 
                     copyToRealm(realmRoute)
@@ -47,7 +47,7 @@ object Utils {
                 // add Stops
                 stops.forEach { obj ->
                     // get all Route objects associated with this stop
-                    val stopRoutes = obj.route_id.mapNotNull { id ->
+                    val stopRoutes = obj.route_ids.mapNotNull { id ->
                         query<MongoRoute>(
                             "id == $0",
                             id.toString()
@@ -55,11 +55,11 @@ object Utils {
                     }
 
                     val realmStop = MongoBusStop(
-                        id = obj.stop_id.toString(),
-                        code = obj.stop_code.toString(),
-                        name = obj.stop_name,
-                        lat = obj.stop_lat,
-                        lng = obj.stop_lon,
+                        id = obj.id.toString(),
+                        code = obj.code.toString(),
+                        name = obj.name,
+                        lat = obj.lat,
+                        lng = obj.lng,
                         mongoRoutes = stopRoutes.toRealmList()
                     )
 
