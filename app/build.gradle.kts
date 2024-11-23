@@ -79,5 +79,5 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.runtime.livedata)
 
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation(libs.gson)
 }
