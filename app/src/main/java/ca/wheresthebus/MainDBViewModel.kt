@@ -138,13 +138,24 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    fun searchByCode(code: String): ArrayList<BusStop> {
-        val updatedList = ArrayList<BusStop>()
-        val listOfMongoStops = realm.query<MongoBusStop>("code CONTAINS[c] $0", code).find().take(5)
-        for (mongoStop in listOfMongoStops) {
-            updatedList.add(modelFactory.toBusStop(mongoStop))
-        }
-        return updatedList
+    // todo: can improve search by sorting by closest location
+    fun searchForStop(input: String): List<BusStop> {
+        // search the name parts by any matching string tokens
+        val words = input.split(" ").filter { it.isNotEmpty() }
+        val fuzzyQuery = List(words.size) { i ->
+            "(name CONTAINS[c] $${i + 1} OR ANY mongoRoutes.longName CONTAINS[c] $${i + 1})"
+        }.joinToString(" AND ")
+
+        // Strict search by code or route shortname
+        val query = "code == $0 OR ANY mongoRoutes.shortName == $0 OR ($fuzzyQuery)"
+        val result = realm.query<MongoBusStop>(
+            query,
+            input,
+            *words.toTypedArray() // spread operator to pass string tokens as query params
+        ).find().take(10)
+
+        // Return result as a List<BusStops> instead of List<MongoBusStops>
+        return result.map { it -> modelFactory.toBusStop(it) }
     }
 
     fun searchForRouteByShortName(shortName: String) : Route? {

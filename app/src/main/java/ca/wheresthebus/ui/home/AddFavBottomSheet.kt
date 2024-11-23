@@ -80,7 +80,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
                         stopSuggestionsView.visibility = View.VISIBLE
                         // Perform the search and update suggestions
                         suggestedStops.clear()
-                        suggestedStops.addAll(mainDBViewModel.searchByCode(searchText))
+                        suggestedStops.addAll(mainDBViewModel.searchForStop(searchText))
 
                         // Notify the adapter that the data has changed
                         stopSuggestionAdapter.notifyDataSetChanged()
