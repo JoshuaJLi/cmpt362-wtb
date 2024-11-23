@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
-import ca.wheresthebus.data.ScheduledTripId
+import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.ScheduledTrip
 
 class TripAdapter(
@@ -16,10 +17,17 @@ class TripAdapter(
     inner class TripViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val nickname : TextView = view.findViewById(R.id.text_trip_nickname)
         private val active : TextView = view.findViewById(R.id.text_trip_active_time)
-        private val stops : RecyclerView = view.findViewById(R.id.recycler_trips_recycler_stops)
+        private var stops : RecyclerView = view.findViewById(R.id.recycler_trips_recycler_stops)
+        private lateinit var stopAdapter: FavStopAdapter
 
         fun bind(trip : ScheduledTrip) {
             nickname.text = trip.nickname
+            stopAdapter = FavStopAdapter(trip.stops, FavStopAdapter.Type.TRIP)
+
+            stops.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = stopAdapter
+            }
         }
         init {
             view.setOnClickListener {  }
@@ -44,7 +52,10 @@ class TripAdapter(
         }
     }
 
-    inner class StopsAdapter(view:View) : RecyclerView.Adapter<StopsAdapter.StopViewHolder>() {
+    inner class StopsAdapter(
+        view:View,
+        private val dataSet:List<FavouriteStop>
+        ) : RecyclerView.Adapter<StopsAdapter.StopViewHolder>() {
 
         inner class StopViewHolder(view : View) : RecyclerView.ViewHolder(view) {
 
