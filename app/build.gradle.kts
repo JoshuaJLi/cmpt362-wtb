@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "ca.wheresthebus"
-        minSdk = 26
+        minSdk = 27
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -74,10 +74,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.google.material)
-    implementation("io.realm.kotlin:library-base:1.11.0")
-    implementation("androidx.compose.ui:ui:1.5.0")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
+    implementation(libs.library.base)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.runtime.livedata)
 
     implementation("com.google.code.gson:gson:2.11.0")
 }
