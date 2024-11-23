@@ -1,18 +1,14 @@
 package ca.wheresthebus.ui.nearby
 
+import android.app.Activity
 import android.content.Context
-import android.location.LocationRequest
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ca.wheresthebus.data.model.Stop
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.Priority
-import com.google.android.gms.maps.model.LatLng
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -23,21 +19,13 @@ class NearbyViewModel : ViewModel() {
     }
     val text: LiveData<String> = _text
 
-    lateinit var context: Context;
-
+    // -- properties
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient;
 
     var stopList: ArrayList<Stop> = ArrayList<Stop>();
 
-    fun intializeContext(context: Context) {
-        this.context = context
-    }
-
-    fun initializeFusedLocationProviderClient(fusedLocationProviderClient: FusedLocationProviderClient) {
-        this.fusedLocationProviderClient = fusedLocationProviderClient
-    }
-
-    fun loadStopsFromCSV() {
+    // -- methods
+    fun loadStopsFromCSV(context: Context) {
         val minput = InputStreamReader(context?.assets?.open("stops.csv"))
         val reader = BufferedReader(minput)
 
@@ -57,6 +45,15 @@ class NearbyViewModel : ViewModel() {
             } catch (e: IndexOutOfBoundsException) {
                 println("Row has insufficient columns: $line")
             }
+        }
+    }
+
+    fun getLocationPermissions(context: Context) {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(context as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 101)
+
+            return
         }
     }
 }

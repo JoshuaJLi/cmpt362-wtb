@@ -1,31 +1,25 @@
 package ca.wheresthebus.ui.nearby
 
-import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
+import android.location.LocationRequest
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ca.wheresthebus.R
-import ca.wheresthebus.data.model.Stop
+import ca.wheresthebus.constants.Constants.ACTION_START_SERVICE
+import ca.wheresthebus.constants.Constants.ACTION_STOP_SERVICE
 import ca.wheresthebus.databinding.FragmentNearbyBinding
-import com.google.android.gms.location.FusedLocationProviderClient
+import ca.wheresthebus.service.NearbyService
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -33,8 +27,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 class NearbyFragment : Fragment(), OnMapReadyCallback {
 
@@ -45,14 +37,13 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var nearbyViewModel: NearbyViewModel;
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var mMap: GoogleMap;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNearbyBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         nearbyViewModel = ViewModelProvider(this)[NearbyViewModel::class.java]
-        nearbyViewModel.intializeContext(requireContext());
 
         return root
     }
@@ -60,20 +51,16 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
 
-        nearbyViewModel.loadStopsFromCSV();
-        nearbyViewModel.initializeFusedLocationProviderClient(LocationServices.getFusedLocationProviderClient(requireContext()));
+        nearbyViewModel.loadStopsFromCSV(requireContext());
+        nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        nearbyViewModel.getLocationPermissions(requireContext());
 
-        setupMapFragment();
-        getLocationPermissions();
+        initializeMapFragment();
+
+        // start the nearby service to start tracking the user's location
+        sendCommandToService(ACTION_START_SERVICE);
     }
 
-    private fun setupMapFragment() {
-        val mapFragment = childFragmentManager
-            .findFragmentById(R.id.poopy) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-    }
-
-    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
@@ -129,17 +116,21 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun getLocationPermissions() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 101)
-
-            return
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun initializeMapFragment() {
+        val mapFragment = childFragmentManager
+            .findFragmentById(R.id.poopy) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
+    private fun sendCommandToService(action: String) {
+        val intent = android.content.Intent(requireContext(), NearbyService::class.java)
+        intent.action = action
+        requireContext().startService(intent)
+    }
+
 }
