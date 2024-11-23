@@ -39,6 +39,10 @@ class StopSuggestionAdapter(
             stopName.text = stop.name
             stopCode.text = stop.code.value
 
+            // Clear old route content
+            routeShortNames.clear()
+            routesAtStop.text = ""
+
             for (route in stop.routes) {
                 routeShortNames.add(route.shortName)
             }

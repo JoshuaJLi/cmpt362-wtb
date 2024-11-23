@@ -7,6 +7,22 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 class MongoRoute : RealmObject {
     // route_id
     @PrimaryKey var id: String = ""
-    var shortName : String = "John"
-    var longName : String = "Doe"
+    var shortName : String = ""
+    var longName : String = ""
+
+    //Primary (EMPTY) constructor
+    constructor() : this("", "", "") {
+
+    }
+
+    //Secondary constructor
+    constructor(
+        id: String = "",
+        shortName: String = "",
+        longName: String = ""
+    ) {
+        this.id = id
+        this.shortName = shortName
+        this.longName = longName
+    }
 }

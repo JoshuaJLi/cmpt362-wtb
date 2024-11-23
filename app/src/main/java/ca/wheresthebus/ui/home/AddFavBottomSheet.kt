@@ -53,7 +53,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         stopSuggestionAdapter = StopSuggestionAdapter(suggestedStops, mainDBViewModel, modelFactory, requireContext())
         stopSuggestionsView.adapter = stopSuggestionAdapter
         //used for testing
-        nearbyStops.add(mainDBViewModel.getBusStopByCode("55234")!!)
+//        nearbyStops.add(mainDBViewModel.getBusStopByCode("55234")!!)
 //        sv = view?.findViewById(R.id.search_view_bus)!!
 //        nearbyStopsSuggestions = view?.findViewById(R.id.recycler_view_nearby_suggestions)!!
 //        sv.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
