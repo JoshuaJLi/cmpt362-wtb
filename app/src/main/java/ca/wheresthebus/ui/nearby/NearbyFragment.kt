@@ -38,68 +38,33 @@ import java.io.InputStreamReader
 
 class NearbyFragment : Fragment(), OnMapReadyCallback {
 
-    private var _binding: FragmentNearbyBinding? = null
-
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private var _binding: FragmentNearbyBinding? = null
 
-    // for testing purposes
-    private var stopList: ArrayList<Stop> = ArrayList<Stop>()
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var nearbyViewModel: NearbyViewModel;
+
     private lateinit var mMap: GoogleMap
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(NearbyViewModel::class.java)
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNearbyBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textNotifications
-//        notificationsViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
+        nearbyViewModel = ViewModelProvider(this)[NearbyViewModel::class.java]
+        nearbyViewModel.intializeContext(requireContext());
+
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
-        loadStopsFromCSV();
-        initializeLocationProvider();
+
+        nearbyViewModel.loadStopsFromCSV();
+        nearbyViewModel.initializeFusedLocationProviderClient(LocationServices.getFusedLocationProviderClient(requireContext()));
+
         setupMapFragment();
         getLocationPermissions();
-    }
-
-    private fun loadStopsFromCSV() {
-        val minput = InputStreamReader(context?.assets?.open("stops.csv"))
-        val reader = BufferedReader(minput)
-
-        var line: String?
-        while (reader.readLine().also { line = it } != null) {
-            val row: List<String> = line!!.split(",")
-            try {
-                val stopId = row[1]
-                val stopName = row[2]
-                val stopLat = row[4].toDouble()
-                val stopLon = row[5].toDouble()
-
-                val newStop = Stop(stopId, stopName, stopLat, stopLon)
-                stopList.add(newStop)
-            } catch (e: NumberFormatException) {
-                println("Failed to parse row: ${line}. Error: ${e.message}")
-            } catch (e: IndexOutOfBoundsException) {
-                println("Row has insufficient columns: $line")
-            }
-        }
-    }
-
-    private fun initializeLocationProvider() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
     private fun setupMapFragment() {
@@ -115,7 +80,7 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
         // give the map some time to load, then grab the user's current location
         Handler(Looper.getMainLooper()).postDelayed({
             // Get the last known location
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+            nearbyViewModel.fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     // Get the location's latitude and longitude
                     val currentLatLng = LatLng(location.latitude, location.longitude)
@@ -158,14 +123,13 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
         }, 2000);
 
 
-        for (stop in stopList) {
+        for (stop in nearbyViewModel.stopList) {
             val newStopLatLng = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble())
             mMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.stopNumber + " - " + stop.stopName))
         }
     }
 
     private fun getLocationPermissions() {
-        val currentLocation = fusedLocationProviderClient.lastLocation
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 101)
