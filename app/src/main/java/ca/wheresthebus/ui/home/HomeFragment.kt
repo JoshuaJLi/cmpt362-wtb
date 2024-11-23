@@ -1,13 +1,10 @@
 package ca.wheresthebus.ui.home
 
-import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,12 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.ModelFactory
-import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopCode
-import ca.wheresthebus.data.StopId
-import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
-import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import kotlinx.coroutines.flow.firstOrNull
@@ -41,7 +33,6 @@ class HomeFragment : Fragment() {
     //private val allBusStops : ArrayList<BusStop> = arrayListOf()
     private lateinit var modelFactory: ModelFactory
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,7 +49,6 @@ class HomeFragment : Fragment() {
         return root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setUpObservers() {
         // when the app opens, the favourite stops list is updated.
         mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { favouriteStops ->
@@ -69,26 +59,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getFavStopsList(): List<MongoFavouriteStop> {
         return mainDBViewModel.mongoFavouriteStops.firstOrNull() ?: emptyList()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setUpFab() {
         binding.fabNewFav.setOnClickListener {
             AddFavBottomSheet().show(parentFragmentManager, AddFavBottomSheet.TAG)
-//            val newLocation = Location("passive")
-//            newLocation.latitude = (49.0123)
-//            newLocation.longitude = (-123.2354)
-//            val testListTripIds = arrayListOf<TripId>(TripId("11"), TripId("12"), TripId("14"))
-//            val route1 = Route(RouteId("1"), "PEE", "Number 1", testListTripIds)
-//            val route2 = Route(RouteId("2"), "POO", "Number 2", testListTripIds)
-//            val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, arrayListOf(route1, route2))
-//            mainDBViewModel.insertBusStop(busStop)
-//            mainDBViewModel.insertFavouriteStop(FavouriteStop("hello", busStop, route1))
-//            val test = mainDBViewModel.getBusStopByCode("34567")
-//            Log.d("favStopQueryTest", test.toString())
         }
     }
 

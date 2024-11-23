@@ -12,7 +12,6 @@ class MongoRoute : RealmObject {
 
     //Primary (EMPTY) constructor
     constructor() : this("", "", "") {
-
     }
 
     //Secondary constructor

@@ -1,8 +1,6 @@
 package ca.wheresthebus.data
 
 import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
 import ca.wheresthebus.data.model.*
 import ca.wheresthebus.data.mongo_model.*
 import io.realm.kotlin.ext.toRealmList
@@ -12,7 +10,6 @@ import java.time.ZoneId
 
 class ModelFactory() {
     
-    @RequiresApi(Build.VERSION_CODES.O)
     fun toBusStop(mongoBusStop: MongoBusStop): BusStop {
         val location = Location("").apply {
             latitude = mongoBusStop.lat
@@ -28,7 +25,6 @@ class ModelFactory() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun toMongoBusStop(busStop: BusStop): MongoBusStop {
         return MongoBusStop(
             id = busStop.id.value,
@@ -40,7 +36,6 @@ class ModelFactory() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun toFavouriteBusStop(mongoFavouriteStop: MongoFavouriteStop): FavouriteStop {
         return FavouriteStop(
             nickname = mongoFavouriteStop.nickname,
@@ -49,7 +44,6 @@ class ModelFactory() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun toMongoFavouriteStop(favouriteStop: FavouriteStop) : MongoFavouriteStop {
         return MongoFavouriteStop(
             nickname = favouriteStop.nickname,
@@ -74,7 +68,6 @@ class ModelFactory() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun toStopTime(mongoStopTime: MongoStopTime): StopTime {
         return StopTime(
             arrivalTime = LocalDateTime.ofInstant(
@@ -88,7 +81,6 @@ class ModelFactory() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun toMongoStopTime(stopTime: StopTime): MongoStopTime {
         return MongoStopTime().apply {
             arrivalTime = stopTime.arrivalTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()

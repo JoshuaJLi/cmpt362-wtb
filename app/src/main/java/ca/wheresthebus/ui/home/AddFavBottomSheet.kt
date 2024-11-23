@@ -1,16 +1,11 @@
 package ca.wheresthebus.ui.home
 
-import android.graphics.ColorSpace.Model
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +32,6 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
     private lateinit var mainDBViewModel: MainDBViewModel
     private lateinit var modelFactory: ModelFactory
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,33 +46,9 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         stopSuggestionsView.layoutManager = LinearLayoutManager(context)
         stopSuggestionAdapter = StopSuggestionAdapter(suggestedStops, mainDBViewModel, modelFactory, requireContext())
         stopSuggestionsView.adapter = stopSuggestionAdapter
-        //used for testing
-//        nearbyStops.add(mainDBViewModel.getBusStopByCode("55234")!!)
-//        sv = view?.findViewById(R.id.search_view_bus)!!
-//        nearbyStopsSuggestions = view?.findViewById(R.id.recycler_view_nearby_suggestions)!!
-//        sv.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                // Perform search
-//                checkForEmptyResults(query)
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                // Handle text changes
-//                checkForEmptyResults(newText)
-//                return true
-//            }
-//        })
+
         binding.apply {
             searchViewBus.setupWithSearchBar(searchBarBus)
-//            searchViewBus.editText.setOnEditorActionListener { v, actionId, event ->
-//                //searchViewBus.hide()
-//                searchBarBus.setText(searchViewBus.text)
-//                suggestedStops.clear()
-//                suggestedStops.addAll(mainDBViewModel.searchByCode(searchViewBus.text.toString()))
-//                stopSuggestionAdapter.notifyDataSetChanged()
-//                false
-//            }
             val nearbySuggestionsRecyclerView = binding.recyclerViewNearbySuggestions
             val nearbyAdapter = StopSuggestionAdapter(nearbyStops, mainDBViewModel, modelFactory, requireContext())
             nearbySuggestionsRecyclerView.layoutManager = LinearLayoutManager(context)

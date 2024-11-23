@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "ca.wheresthebus"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -78,4 +78,6 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.5.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
+
+    implementation("com.google.code.gson:gson:2.11.0")
 }

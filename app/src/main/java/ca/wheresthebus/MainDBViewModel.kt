@@ -1,8 +1,5 @@
 package ca.wheresthebus
 
-import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,9 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.ModelFactory
-import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopCode
-import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
@@ -28,7 +22,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.O)
 class MainDBViewModel : ViewModel() {
     private val realm = MyMongoDBApp.realm
     private val modelFactory = ModelFactory()
@@ -74,7 +67,6 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun insertBusStop(newStop: BusStop) {
         viewModelScope.launch {
             realm.write {
@@ -85,7 +77,6 @@ class MainDBViewModel : ViewModel() {
 
     // function to return bus stops by entering the stop code
     // TODO @Jonathan: have this function return a normal bus stop instead maybe?
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getBusStopByCode(stopCode: String) : BusStop? {
         return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
             ?.let { modelFactory.toBusStop(it) }
@@ -101,7 +92,6 @@ class MainDBViewModel : ViewModel() {
         _favouriteBusStopsList.postValue(updatedList)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     // NOTE: _allBusStopsList will be empty if tables are not filled on initial app start
     private fun loadAllStops() {
         _allBusStopsList.postValue(mutableListOf())
@@ -148,7 +138,6 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun searchByCode(code: String): ArrayList<BusStop> {
         val updatedList = ArrayList<BusStop>()
         val listOfMongoStops = realm.query<MongoBusStop>("code CONTAINS[c] $0", code).find().take(5)
