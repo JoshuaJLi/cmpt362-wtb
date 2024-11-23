@@ -4,16 +4,16 @@ package ca.wheresthebus.data
 // see https://kotlinlang.org/docs/inline-classes.html
 
 @JvmInline
-value class StopCode(val id : String)
+value class StopCode(val value : String)
 
 @JvmInline
-value class StopId(val id : String)
+value class StopId(val value : String)
 
 @JvmInline
-value class RouteId(val id : String)
+value class RouteId(val value : String)
 
 @JvmInline
-value class ServiceId(val id : String)
+value class ServiceId(val value : String)
 
 @JvmInline
-value class TripId(val id : String)
+value class TripId(val value : String)
