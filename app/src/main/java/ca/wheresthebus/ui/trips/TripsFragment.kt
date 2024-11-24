@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.TripAdapter
 import ca.wheresthebus.databinding.FragmentTripsBinding
+import java.time.LocalDateTime
 
 class TripsFragment : Fragment() {
 
@@ -45,6 +46,12 @@ class TripsFragment : Fragment() {
 
     private fun setUpAdapter() {
         val trips = mainDBViewModel.getTrips()
+        trips.apply {
+            val currentTime = LocalDateTime.now()
+            sortBy { it.getClosestTime(currentTime) }
+            partition { it.isActive(currentTime) }
+        }
+
         tripAdapter = TripAdapter(trips)
         tripsView = binding.recyclerTrips
 
