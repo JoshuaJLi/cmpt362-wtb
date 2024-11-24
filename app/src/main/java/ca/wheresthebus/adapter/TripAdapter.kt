@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import ca.wheresthebus.R
-import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.ScheduledTrip
+import ca.wheresthebus.utils.TextUtils
 import java.time.LocalDateTime
 
 class TripAdapter(
@@ -37,6 +37,7 @@ class TripAdapter(
                 else -> FavStopAdapter.Type.TRIP_INACTIVE
             }
 
+            active.text = TextUtils.ScheduledTripText.getActivityStatus(trip)
             nickname.text = trip.nickname
             stopAdapter = FavStopAdapter(trip.stops, adapterType)
 
