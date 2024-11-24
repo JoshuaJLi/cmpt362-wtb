@@ -4,7 +4,6 @@ import android.util.Log
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopId
 import com.google.transit.realtime.GtfsRealtime.FeedMessage
-import io.realm.kotlin.internal.interop.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -19,7 +18,7 @@ import java.util.Date
  *      times = GtfsRealtime.getBusTimes(StopId("70"), RouteId("6612"), 3)
  *  }
  */
-class GtfsRealtime {
+class GtfsRealtimeHelper {
     companion object {
         private val client = OkHttpClient()
         private const val GTFS_API_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"

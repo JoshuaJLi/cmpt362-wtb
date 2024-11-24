@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -37,11 +35,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // Hide key as per https://www.youtube.com/watch?v=-2ckvIzs0nU
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").inputStream())
-        buildConfigField("String", "GTFS_KEY", "\"${properties.getProperty("GTFS_KEY")}\"")
     }
 
     buildTypes {
