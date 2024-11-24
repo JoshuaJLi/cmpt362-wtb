@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,6 +42,7 @@ class NearbyViewModel : ViewModel() {
     val locationUpdates: LiveData<Location> = _locationUpdates; // this makes it so location live data is read only
 
     var stopList: ArrayList<Stop> = ArrayList<Stop>();
+    var dynamicStopList: MutableLiveData<ArrayList<Stop>> = MutableLiveData<ArrayList<Stop>>();
 
     // -- methods
     fun loadStopsFromCSV(context: Context) {
@@ -64,6 +66,32 @@ class NearbyViewModel : ViewModel() {
                 println("Row has insufficient columns: $line")
             }
         }
+    }
+
+    // all calculations will be done in meters
+    // https://stackoverflow.com/questions/43080343/calculate-distance-between-two-locations-in-metre
+    fun isInRange(userLocation: LatLng, stopLocation: LatLng, distanceThreshold: Double): Boolean {
+        var inRange: Boolean = false;
+
+        try {
+            var distance: FloatArray = FloatArray(2);
+
+            Location.distanceBetween(
+                userLocation.latitude,
+                userLocation.longitude,
+                stopLocation.latitude,
+                stopLocation.longitude,
+                distance
+            );
+
+            if (distance[0] < distanceThreshold) {
+                inRange = true;
+            }
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+        }
+
+        return inRange;
     }
 
     fun getLocationPermissions(context: Context) {
