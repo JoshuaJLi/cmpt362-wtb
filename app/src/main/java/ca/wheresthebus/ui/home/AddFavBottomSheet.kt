@@ -1,16 +1,11 @@
 package ca.wheresthebus.ui.home
 
-import android.graphics.ColorSpace.Model
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,8 +46,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         stopSuggestionsView.layoutManager = LinearLayoutManager(context)
         stopSuggestionAdapter = StopSuggestionAdapter(suggestedStops, mainDBViewModel, modelFactory, requireContext())
         stopSuggestionsView.adapter = stopSuggestionAdapter
-        //used for testing
-        nearbyStops.add(mainDBViewModel.getBusStopByCode("55234")!!)
+
         binding.apply {
             searchViewBus.setupWithSearchBar(searchBarBus)
             val nearbySuggestionsRecyclerView = binding.recyclerViewNearbySuggestions
@@ -86,7 +80,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
                         stopSuggestionsView.visibility = View.VISIBLE
                         // Perform the search and update suggestions
                         suggestedStops.clear()
-                        suggestedStops.addAll(mainDBViewModel.searchByCode(searchText))
+                        suggestedStops.addAll(mainDBViewModel.searchForStop(searchText))
 
                         // Notify the adapter that the data has changed
                         stopSuggestionAdapter.notifyDataSetChanged()

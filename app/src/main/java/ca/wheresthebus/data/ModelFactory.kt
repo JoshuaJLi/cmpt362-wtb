@@ -1,8 +1,6 @@
 package ca.wheresthebus.data
 
 import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
 import ca.wheresthebus.data.model.*
 import ca.wheresthebus.data.mongo_model.*
 import io.realm.kotlin.ext.toRealmList
@@ -11,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class ModelFactory() {
-
+    
     fun toBusStop(mongoBusStop: MongoBusStop): BusStop {
         val location = Location("").apply {
             latitude = mongoBusStop.lat
@@ -59,7 +57,6 @@ class ModelFactory() {
             id = RouteId(mongoRoute.id),
             shortName = mongoRoute.shortName,
             longName = mongoRoute.longName,
-            tripIds = mongoRoute.tripIds.map { TripId(it) }
         )
     }
 
@@ -68,7 +65,6 @@ class ModelFactory() {
             id = route.id.value
             shortName = route.shortName
             longName = route.longName
-            tripIds = route.tripIds.map { it.value }.toRealmList()
         }
     }
 

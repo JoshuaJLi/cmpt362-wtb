@@ -1,21 +1,12 @@
 package ca.wheresthebus
 
-import android.location.Location
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.ModelFactory
-import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopCode
-import ca.wheresthebus.data.StopId
-import ca.wheresthebus.data.TripId
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
@@ -23,6 +14,7 @@ import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
+import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,13 +23,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainDBViewModel : ViewModel() {
-
     private val realm = MyMongoDBApp.realm
     private val modelFactory = ModelFactory()
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
 
     val _favouriteBusStopsList = MutableLiveData<MutableList<FavouriteStop>>()
 
@@ -45,8 +32,8 @@ class MainDBViewModel : ViewModel() {
     val _allBusStopsList = MutableLiveData<MutableList<BusStop>>()
 
     init {
-        loadStopsIntoDatabase()
-        loadFavouriteStopsFromDatabase()
+        loadAllStops()
+        loadAllFavoriteStops()
     }
 
     // NOTE: each view model for each frag can query for different class objects from the db when required
@@ -68,63 +55,6 @@ class MainDBViewModel : ViewModel() {
 
     var favStopDetails: MongoFavouriteStop? by mutableStateOf(null)
         private set
-
-    // populate view model here; perhaps have a function to load the favourite stops in the db later?
-    init {
-        val favStopsInDb = realm.query<MongoFavouriteStop>().find()
-
-        if (favStopsInDb.isEmpty()) {
-            createDummyEntries()
-        }
-    }
-
-    // function that creates the sample entries
-    private fun createDummyEntries() {
-        viewModelScope.launch {
-            val newLocation = Location("passive")
-            newLocation.latitude = (49.0123)
-            newLocation.longitude = (-123.2354)
-            val testListTripIds = arrayListOf<TripId>(TripId("11"), TripId("12"), TripId("14"))
-            val route1 = Route(RouteId("1"), "PEE", "Number 1", testListTripIds)
-            val route2 = Route(RouteId("2"), "POO", "Number 2", testListTripIds)
-            val busStop = BusStop(StopId("12345"), StopCode("34567"), "Pee St @ Poo Ave", newLocation, arrayListOf(route1, route2))
-            insertBusStop(busStop)
-
-            val testLocation1 = Location("passive")
-            testLocation1.latitude = 49.0111
-            testLocation1.longitude = -123.1111
-            val testLocation2 = Location("passive")
-            testLocation2.latitude = 49.1234
-            testLocation2.longitude = -123.5678
-            val testLocation3 = Location("passive")
-            testLocation3.latitude = 49.2222
-            testLocation3.longitude = -123.3333
-            val testLocation4 = Location("passive")
-            testLocation4.latitude = 49.2002
-            testLocation4.longitude = -123.2002
-            val testLocation5 = Location("passive")
-            testLocation5.latitude = 49.1989
-            testLocation5.longitude = -123.1989
-            val testTripIds1 = arrayListOf(TripId("11"), TripId("12"), TripId("14"))
-            val testTripIds2 = arrayListOf(TripId("15"), TripId("16"), TripId("17"))
-            val testTripIds3 = arrayListOf(TripId("18"), TripId("19"), TripId("20"))
-            val testTripIds4 = arrayListOf(TripId("21"), TripId("22"), TripId("23"))
-            val testTripIds5 = arrayListOf(TripId("24"), TripId("25"), TripId("25"))
-            val testRoute1 = Route(RouteId("01"), "013", "taylor swift", testTripIds1)
-            val testRoute2 = Route(RouteId("02"), "505", "rihanna", testTripIds2)
-            val testRoute3 = Route(RouteId("03"), "802", "post malone", testTripIds3)
-            val testRoute4 = Route(RouteId("04"), "999", "the weeknd", testTripIds4)
-            val testRoute5 = Route(RouteId("05"), "24K", "bruno mars", testTripIds5)
-            insertBusStop(BusStop(StopId("1"), StopCode("55234"), "1989 St @ TTPD Ave", testLocation1, arrayListOf(testRoute1, testRoute3)))
-            insertBusStop(BusStop(StopId("2"), StopCode("23199"), "Disturbia St @ Umbrella Ave", testLocation2, arrayListOf(testRoute2, testRoute4)))
-            insertBusStop(BusStop(StopId("3"), StopCode("11111"), "Circles St @ F1-Trillion Blvd", testLocation3, arrayListOf(testRoute1, testRoute3)))
-            insertBusStop(BusStop(StopId("4"), StopCode("10001"), "Dancing St @ The Flames Ave", testLocation4, arrayListOf(testRoute4)))
-            insertBusStop(BusStop(StopId("5"), StopCode("24000"), "The APT @ Grenade Ave", testLocation5, arrayListOf(testRoute2, testRoute5)))
-
-            // once inserted, the above will not be reinserted.
-            insertFavouriteStop(FavouriteStop("hello", busStop, route1))
-        }
-    }
 
     fun deleteMongoFavStop() {
         viewModelScope.launch {
@@ -152,7 +82,7 @@ class MainDBViewModel : ViewModel() {
             ?.let { modelFactory.toBusStop(it) }
     }
 
-    private fun loadFavouriteStopsFromDatabase() {
+    private fun loadAllFavoriteStops() {
         _favouriteBusStopsList.postValue(mutableListOf())
         val updatedList = mutableListOf<FavouriteStop>()
         val allMongoFavStops = realm.query<MongoFavouriteStop>().find()
@@ -162,14 +92,8 @@ class MainDBViewModel : ViewModel() {
         _favouriteBusStopsList.postValue(updatedList)
     }
 
-    private fun loadStopsIntoDatabase() {
-        // if initially run, we load in all the stops in the db
-        if (realm.query<MongoBusStop>().find().isEmpty()) {
-            // load all the bus stops into the database
-            var stopToAdd = MongoBusStop()
-            // stopToAdd.id = ...
-            // stopToAdd.code = ...
-        }
+    // NOTE: _allBusStopsList will be empty if tables are not filled on initial app start
+    private fun loadAllStops() {
         _allBusStopsList.postValue(mutableListOf())
         val convertedBusStopList = mutableListOf<BusStop>()
         val allMongoBusStops = realm.query<MongoBusStop>().find()
@@ -177,6 +101,24 @@ class MainDBViewModel : ViewModel() {
             convertedBusStopList.add(modelFactory.toBusStop(mongoBusStop))
         }
         _allBusStopsList.postValue(convertedBusStopList)
+    }
+
+    // NOTE: ONLY use when populating database on initial app load in MainActivity
+    fun getRealm(): Realm {
+        return realm
+    }
+
+    // Returns true if both MongoRoutes and MongoBusStops have already been initialized
+    fun isStaticDataLoaded(): Boolean {
+        return !(realm.query<MongoRoute>().find().isEmpty() && realm.query<MongoBusStop>().find().isEmpty())
+    }
+
+    fun getAllStops(): List<BusStop>? {
+        // Load stops if needed
+        if (_allBusStopsList.value.isNullOrEmpty()) {
+            loadAllStops()
+        }
+        return _allBusStopsList.value
     }
 
     // function to add a favourite stop (add route/mongo route parameter later??)
@@ -196,13 +138,24 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    fun searchByCode(code: String): ArrayList<BusStop> {
-        val updatedList = ArrayList<BusStop>()
-        val listOfMongoStops = realm.query<MongoBusStop>("code CONTAINS[c] $0", code).find().take(5)
-        for (mongoStop in listOfMongoStops) {
-            updatedList.add(modelFactory.toBusStop(mongoStop))
-        }
-        return updatedList
+    // todo: can improve search by sorting by closest location
+    fun searchForStop(input: String): List<BusStop> {
+        // search the name parts by any matching string tokens
+        val words = input.split(" ").filter { it.isNotEmpty() }
+        val fuzzyQuery = List(words.size) { i ->
+            "(name CONTAINS[c] $${i + 1} OR ANY mongoRoutes.longName CONTAINS[c] $${i + 1})"
+        }.joinToString(" AND ")
+
+        // Strict search by code or route shortname
+        val query = "code == $0 OR ANY mongoRoutes.shortName == $0 OR ($fuzzyQuery)"
+        val result = realm.query<MongoBusStop>(
+            query,
+            input,
+            *words.toTypedArray() // spread operator to pass string tokens as query params
+        ).find().take(10)
+
+        // Return result as a List<BusStops> instead of List<MongoBusStops>
+        return result.map { it -> modelFactory.toBusStop(it) }
     }
 
     fun searchForRouteByShortName(shortName: String) : Route? {

@@ -2,7 +2,6 @@ package ca.wheresthebus.adapter
 
 import android.app.AlertDialog
 import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
@@ -29,6 +26,7 @@ class StopSuggestionAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<StopSuggestionAdapter.SuggestedStopViewHolder>() {
     private val routeShortNames = ArrayList<String>()
+
     inner class SuggestedStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val stopName: TextView = view.findViewById(R.id.suggested_stop_name)
         private val stopCode: TextView = view.findViewById(R.id.suggested_stop_code)
@@ -37,6 +35,10 @@ class StopSuggestionAdapter(
         fun bind(stop: BusStop) {
             stopName.text = stop.name
             stopCode.text = stop.code.value
+
+            // Clear old content first
+            routeShortNames.clear()
+            routesAtStop.text = ""
 
             for (route in stop.routes) {
                 routeShortNames.add(route.shortName)
