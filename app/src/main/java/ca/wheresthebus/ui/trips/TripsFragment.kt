@@ -45,12 +45,12 @@ class TripsFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
+        val currentTime = LocalDateTime.now()
+
         val trips = mainDBViewModel.getTrips()
-        trips.apply {
-            val currentTime = LocalDateTime.now()
-            sortBy { it.getClosestTime(currentTime) }
-            partition { it.isActive(currentTime) }
-        }
+            .sortedBy { it.getClosestTime(currentTime) }
+            .partition { it.isActive(currentTime) }
+            .let { (active, inactive) -> active + inactive }
 
         tripAdapter = TripAdapter(trips)
         tripsView = binding.recyclerTrips

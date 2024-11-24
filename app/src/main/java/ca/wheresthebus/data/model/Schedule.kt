@@ -10,9 +10,8 @@ data class Schedule(
     val time : LocalTime
 ) {
     fun getNextTime(currentTime : LocalDateTime): LocalDateTime {
-        val newTime = currentTime
-        newTime.with(TemporalAdjusters.nextOrSame(day))
-        newTime.toLocalDate().atTime(this.time)
-        return newTime
+        return currentTime
+        .with(TemporalAdjusters.nextOrSame(day))
+        .toLocalDate().atTime(this.time)
     }
 }
