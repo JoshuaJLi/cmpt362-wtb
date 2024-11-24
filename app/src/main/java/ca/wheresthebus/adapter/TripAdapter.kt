@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.ScheduledTripId
 import ca.wheresthebus.data.model.ScheduledTrip
 
 class TripAdapter(
