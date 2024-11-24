@@ -1,13 +1,12 @@
 package ca.wheresthebus
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -15,17 +14,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopId
 import ca.wheresthebus.databinding.ActivityMainBinding
-import ca.wheresthebus.service.GtfsRealtime
 import ca.wheresthebus.service.NfcService
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-
+import android.Manifest
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +38,7 @@ class MainActivity : AppCompatActivity() {
             NfcService.handleTap(this)
             moveTaskToBack(true)
         }
+
     }
 
     private fun requestNotificationPermission() {
