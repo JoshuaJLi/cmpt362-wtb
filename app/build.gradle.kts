@@ -1,8 +1,11 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("io.realm.kotlin") version "1.16.0"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.protobuf") version "0.9.4"
 }
 
 secrets {
@@ -34,6 +37,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Hide key as per https://www.youtube.com/watch?v=-2ckvIzs0nU
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "GTFS_KEY", "\"${properties.getProperty("GTFS_KEY")}\"")
     }
 
     buildTypes {
@@ -54,6 +62,21 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+    }
+}
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.12"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
     }
 }
 
@@ -78,4 +101,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.okhttp)
+    implementation(libs.protobuf.javalite)
 }

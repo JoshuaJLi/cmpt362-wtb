@@ -15,6 +15,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import ca.wheresthebus.data.RouteId
+import ca.wheresthebus.data.StopId
 import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.GtfsRealtime
 import ca.wheresthebus.service.NfcService

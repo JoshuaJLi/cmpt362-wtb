@@ -22,13 +22,12 @@ import java.util.Date
 class GtfsRealtime {
     companion object {
         private val client = OkHttpClient()
-        private val gtfsRealtimeUrl = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"
+        private const val GTFS_API_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"
 
         suspend fun getBusTimes(stopId: StopId, routeId: RouteId, amountOfTimes: Int): List<Date> {
             return try {
                 val feedMessage = callGtfsRealtime()
                 val busTimes = grabBusTimes(feedMessage, stopId, routeId)
-                Log.d("GTFS", busTimes.toString())
                 filterBusTimes(busTimes, amountOfTimes)
             } catch (e: Exception) {
                 Log.e("GTFS", "Error fetching GTFS realtime data", e)
@@ -41,7 +40,7 @@ class GtfsRealtime {
          */
         private suspend fun callGtfsRealtime(): FeedMessage = withContext(Dispatchers.IO) {
             // Create an HTTP request to the GTFS realtime API and get the response
-            val request = Request.Builder().url(gtfsRealtimeUrl).build()
+            val request = Request.Builder().url(GTFS_API_URL).build()
             val response = client.newCall(request).execute()
             if (!response.isSuccessful) {
                 throw Exception("HTTP error: ${response.code} - ${response.message}")
