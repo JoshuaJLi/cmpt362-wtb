@@ -14,23 +14,25 @@
             android:orientation="vertical"
             android:padding="16dp">
         <TextView
-            android:id="@+id/text_stop_nickname"
+            android:id="@+id/suggested_stop_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="28sp"
-            android:text="Stop Nickname"
+            android:text="Stop Name"
+            android:textSize="20sp"
             />
         <TextView
-            android:id="@+id/text_stop_id"
+            android:id="@+id/suggested_stop_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stop ID"
+            android:text="Stop Code"
+            android:textSize="16sp"
             />
         <TextView
-            android:id="@+id/text_stop_upcoming"
+            android:id="@+id/suggested_stop_routes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upcoming Buses"
+            android:text="Routes"
+            android:textSize="16sp"
             />
         </LinearLayout>
 </androidx.cardview.widget.CardView>

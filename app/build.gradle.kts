@@ -96,4 +96,5 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.okhttp)
     implementation(libs.protobuf.javalite)
+    implementation(libs.gson)
 }

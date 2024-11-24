@@ -22,30 +22,49 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 />
+            <!-- SearchBar at the top -->
+
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <com.google.android.material.search.SearchBar
-                    android:id="@+id/search_bar_bus"
+                android:layout_height="wrap_content">
+                <com.google.android.material.appbar.AppBarLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_fav_search"
-                    />
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.search.SearchBar
+                        android:id="@+id/search_bar_bus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Type in a stop code!"
+                        app:layout_scrollFlags="scroll|enterAlways" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_nearby_suggestions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_behavior="androidx.coordinatorlayout.widget.CoordinatorLayout$LayoutParams"/>
+                </com.google.android.material.appbar.AppBarLayout>
 
                 <com.google.android.material.search.SearchView
                     android:id="@+id/search_view_bus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_anchor="@id/search_bar_bus"/>
+                    app:layout_anchor="@id/search_bar_bus">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_suggestions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_behavior="androidx.coordinatorlayout.widget.CoordinatorLayout$LayoutParams" />
+                </com.google.android.material.search.SearchView>
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Maybe a list of suggested bus stops can go here, like recently searched busses or nearby" />
+            <!-- RecyclerView to display list, fills the remaining space -->
 
-
-                <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
+            <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/recycler_view_nearby_suggestions"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
         </LinearLayout>
     </FrameLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -6,11 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
-import ca.wheresthebus.data.model.BusStop
-import ca.wheresthebus.data.mongo_model.MongoBusStop
+import ca.wheresthebus.data.model.FavouriteStop
 
 class FavStopAdapter(
-    private val dataSet: Array<BusStop>
+    private val dataSet: ArrayList<FavouriteStop>
 ) : RecyclerView.Adapter<FavStopAdapter.FavStopViewHolder>() {
 
     inner class FavStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -18,9 +17,18 @@ class FavStopAdapter(
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
 
-        fun bind(stop: BusStop) {
-            id.text = stop.code.id
-            upcoming.text = stop.location.toString()
+        fun bind(stop: FavouriteStop) {
+            nickname.text = buildString {
+                append(stop.route.shortName)
+                append(" - ")
+                append(stop.nickname)
+            }
+            id.text = buildString {
+                append("Stop Code: ")
+                append(stop.busStop.code.value)
+            }
+            //todo: fixate with the live views.
+            upcoming.text = stop.busStop.location.toString()
         }
 
         init {
