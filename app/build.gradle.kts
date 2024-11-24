@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -35,6 +37,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "GTFS_KEY", "\"${properties.getProperty("GTFS_KEY")}\"")
     }
 
     buildTypes {
@@ -55,6 +61,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -95,4 +102,5 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
     implementation("com.google.protobuf:protobuf-javalite:3.21.12")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
