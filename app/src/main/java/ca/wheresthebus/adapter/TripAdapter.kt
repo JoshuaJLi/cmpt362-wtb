@@ -3,13 +3,15 @@ package ca.wheresthebus.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import ca.wheresthebus.R
-import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.ScheduledTrip
+import ca.wheresthebus.utils.TextUtils
+import com.google.android.material.button.MaterialButton
 import java.time.LocalDateTime
 
 class TripAdapter(
@@ -29,6 +31,7 @@ class TripAdapter(
         private val nickname : TextView = view.findViewById(R.id.text_trip_nickname)
         private val active : TextView = view.findViewById(R.id.text_trip_active_time)
         private var stops : RecyclerView = view.findViewById(R.id.recycler_trips_recycler_stops)
+        private var bell : MaterialButton = view.findViewById(R.id.button_trip_do_notifications)
         private lateinit var stopAdapter: FavStopAdapter
 
         fun bind(trip : ScheduledTrip) {
@@ -37,6 +40,11 @@ class TripAdapter(
                 else -> FavStopAdapter.Type.TRIP_INACTIVE
             }
 
+            if (viewType != ViewType.ACTIVE) {
+                bell.visibility = View.GONE
+            }
+
+            active.text = TextUtils.ScheduledTripText.getActivityStatus(trip)
             nickname.text = trip.nickname
             stopAdapter = FavStopAdapter(trip.stops, adapterType)
 

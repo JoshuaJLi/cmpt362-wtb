@@ -8,13 +8,13 @@ import java.time.ZoneOffset
 import java.time.temporal.TemporalAdjusters
 
 data class ScheduledTrip(
-    val id : ScheduledTripId,
-    val nickname : String,
-    val stops : ArrayList<FavouriteStop>,
-    val activeTimes : ArrayList<Schedule>,
+    val id: ScheduledTripId,
+    val nickname: String,
+    val stops: ArrayList<FavouriteStop>,
+    val activeTimes: ArrayList<Schedule>,
     val duration: Duration = Duration.ofMinutes(60)
 ) {
-    fun isActive(currentTime : LocalDateTime): Boolean {
+    fun isActive(currentTime: LocalDateTime): Boolean {
         activeTimes.forEach {
             val begin = it.getNextTime(currentTime)
             val end = begin.plus(duration)
@@ -30,13 +30,17 @@ data class ScheduledTrip(
 
     fun isToday(currentTime: LocalDateTime): Boolean {
         activeTimes.forEach {
-            if (it.getNextTime(currentTime).dayOfWeek == currentTime.dayOfWeek) {return true}
+            val nextTime = it.getNextTime(currentTime)
+            if (nextTime.dayOfWeek == currentTime.dayOfWeek &&
+                currentTime.isBefore(nextTime)) {
+                return true
+            }
         }
 
         return false
     }
 
-    fun getClosestTime(currentTime: LocalDateTime) : LocalDateTime {
+    fun getClosestTime(currentTime: LocalDateTime): LocalDateTime {
         return activeTimes.minOf {
             var closest = it.getNextTime(currentTime)
 
