@@ -33,7 +33,6 @@ class NearbyViewModel : ViewModel() {
     val text: LiveData<String> = _text
 
     // -- properties
-    lateinit var lastLocation: Location;
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient;
     lateinit var locationCallback: LocationCallback;
     lateinit var locationRequest: LocationRequest;

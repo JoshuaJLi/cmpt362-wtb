@@ -135,8 +135,8 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
 
             // add the nearby stops to the map
             for (stop in nearbyStops) {
-                val newStopLatLng = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble())
-                mMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.stopNumber + " - " + stop.stopName))
+                val newStopLatLng = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble());
+                mMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.stopNumber + " - " + stop.stopName));
             }
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f));
