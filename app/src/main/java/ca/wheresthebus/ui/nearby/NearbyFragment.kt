@@ -73,6 +73,7 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
         super.onDestroyView()
         _binding = null
         nearbyViewModel.stopLocationUpdates();
+
     }
 
     private fun initializeMapFragment() {
@@ -100,8 +101,12 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
                 currentLocationRadius?.remove();
             }
 
-            // remove all the markers from the map
-            mMap.clear();
+            try {
+                mMap.clear();
+            } catch (e: Exception) {
+                Log.e("NearbyFragment", "Failed to clear map: ${e.message}");
+                return@observe;
+            }
 
             // add a marker at the current location
             currentLocationMarker = mMap.addMarker(
