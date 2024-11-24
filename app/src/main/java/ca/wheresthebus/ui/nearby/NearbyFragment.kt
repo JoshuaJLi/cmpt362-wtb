@@ -6,6 +6,7 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +24,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 class NearbyFragment : Fragment(), OnMapReadyCallback {
@@ -35,7 +40,9 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var nearbyViewModel: NearbyViewModel;
 
-    private lateinit var mMap: GoogleMap;
+    private lateinit var mMap: GoogleMap
+    private var currentLocationMarker: Marker? = null;
+    private var currentLocationRadius: Circle? = null;
     private lateinit var locationRequest: LocationRequest;
     private lateinit var locationCallback: LocationCallback;
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient;
@@ -62,13 +69,33 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
         nearbyViewModel.locationUpdates.observe(viewLifecycleOwner) { location ->
             val currentLocation: LatLng = LatLng(location.latitude, location.longitude);
 
-            mMap.addMarker(
+            // remove the previous marker once the location updates
+            if (currentLocationMarker != null) { // if the marker isn't null, the radius won't be null either
+                currentLocationMarker?.remove();
+                currentLocationRadius?.remove();
+            }
+
+            // add a marker at the current location
+            currentLocationMarker = mMap.addMarker(
                 MarkerOptions()
                     .position(currentLocation)
                     .title("Current Location")
                     .snippet("Your current location")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                     .draggable(true)
             );
+
+            // add a circle radius around the user's location
+            currentLocationRadius = mMap.addCircle(
+                CircleOptions()
+                    .center(currentLocation)
+                    .radius(1000.0)
+                    .strokeWidth(3f)
+                    .strokeColor(Color.BLUE)
+                    .fillColor(Color.argb(25, 0, 0, 255))
+            );
+            currentLocationRadius!!.isVisible = true; // won't be null idt
+
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f));
         }
         nearbyViewModel.startLocationUpdates();
@@ -88,38 +115,11 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
             nearbyViewModel.fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     // Get the location's latitude and longitude
-                    val currentLatLng = LatLng(location.latitude, location.longitude)
-
-                    Toast.makeText(context, "Current location: ${currentLatLng.latitude}, ${currentLatLng.longitude}", Toast.LENGTH_SHORT).show()
-
-                    // Add a marker at the current location
-                    mMap.addMarker(
-                        MarkerOptions()
-                            .position(currentLatLng)
-                            .title("Current Location")
-                            .snippet("Your current location")
-                            .draggable(true)
-                    )
-                    // add a circle radius around the user's location
-                    var userRadius = mMap.addCircle(
-                        com.google.android.gms.maps.model.CircleOptions()
-                            .center(currentLatLng)
-                            .radius(1000.0)
-                            .strokeWidth(3f)
-                            .strokeColor(Color.BLUE)
-                            .fillColor(Color.argb(25, 0, 0, 255))
-                    )
-                    userRadius.isVisible = true;
-
-                    // Move the camera to the current location
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                    val sfu = LatLng(49.2791, -122.9202)
-                    mMap.addMarker(MarkerOptions().position(sfu).title("SFU"))
-//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sfu, 15f))
+                    val currentLatLng = LatLng(location.latitude, location.longitude);
+                    Log.d("NearbyFragment", "Current location: ${currentLatLng.latitude}, ${currentLatLng.longitude}");
 
                     // Move the camera to the current location
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-
                 } else {
                     // Handle case where location is null
                     // You might want to notify the user or provide a default location

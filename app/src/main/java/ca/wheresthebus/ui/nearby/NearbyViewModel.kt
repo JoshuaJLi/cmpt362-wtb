@@ -81,9 +81,9 @@ class NearbyViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 locationRequest = LocationRequest.Builder(
                     Priority.PRIORITY_HIGH_ACCURACY,
-                    5000L
-                ).setMinUpdateIntervalMillis(3000L)
-                    .setMaxUpdateAgeMillis(5000L)
+                    20L
+                ).setMinUpdateIntervalMillis(20L)
+                    .setMaxUpdateAgeMillis(500L)
                     .build();
 
                 locationCallback = object : LocationCallback() {
