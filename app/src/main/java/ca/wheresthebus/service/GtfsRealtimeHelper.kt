@@ -8,7 +8,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.util.Date
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  *  Class to grab bus times from the GTFS realtime API.
@@ -23,7 +25,7 @@ class GtfsRealtimeHelper {
         private val client = OkHttpClient()
         private const val GTFS_API_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"
 
-        suspend fun getBusTimes(stopId: StopId, routeId: RouteId, amountOfTimes: Int): List<Date> {
+        suspend fun getBusTimes(stopId: StopId, routeId: RouteId, amountOfTimes: Int): List<LocalDateTime> {
             return try {
                 val feedMessage = callGtfsRealtime()
                 val busTimes = grabBusTimes(feedMessage, stopId, routeId)
@@ -76,12 +78,12 @@ class GtfsRealtimeHelper {
             return busTimes
         }
 
-        private fun filterBusTimes(busTimes: List<Long>, amountOfTimes: Int): List<Date> {
+        private fun filterBusTimes(busTimes: List<Long>, amountOfTimes: Int): List<LocalDateTime> {
             return busTimes
                 .sorted()
                 .take(amountOfTimes)
                 .map { time ->
-                    Date(time * 1000)
+                    LocalDateTime.ofInstant(Instant.ofEpochSecond(time), ZoneId.systemDefault())
                 }
         }
     }
