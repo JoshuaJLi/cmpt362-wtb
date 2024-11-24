@@ -1,9 +1,8 @@
 package ca.wheresthebus.ui.nearby
 
-import android.content.pm.PackageManager
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.location.Location
-import android.location.LocationRequest
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,15 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ca.wheresthebus.R
-import ca.wheresthebus.constants.Constants.ACTION_START_SERVICE
-import ca.wheresthebus.constants.Constants.ACTION_STOP_SERVICE
 import ca.wheresthebus.databinding.FragmentNearbyBinding
 import ca.wheresthebus.service.NearbyService
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -38,6 +36,9 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
     private lateinit var nearbyViewModel: NearbyViewModel;
 
     private lateinit var mMap: GoogleMap;
+    private lateinit var locationRequest: LocationRequest;
+    private lateinit var locationCallback: LocationCallback;
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNearbyBinding.inflate(inflater, container, false)
@@ -51,22 +52,39 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
 
-        nearbyViewModel.loadStopsFromCSV(requireContext());
-        nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
-        nearbyViewModel.getLocationPermissions(requireContext());
-
         initializeMapFragment();
 
+        nearbyViewModel.loadStopsFromCSV(requireContext());
+        nearbyViewModel.getLocationPermissions(requireContext());
+
+        nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
+
+        nearbyViewModel.locationUpdates.observe(viewLifecycleOwner) { location ->
+            val currentLocation: LatLng = LatLng(location.latitude, location.longitude);
+
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(currentLocation)
+                    .title("Current Location")
+                    .snippet("Your current location")
+                    .draggable(true)
+            );
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f));
+        }
+        nearbyViewModel.startLocationUpdates();
+
         // start the nearby service to start tracking the user's location
-        sendCommandToService(ACTION_START_SERVICE);
+//        sendCommandToService(ACTION_START_SERVICE);
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
         // give the map some time to load, then grab the user's current location
         Handler(Looper.getMainLooper()).postDelayed({
             // Get the last known location
+            // TODO: add permission checks
             nearbyViewModel.fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     // Get the location's latitude and longitude
@@ -119,6 +137,7 @@ class NearbyFragment : Fragment(), OnMapReadyCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        nearbyViewModel.stopLocationUpdates();
     }
 
     private fun initializeMapFragment() {
