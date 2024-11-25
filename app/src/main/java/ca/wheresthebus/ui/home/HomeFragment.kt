@@ -7,16 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.ModelFactory
+import ca.wheresthebus.data.RouteId
+import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
+import ca.wheresthebus.service.GtfsRealtimeHelper
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -60,6 +65,7 @@ class HomeFragment : Fragment() {
             favouriteStopsList.clear()
             favouriteStopsList.addAll(favouriteStops)
             stopAdapter.notifyDataSetChanged()
+            refreshBusTimes()
         }
     }
 
@@ -86,17 +92,29 @@ class HomeFragment : Fragment() {
     private fun setUpSwipeRefresh() {
         swipeRefreshLayout = binding.swipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener {
-            // do gtfs realtime api call
-            refreshData()
+            refreshBusTimes()
         }
     }
 
-    private fun refreshData() {
-        // Simulate an API call
-        swipeRefreshLayout.postDelayed({
-            swipeRefreshLayout.isRefreshing = false
-            Log.d("SwipeRefresh", "Data refresh complete")
-        }, 500) // Simulated delay of .5 seconds
+    private fun refreshBusTimes() {
+        lifecycleScope.launch {
+            try {
+                // Create a map of favourite stops to their next bus times
+                val busTimesMap = mutableMapOf<String, List<String>>()
+                favouriteStopsList.forEach { stop ->
+                    val nextBusTimes = GtfsRealtimeHelper.getBusTimes(
+                        StopId(stop.busStop.id.value),
+                        RouteId(stop.route.id.value))
+                    busTimesMap[stop.busStop.code.value] = nextBusTimes
+                }
+
+                stopAdapter.updateBusTimes(busTimesMap)
+                swipeRefreshLayout.isRefreshing = false
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "Error refreshing bus times", e)
+                swipeRefreshLayout.isRefreshing = false
+            }
+        }
     }
 
     override fun onDestroyView() {

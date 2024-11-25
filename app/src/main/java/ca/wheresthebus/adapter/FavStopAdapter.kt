@@ -12,6 +12,8 @@ class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>
 ) : RecyclerView.Adapter<FavStopAdapter.FavStopViewHolder>() {
 
+    private val busTimesMap: MutableMap<String, List<String>> = mutableMapOf()
+
     inner class FavStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val nickname: TextView = view.findViewById(R.id.text_stop_nickname)
         private val id: TextView = view.findViewById(R.id.text_stop_id)
@@ -20,15 +22,27 @@ class FavStopAdapter(
         fun bind(stop: FavouriteStop) {
             nickname.text = buildString {
                 append(stop.route.shortName)
-                append(" - ")
-                append(stop.nickname)
+                if (stop.nickname.isNotEmpty()) {
+                    append(" - ")
+                    append(stop.nickname)
+                }
             }
+
             id.text = buildString {
                 append("Stop Code: ")
                 append(stop.busStop.code.value)
             }
-            //todo: fixate with the live views.
-            upcoming.text = stop.busStop.location.toString()
+
+            val busTimes = busTimesMap[stop.busStop.code.value]
+            if (!busTimes.isNullOrEmpty()) {
+                upcoming.text = buildString {
+                    append(busTimes.joinToString(", "))
+                }
+            } else {
+                upcoming.text = buildString {
+                    append("No upcoming buses")
+                }
+            }
         }
 
         init {
@@ -53,8 +67,9 @@ class FavStopAdapter(
         }
     }
 
-    // TODO: make an actual class to hold this information
-    fun updateNextBus(listOfBusCodeAndNextTime: List<String>) {
-
+    fun updateBusTimes(busTimes: Map<String, List<String>>) {
+        busTimesMap.clear()
+        busTimesMap.putAll(busTimes)
+        notifyDataSetChanged()
     }
 }
