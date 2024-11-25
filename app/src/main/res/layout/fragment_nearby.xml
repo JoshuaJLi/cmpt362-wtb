@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:text="Expand List" />
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/NearbyFragment_recenterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

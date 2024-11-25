@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ca.wheresthebus.R
@@ -30,6 +31,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class NearbyFragment :
     Fragment(),
@@ -46,8 +49,8 @@ class NearbyFragment :
     private var currentLocationMarker: Marker? = null;
     private var currentLocationRadius: Circle? = null;
 
-    private lateinit var expandListButton: Button;
-    private lateinit var recenterButton: Button;
+    private lateinit var expandListButton: ExtendedFloatingActionButton;
+    private lateinit var recenterButton: FloatingActionButton;
     private lateinit var nearbyBottomSheet: BottomSheetDialogFragment;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -183,5 +186,15 @@ class NearbyFragment :
 
         }
         nearbyViewModel.startLocationUpdates();
+
+        // observe the isTracking to change the icon respectively for the recenter button
+        nearbyViewModel.isTracking.observe(viewLifecycleOwner) { isTracking ->
+            if (isTracking) {
+                recenterButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.baseline_gps_fixed_24));
+            } else {
+                recenterButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.baseline_gps_not_fixed_24));
+            }
+        }
     }
+
 }

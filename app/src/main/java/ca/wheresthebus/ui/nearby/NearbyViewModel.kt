@@ -39,6 +39,7 @@ class NearbyViewModel : ViewModel() {
 
     private val _locationUpdates: MutableLiveData<Location> = MutableLiveData<Location>();
     val locationUpdates: LiveData<Location> = _locationUpdates; // this makes it so location live data is read only
+    val isTracking: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true);
 
     var stopList: ArrayList<Stop> = ArrayList<Stop>();
     var dynamicStopList: MutableLiveData<ArrayList<Stop>> = MutableLiveData<ArrayList<Stop>>();
@@ -131,11 +132,14 @@ class NearbyViewModel : ViewModel() {
             }
         };
 
+        isTracking.postValue(true);
+
         Log.d("NearbyViewModel", "Location updates started");
     }
 
     fun stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        isTracking.postValue(false);
         Log.d("NearbyViewModel", "Location updates stopped");
     }
 }
