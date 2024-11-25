@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ca.wheresthebus.R
@@ -30,7 +31,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
+class NearbyFragment :
+    Fragment(),
+    OnMapReadyCallback {
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -39,7 +42,7 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
 
     private lateinit var nearbyViewModel: NearbyViewModel;
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var googleMap: GoogleMap
     private var currentLocationMarker: Marker? = null;
     private var currentLocationRadius: Circle? = null;
 
@@ -62,19 +65,19 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
         initializeMapFragment();
         initializeViewModel();
         initializeInterface();
+        observeLocationUpdates();
     }
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-    }
+        this.googleMap = googleMap
+        Toast.makeText(context, "Finding bus stops near you...", Toast.LENGTH_SHORT).show();
 
-    override fun onCameraMove() {
-        // if the camera is moved, change the recenter button icon to an unfilled compass (gps_not_fixed)
-        recenterButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.baseline_gps_not_fixed_24, 0, 0);
-
-        // now stop location updates
-        nearbyViewModel.stopLocationUpdates();
+        // disable location updates when a marker is clicked
+        googleMap.setOnMarkerClickListener {
+            nearbyViewModel.stopLocationUpdates();
+            false;
+        }
     }
 
     override fun onDestroyView() {
@@ -94,9 +97,37 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
         nearbyViewModel.loadStopsFromCSV(requireContext());
         nearbyViewModel.getLocationPermissions(requireContext());
         nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
+    }
 
+    private fun initializeInterface() {
+
+        expandListButton = requireView().findViewById(R.id.NearbyFragment_expandListButton);
+        recenterButton = requireView().findViewById(R.id.NearbyFragment_recenterButton);
+
+        expandListButton.setOnClickListener {
+            val nearbyStops: ArrayList<Stop> = ArrayList()
+            for (stop in nearbyViewModel.stopList) {
+                val stopLocation = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble())
+                val currentLocation = LatLng(nearbyViewModel.locationUpdates.value!!.latitude, nearbyViewModel.locationUpdates.value!!.longitude)
+
+                if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
+                    nearbyStops.add(stop)
+                }
+            }
+            nearbyBottomSheet = NearbyBottomSheet(nearbyStops)
+            nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
+        }
+
+        recenterButton.setOnClickListener {
+            nearbyViewModel.startLocationUpdates();
+            Toast.makeText(context, "Recentering...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private fun observeLocationUpdates() {
         // whenever a location is posted into the live data, this will be called
         nearbyViewModel.locationUpdates.observe(viewLifecycleOwner) { location ->
+
             val currentLocation: LatLng = LatLng(location.latitude, location.longitude);
 
             // remove the previous marker once the location updates
@@ -106,14 +137,14 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
             }
 
             try {
-                mMap.clear();
+                googleMap.clear();
             } catch (e: Exception) {
                 Log.e("NearbyFragment", "Failed to clear map: ${e.message}");
                 return@observe;
             }
 
             // add a marker at the current location
-            currentLocationMarker = mMap.addMarker(
+            currentLocationMarker = googleMap.addMarker(
                 MarkerOptions()
                     .position(currentLocation)
                     .title("Current Location")
@@ -123,7 +154,7 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
             );
 
             // add a circle radius around the user's location
-            currentLocationRadius = mMap.addCircle(
+            currentLocationRadius = googleMap.addCircle(
                 CircleOptions()
                     .center(currentLocation)
                     .radius(300.0)
@@ -145,28 +176,12 @@ class NearbyFragment : Fragment(), OnMapReadyCallback, OnCameraMoveListener {
             // add the nearby stops to the map
             for (stop in nearbyStops) {
                 val newStopLatLng = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble());
-                mMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.stopNumber + " - " + stop.stopName));
+                googleMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.stopNumber + " - " + stop.stopName));
             }
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f));
+
         }
         nearbyViewModel.startLocationUpdates();
     }
-
-    private fun initializeInterface() {
-
-        nearbyBottomSheet = NearbyBottomSheet();
-        expandListButton = requireView().findViewById(R.id.NearbyFragment_expandListButton);
-        recenterButton = requireView().findViewById(R.id.NearbyFragment_recenterButton);
-
-        expandListButton.setOnClickListener {
-            nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet");
-        }
-
-        recenterButton.setOnClickListener {
-            nearbyViewModel.startLocationUpdates();
-        }
-
-    }
-
 }

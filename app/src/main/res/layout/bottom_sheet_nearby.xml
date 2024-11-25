@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    style="@style/Widget.Material3.BottomSheet"
     android:padding="16dp">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -12,13 +12,32 @@
         android:layout_gravity="top"
         />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This is a bottom sheet"
-        android:textSize="18sp"
-        android:padding="8dp" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="8dp">
 
-    <!-- Add more views here -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/outline_location_on_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nearby based on your location"
+            android:textSize="12sp"
+            android:paddingStart="8dp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/nearby_stops_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
 </LinearLayout>
