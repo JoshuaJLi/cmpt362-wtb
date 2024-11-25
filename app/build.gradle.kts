@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("io.realm.kotlin") version "1.16.0"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.protobuf") version "0.9.4"
 }
 
 secrets {
@@ -54,6 +55,21 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+    }
+}
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.12"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
     }
 }
 
@@ -78,4 +94,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.okhttp)
+    implementation(libs.protobuf.javalite)
+    implementation(libs.gson)
 }
