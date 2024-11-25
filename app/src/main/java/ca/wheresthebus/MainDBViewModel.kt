@@ -11,6 +11,7 @@ import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route
+import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
@@ -164,5 +165,10 @@ class MainDBViewModel : ViewModel() {
             return null
         }
         return modelFactory.toRoute(route[0]) ?: null
+    }
+
+    fun getTrips(): ArrayList<ScheduledTrip> {
+        val trips = ArrayList<ScheduledTrip>()
+        return trips
     }
 }
