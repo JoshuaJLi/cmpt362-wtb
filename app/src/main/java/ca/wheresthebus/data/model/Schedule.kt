@@ -1,4 +1,4 @@
-package ca.wheresthebus.data
+package ca.wheresthebus.data.model
 
 import java.time.DayOfWeek
 import java.time.LocalTime
