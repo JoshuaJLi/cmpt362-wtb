@@ -108,17 +108,23 @@ class NearbyFragment :
         recenterButton = requireView().findViewById(R.id.NearbyFragment_recenterButton);
 
         expandListButton.setOnClickListener {
-            val nearbyStops: ArrayList<Stop> = ArrayList()
-            for (stop in nearbyViewModel.stopList) {
-                val stopLocation = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble())
-                val currentLocation = LatLng(nearbyViewModel.locationUpdates.value!!.latitude, nearbyViewModel.locationUpdates.value!!.longitude)
+            try {
+                val nearbyStops: ArrayList<Stop> = ArrayList()
+                for (stop in nearbyViewModel.stopList) {
+                    val stopLocation = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble())
+                    val currentLocation = LatLng(nearbyViewModel.locationUpdates.value!!.latitude, nearbyViewModel.locationUpdates.value!!.longitude)
 
-                if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
-                    nearbyStops.add(stop)
+                    if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
+                        nearbyStops.add(stop)
+                    }
                 }
+                nearbyBottomSheet = NearbyBottomSheet(nearbyStops)
+                nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
+            } catch (e: Exception) {
+                Log.e("NearbyFragment", "${e.message}");
+                Toast.makeText(context, "Failed to load nearby stops, please wait a moment.", Toast.LENGTH_SHORT).show();
+                return@setOnClickListener;
             }
-            nearbyBottomSheet = NearbyBottomSheet(nearbyStops)
-            nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
         }
 
         recenterButton.setOnClickListener {
