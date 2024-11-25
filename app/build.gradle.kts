@@ -35,6 +35,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // this build config field is to set the maps api key in the manifest properly - from chatgpt :)
+        buildConfigField("String", "MAPS_KEY", "\"${project.findProperty("MAPS_KEY")}\"");
     }
 
     buildTypes {
