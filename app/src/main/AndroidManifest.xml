@@ -41,10 +41,6 @@
                 android:resource="@xml/nfc_filters" />
         </activity>
 
-        <service
-            android:name=".service.NearbyService"
-            android:foregroundServiceType="location" />
-
     </application>
 
 </manifest>
