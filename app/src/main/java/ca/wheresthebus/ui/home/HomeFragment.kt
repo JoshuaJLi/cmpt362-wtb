@@ -1,6 +1,5 @@
 package ca.wheresthebus.ui.home
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.ModelFactory
@@ -34,6 +34,8 @@ class HomeFragment : Fragment() {
     //private val allBusStops : ArrayList<BusStop> = arrayListOf()
     private lateinit var modelFactory: ModelFactory
 
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,6 +49,7 @@ class HomeFragment : Fragment() {
         setUpAdapter()
         setUpFab()
         setUpObservers()
+        setUpSwipeRefresh()
         return root
     }
 
@@ -78,6 +81,22 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = stopAdapter
         }
+    }
+
+    private fun setUpSwipeRefresh() {
+        swipeRefreshLayout = binding.swipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener {
+            // do gtfs realtime api call
+            refreshData()
+        }
+    }
+
+    private fun refreshData() {
+        // Simulate an API call
+        swipeRefreshLayout.postDelayed({
+            swipeRefreshLayout.isRefreshing = false
+            Log.d("SwipeRefresh", "Data refresh complete")
+        }, 500) // Simulated delay of .5 seconds
     }
 
     override fun onDestroyView() {

@@ -63,9 +63,9 @@ class GtfsRealtimeHelper {
             feedMessage.entityList.forEach { entity ->
                 if (entity.hasTripUpdate()) {
                     val tripUpdate = entity.tripUpdate
-                    if (tripUpdate.trip.routeId == routeId.id) {
+                    if (tripUpdate.trip.routeId == routeId.value) {
                         tripUpdate.stopTimeUpdateList.forEach { stopTimeUpdate ->
-                            if (stopTimeUpdate.stopId == stopId.id) {
+                            if (stopTimeUpdate.stopId == stopId.value) {
                                 stopTimeUpdate.arrival?.time?.let {
                                     busTimes.add(it)
                                 }
