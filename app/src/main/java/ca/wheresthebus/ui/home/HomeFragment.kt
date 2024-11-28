@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +25,7 @@ import ca.wheresthebus.databinding.FragmentHomeBinding
 import ca.wheresthebus.service.GtfsRealtimeHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.Duration
@@ -34,6 +36,7 @@ class HomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private val homeViewModel: HomeViewModel by viewModels()
 
     private lateinit var stopAdapter: FavStopAdapter
     private lateinit var stopsView : RecyclerView
@@ -71,6 +74,10 @@ class HomeFragment : Fragment() {
             favouriteStopsList.addAll(favouriteStops)
             stopAdapter.notifyDataSetChanged()
             refreshBusTimes()
+        }
+
+        homeViewModel.busTimes.observe(requireActivity()){
+            stopAdapter.updateBusTimes(it)
         }
     }
 
@@ -113,7 +120,11 @@ class HomeFragment : Fragment() {
                     busTimesMap[stop.busStop.code] = nextBusTimes
                 }
 
-                stopAdapter.updateBusTimes(busTimesMap)
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    homeViewModel.busTimes.value = busTimesMap
+                }
+
                 swipeRefreshLayout.isRefreshing = false
             } catch (e: Exception) {
                 Log.e("HomeFragment", "Error refreshing bus times", e)

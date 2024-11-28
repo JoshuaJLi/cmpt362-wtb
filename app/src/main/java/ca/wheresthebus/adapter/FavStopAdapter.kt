@@ -37,16 +37,13 @@ class FavStopAdapter(
 
             val busTimes = busTimesMap[stop.busStop.code]
             if (!busTimes.isNullOrEmpty()) {
-                busTimes.map { it.toMinutes() }
-                    .map {
-                        if (it >= 1) {
-                            return@map "$it min"
-                        } else {
-                            return@map "Now"
-                        }
-                    }
+                val formattedTimes = busTimes.map { busArrivalTime ->
+                    val minutes = busArrivalTime.toMinutes()
+                    if (minutes >= 1) "$minutes min" else "Now"
+                }
+
                 upcoming.text = buildString {
-                    append(busTimes.joinToString(", "))
+                    append(formattedTimes.joinToString(", "))
                 }
             } else {
                 upcoming.text = buildString {
