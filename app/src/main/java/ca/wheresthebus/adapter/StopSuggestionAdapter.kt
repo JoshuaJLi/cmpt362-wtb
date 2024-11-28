@@ -25,25 +25,24 @@ class StopSuggestionAdapter(
     private val modelFactory: ModelFactory,
     private val context: Context
 ) : RecyclerView.Adapter<StopSuggestionAdapter.SuggestedStopViewHolder>() {
-    private val routeShortNames = ArrayList<String>()
 
     inner class SuggestedStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val stopName: TextView = view.findViewById(R.id.suggested_stop_name)
         private val stopCode: TextView = view.findViewById(R.id.suggested_stop_code)
         private val routesAtStop: TextView = view.findViewById(R.id.suggested_stop_routes)
+        // Key is the route short name
+        private val routesMap: MutableMap<String, Route> = mutableMapOf()
 
         fun bind(stop: BusStop) {
             stopName.text = stop.name
             stopCode.text = stop.code.value
 
-            // Clear old content first
-            routeShortNames.clear()
+            // Clear old content
+            routesMap.clear()
             routesAtStop.text = ""
 
-            for (route in stop.routes) {
-                routeShortNames.add(route.shortName)
-            }
-            routesAtStop.text = routeShortNames.joinToString(", ")
+            stop.routes.forEach { routesMap[it.shortName] = it }
+            routesAtStop.text = routesMap.keys.joinToString(", ")
         }
 
         init {
@@ -52,33 +51,46 @@ class StopSuggestionAdapter(
                 val builder = AlertDialog.Builder(view.context)
                 val customView = LayoutInflater.from(view.context).inflate(R.layout.dialog_add_fav_stop, null)
                 builder.setView(customView)
+
                 val nicknameEditText: EditText = customView.findViewById(R.id.nicknameEditText)
                 val routesSpinner: Spinner = customView.findViewById(R.id.routeChoiceSpinner)
-                val routesAdapter = ArrayAdapter<String>(context, R.layout.route_spinner_item, routeShortNames)
+
+                val routesAdapter = ArrayAdapter(context, R.layout.route_spinner_item, routesMap.keys.toList())
                 var selectedRoute: Route? = null
+
                 routesSpinner.adapter = routesAdapter
-                routesSpinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+                routesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>,
                         view: View?,
                         position: Int,
                         id: Long
                     ) {
-                        selectedRoute = mainDBViewModel.searchForRouteByShortName(routeShortNames[position])
+                        val key = routesSpinner.adapter.getItem(position)
+                        selectedRoute = routesMap[key]
                     }
-
                     override fun onNothingSelected(parent: AdapterView<*>) {
                         selectedRoute = null
                     }
-                })
-                builder.setTitle("Add Favourite Stop!").setNegativeButton("Cancel") { _, _ ->
-                    // Handle the negative button click
+                }
+
+                // Creating dialog
+                builder.setTitle("Add Favourite Stop").setNegativeButton("Cancel") { _, _ ->
+                    // Do nothing on cancel
                 }.setPositiveButton("Ok") { _, _ ->
                     if (selectedRoute != null) {
-                        val newFavouriteStop = FavouriteStop(nicknameEditText.text.toString(), selectedStop, selectedRoute!!)
+                        val newFavouriteStop = FavouriteStop(
+                            nicknameEditText.text.toString(),
+                            selectedStop,
+                            selectedRoute!!
+                        )
                         mainDBViewModel.insertFavouriteStop(newFavouriteStop)
                     } else {
-                        Toast.makeText(view.context, "This route does not stop here, try again.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            view.context,
+                            "Please select a valid bus route.",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }.create().show()
             }
