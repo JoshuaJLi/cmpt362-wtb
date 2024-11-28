@@ -80,6 +80,7 @@ class FavStopAdapter(
     fun updateBusTimes(busTimes: Map<StopCode, List<Duration>>) {
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
+        // TODO: figure out a more efficient way to do this in the future
         notifyDataSetChanged()
     }
 }
