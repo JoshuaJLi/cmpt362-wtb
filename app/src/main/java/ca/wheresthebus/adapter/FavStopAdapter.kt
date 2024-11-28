@@ -6,13 +6,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
+import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.model.FavouriteStop
+import java.time.Duration
 
 class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>
 ) : RecyclerView.Adapter<FavStopAdapter.FavStopViewHolder>() {
 
-    private val busTimesMap: MutableMap<String, List<String>> = mutableMapOf()
+    private val busTimesMap: MutableMap<StopCode, List<Duration>> = mutableMapOf()
 
     inner class FavStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val nickname: TextView = view.findViewById(R.id.text_stop_nickname)
@@ -33,8 +35,16 @@ class FavStopAdapter(
                 append(stop.busStop.code.value)
             }
 
-            val busTimes = busTimesMap[stop.busStop.code.value]
+            val busTimes = busTimesMap[stop.busStop.code]
             if (!busTimes.isNullOrEmpty()) {
+                busTimes.map { it.toMinutes() }
+                    .map {
+                        if (it >= 1) {
+                            return@map "$it min"
+                        } else {
+                            return@map "Now"
+                        }
+                    }
                 upcoming.text = buildString {
                     append(busTimes.joinToString(", "))
                 }
@@ -67,7 +77,7 @@ class FavStopAdapter(
         }
     }
 
-    fun updateBusTimes(busTimes: Map<String, List<String>>) {
+    fun updateBusTimes(busTimes: Map<StopCode, List<Duration>>) {
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
         notifyDataSetChanged()

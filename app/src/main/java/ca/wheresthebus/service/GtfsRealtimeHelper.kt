@@ -25,7 +25,7 @@ class GtfsRealtimeHelper {
         private val client = OkHttpClient()
         private const val GTFS_API_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"
 
-        suspend fun getBusTimes(stopId: StopId, routeId: RouteId): List<String> {
+        suspend fun getBusTimes(stopId: StopId, routeId: RouteId): List<Duration> {
             return try {
                 val feedMessage = callGtfsRealtime()
                 val busTimes = findBusTimes(feedMessage, stopId, routeId)
@@ -57,40 +57,25 @@ class GtfsRealtimeHelper {
          * matching the {stopId} and {routeId} parameters.
          */
         private fun findBusTimes(feedMessage: FeedMessage, stopId: StopId, routeId: RouteId): List<Long> {
-            val busTimes = mutableListOf<Long>()
-
             // Iterate through the entities in the feed message and add matching bus times to the list
-            feedMessage.entityList.forEach { entity ->
-                if (entity.hasTripUpdate()) {
-                    val tripUpdate = entity.tripUpdate
-                    if (tripUpdate.trip.routeId == routeId.value) {
-                        tripUpdate.stopTimeUpdateList.forEach { stopTimeUpdate ->
-                            if (stopTimeUpdate.stopId == stopId.value) {
-                                stopTimeUpdate.arrival?.time?.let {
-                                    busTimes.add(it)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return busTimes
+            return feedMessage.entityList
+                .asSequence()
+                .filter { entity ->  entity.hasTripUpdate()}
+                .map { trip -> trip.tripUpdate }
+                .filter { update -> update.trip.routeId == routeId.value}
+                .map { update -> update.stopTimeUpdateList }
+                .flatten()
+                .filter { update -> update.stopId == stopId.value  }
+                .map { stopTime -> stopTime.arrival?.time }
+                .filterNotNull()
+                .toList()
         }
 
-        private fun convertBusTimes(busTimes: List<Long>): List<String> {
+        private fun convertBusTimes(busTimes: List<Long>): List<Duration> {
             return busTimes
                 .sorted()
                 .take(BUS_RETRIEVAL_MAX)
-                .map { time ->
-                    val currentTime = Instant.now()
-                    val busTime = Instant.ofEpochSecond(time)
-                    val duration = Duration.between(currentTime, busTime).toMinutes()
-                    when {
-                        duration >= 1 -> "$duration min"
-                        else -> "Now"
-                    }
-                }
+                .map { Duration.between(Instant.now(), Instant.ofEpochSecond(it))}
         }
     }
 }
