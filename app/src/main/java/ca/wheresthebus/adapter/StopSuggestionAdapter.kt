@@ -25,68 +25,74 @@ class StopSuggestionAdapter(
     private val modelFactory: ModelFactory,
     private val context: Context
 ) : RecyclerView.Adapter<StopSuggestionAdapter.SuggestedStopViewHolder>() {
-    private val routeShortNames = ArrayList<String>()
 
-    inner class SuggestedStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class SuggestedStopViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
         private val stopName: TextView = view.findViewById(R.id.suggested_stop_name)
         private val stopCode: TextView = view.findViewById(R.id.suggested_stop_code)
         private val routesAtStop: TextView = view.findViewById(R.id.suggested_stop_routes)
+
+        // Key is the route short name
+        private var customView: View =
+            LayoutInflater.from(view.context).inflate(R.layout.dialog_add_fav_stop, null)
+        private val nicknameEditText: EditText = customView.findViewById(R.id.nicknameEditText)
+        private val routesSpinner: Spinner = customView.findViewById(R.id.routeChoiceSpinner)
 
         fun bind(stop: BusStop) {
             stopName.text = stop.name
             stopCode.text = stop.code.value
 
-            // Clear old content first
-            routeShortNames.clear()
-            routesAtStop.text = ""
+            val routesMap = stop.routes.associateBy { it.shortName }
+            routesAtStop.text = routesMap.keys.joinToString(", ")
 
-            for (route in stop.routes) {
-                routeShortNames.add(route.shortName)
+            var selectedRoute: Route? = null
+
+            routesSpinner.adapter = ArrayAdapter(context, R.layout.route_spinner_item, routesMap.keys.toList())
+            routesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>, view: View?, position: Int, id: Long
+                ) {
+                    val key = routesSpinner.adapter.getItem(position)
+                    selectedRoute = routesMap[key]
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    selectedRoute = null
+                }
             }
-            routesAtStop.text = routeShortNames.joinToString(", ")
-        }
 
-        init {
             view.setOnClickListener {
                 val selectedStop = suggestedStops[adapterPosition]
-                val builder = AlertDialog.Builder(view.context)
-                val customView = LayoutInflater.from(view.context).inflate(R.layout.dialog_add_fav_stop, null)
-                builder.setView(customView)
-                val nicknameEditText: EditText = customView.findViewById(R.id.nicknameEditText)
-                val routesSpinner: Spinner = customView.findViewById(R.id.routeChoiceSpinner)
-                val routesAdapter = ArrayAdapter<String>(context, R.layout.route_spinner_item, routeShortNames)
-                var selectedRoute: Route? = null
-                routesSpinner.adapter = routesAdapter
-                routesSpinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        selectedRoute = mainDBViewModel.searchForRouteByShortName(routeShortNames[position])
-                    }
+                val builder = AlertDialog.Builder(customView.context)
 
-                    override fun onNothingSelected(parent: AdapterView<*>) {
-                        selectedRoute = null
-                    }
-                })
-                builder.setTitle("Add Favourite Stop!").setNegativeButton("Cancel") { _, _ ->
-                    // Handle the negative button click
-                }.setPositiveButton("Ok") { _, _ ->
-                    if (selectedRoute != null) {
-                        val newFavouriteStop = FavouriteStop(nicknameEditText.text.toString(), selectedStop, selectedRoute!!)
-                        mainDBViewModel.insertFavouriteStop(newFavouriteStop)
-                    } else {
-                        Toast.makeText(view.context, "This route does not stop here, try again.", Toast.LENGTH_LONG).show()
-                    }
-                }.create().show()
+                // Creating dialog
+                builder
+                    .setView(customView)
+                    .setTitle("Add Favourite Stop")
+                    .setNegativeButton("Cancel") { _, _ -> }
+                    .setPositiveButton("Ok") { _, _ ->
+                        if (selectedRoute != null) {
+                            mainDBViewModel.insertFavouriteStop(
+                                FavouriteStop(
+                                    nicknameEditText.text.toString(),
+                                    selectedStop,
+                                    selectedRoute!!
+                                )
+                            )
+                        } else {
+                            Toast.makeText(
+                                view.context,
+                                "Please select a valid bus route.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }.create().show()
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuggestedStopViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_suggested_bus, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_suggested_bus, parent, false)
         return SuggestedStopViewHolder(view)
     }
 
