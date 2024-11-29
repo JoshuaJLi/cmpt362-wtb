@@ -6,11 +6,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
+import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.model.FavouriteStop
+import java.time.Duration
 
 class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>
 ) : RecyclerView.Adapter<FavStopAdapter.FavStopViewHolder>() {
+
+    private val busTimesMap: MutableMap<StopCode, List<Duration>> = mutableMapOf()
 
     inner class FavStopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val nickname: TextView = view.findViewById(R.id.text_stop_nickname)
@@ -20,15 +24,32 @@ class FavStopAdapter(
         fun bind(stop: FavouriteStop) {
             nickname.text = buildString {
                 append(stop.route.shortName)
-                append(" - ")
-                append(stop.nickname)
+                if (stop.nickname.isNotEmpty()) {
+                    append(" - ")
+                    append(stop.nickname)
+                }
             }
+
             id.text = buildString {
                 append("Stop Code: ")
                 append(stop.busStop.code.value)
             }
-            //todo: fixate with the live views.
-            upcoming.text = stop.busStop.location.toString()
+
+            val busTimes = busTimesMap[stop.busStop.code]
+            if (!busTimes.isNullOrEmpty()) {
+                val formattedTimes = busTimes.map { busArrivalTime ->
+                    val minutes = busArrivalTime.toMinutes()
+                    if (minutes >= 1) "$minutes min" else "Now"
+                }
+
+                upcoming.text = buildString {
+                    append(formattedTimes.joinToString(", "))
+                }
+            } else {
+                upcoming.text = buildString {
+                    append("No upcoming buses")
+                }
+            }
         }
 
         init {
@@ -53,8 +74,10 @@ class FavStopAdapter(
         }
     }
 
-    // TODO: make an actual class to hold this information
-    fun updateNextBus(listOfBusCodeAndNextTime: List<String>) {
-
+    fun updateBusTimes(busTimes: Map<StopCode, List<Duration>>) {
+        busTimesMap.clear()
+        busTimesMap.putAll(busTimes)
+        // TODO: figure out a more efficient way to do this in the future
+        notifyDataSetChanged()
     }
 }

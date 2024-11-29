@@ -21,6 +21,7 @@ import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.NfcService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
+import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import ca.wheresthebus.utils.Utils
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        enableEdgeToEdge()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

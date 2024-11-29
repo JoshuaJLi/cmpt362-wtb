@@ -1,6 +1,8 @@
 package ca.wheresthebus.service
 
 import android.util.Log
+import ca.wheresthebus.Globals
+import ca.wheresthebus.Globals.BUS_RETRIEVAL_MAX
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopId
 import com.google.transit.realtime.GtfsRealtime.FeedMessage
@@ -11,6 +13,7 @@ import okhttp3.Request
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.Duration
 
 /**
  *  Class to grab bus times from the GTFS realtime API.
@@ -25,11 +28,11 @@ class GtfsRealtimeHelper {
         private val client = OkHttpClient()
         private const val GTFS_API_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"
 
-        suspend fun getBusTimes(stopId: StopId, routeId: RouteId, amountOfTimes: Int): List<LocalDateTime> {
+        suspend fun getBusTimes(stopId: StopId, routeId: RouteId): List<Duration> {
             return try {
                 val feedMessage = callGtfsRealtime()
                 val busTimes = grabBusTimes(feedMessage, stopId, routeId)
-                filterBusTimes(busTimes, amountOfTimes)
+                convertBusTimes(busTimes)
             } catch (e: Exception) {
                 Log.e("GTFS", "Error fetching GTFS realtime data", e)
                 emptyList()
@@ -57,34 +60,25 @@ class GtfsRealtimeHelper {
          * matching the {stopId} and {routeId} parameters.
          */
         private fun grabBusTimes(feedMessage: FeedMessage, stopId: StopId, routeId: RouteId): List<Long> {
-            val busTimes = mutableListOf<Long>()
-
             // Iterate through the entities in the feed message and add matching bus times to the list
-            feedMessage.entityList.forEach { entity ->
-                if (entity.hasTripUpdate()) {
-                    val tripUpdate = entity.tripUpdate
-                    if (tripUpdate.trip.routeId == routeId.value) {
-                        tripUpdate.stopTimeUpdateList.forEach { stopTimeUpdate ->
-                            if (stopTimeUpdate.stopId == stopId.value) {
-                                stopTimeUpdate.arrival?.time?.let {
-                                    busTimes.add(it)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return busTimes
+            return feedMessage.entityList
+                .asSequence()
+                .filter { entity ->  entity.hasTripUpdate()}
+                .map { trip -> trip.tripUpdate }
+                .filter { update -> update.trip.routeId == routeId.value}
+                .map { update -> update.stopTimeUpdateList }
+                .flatten()
+                .filter { update -> update.stopId == stopId.value  }
+                .map { stopTime -> stopTime.arrival?.time }
+                .filterNotNull()
+                .toList()
         }
 
-        private fun filterBusTimes(busTimes: List<Long>, amountOfTimes: Int): List<LocalDateTime> {
+        private fun convertBusTimes(busTimes: List<Long>): List<Duration> {
             return busTimes
                 .sorted()
-                .take(amountOfTimes)
-                .map { time ->
-                    LocalDateTime.ofInstant(Instant.ofEpochSecond(time), ZoneId.systemDefault())
-                }
+                .take(BUS_RETRIEVAL_MAX)
+                .map { Duration.between(Instant.now(), Instant.ofEpochSecond(it))}
         }
     }
 }
