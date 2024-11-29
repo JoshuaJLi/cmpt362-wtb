@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import ca.wheresthebus.R
+import ca.wheresthebus.databinding.ActivityAddTripsBinding
 
 class AddTripsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityAddTripsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -18,7 +22,15 @@ class AddTripsActivity : AppCompatActivity() {
             insets
         }
 
+        binding = ActivityAddTripsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        setUpSaveFab()
+    }
 
+    private fun setUpSaveFab() {
+        binding.fabNewTrip.setOnClickListener {
+            finish()
+        }
     }
 }

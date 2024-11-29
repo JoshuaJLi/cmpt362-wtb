@@ -14,4 +14,8 @@
     <string name="desc_fab_new_trip">Add Trip</string>
     <string name="heading_trip_calendar">Starts On</string>
     <string name="heading_trip_notification">Notification Duration</string>
+    <string name="desc_fab_save_trip">Save Trip</string>
+    <string name="fab_save_trip">Save Trip</string>
+    <string name="hint_trip_name">New Trip Name</string>
+    <string name="add_route_button_text">Add another route</string>
 </resources>
