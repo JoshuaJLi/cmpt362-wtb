@@ -1,5 +1,6 @@
 package ca.wheresthebus.ui.nearby
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -117,8 +118,7 @@ class NearbyViewModel : ViewModel() {
         this.mainDBViewModel = mainDBViewModel;
     }
 
-    @SuppressLint("MissingPermission")
-    fun startLocationUpdates() {
+    fun startLocationUpdates(context: Context) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 locationRequest = LocationRequest.Builder(
@@ -137,12 +137,16 @@ class NearbyViewModel : ViewModel() {
                     }
                 };
 
-                // TODO: check for permissions, suppressed for now
-                fusedLocationProviderClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper()
-                );
+                if (
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    fusedLocationProviderClient.requestLocationUpdates(
+                        locationRequest,
+                        locationCallback,
+                        Looper.getMainLooper()
+                    );
+                }
             }
         };
 

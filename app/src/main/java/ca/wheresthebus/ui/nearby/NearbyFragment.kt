@@ -73,7 +73,6 @@ class NearbyFragment :
         observeLocationUpdates();
     }
 
-    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         Toast.makeText(context, "Finding bus stops near you...", Toast.LENGTH_SHORT).show();
@@ -135,7 +134,7 @@ class NearbyFragment :
         }
 
         recenterButton.setOnClickListener {
-            nearbyViewModel.startLocationUpdates();
+            nearbyViewModel.startLocationUpdates(requireContext());
             Toast.makeText(context, "Recentering...", Toast.LENGTH_SHORT).show();
         }
     }
@@ -198,7 +197,7 @@ class NearbyFragment :
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f));
 
         }
-        nearbyViewModel.startLocationUpdates();
+        nearbyViewModel.startLocationUpdates(requireContext());
 
         // observe the isTracking to change the icon respectively for the recenter button
         nearbyViewModel.isTracking.observe(viewLifecycleOwner) { isTracking ->
