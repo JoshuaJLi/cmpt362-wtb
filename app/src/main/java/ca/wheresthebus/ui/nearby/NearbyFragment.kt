@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
 import ca.wheresthebus.data.model.BusStop
-import ca.wheresthebus.data.model.Stop
 import ca.wheresthebus.databinding.FragmentNearbyBinding
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory

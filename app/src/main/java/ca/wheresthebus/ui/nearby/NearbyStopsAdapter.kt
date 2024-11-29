@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.data.model.BusStop
-import ca.wheresthebus.data.model.Stop
 
 class NearbyStopsAdapter(private val stops: List<BusStop>) : RecyclerView.Adapter<NearbyStopsAdapter.ViewHolder>() {
 

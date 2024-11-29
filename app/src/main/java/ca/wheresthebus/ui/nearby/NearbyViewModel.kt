@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.data.model.BusStop
-import ca.wheresthebus.data.model.Stop
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -42,34 +41,9 @@ class NearbyViewModel : ViewModel() {
     val locationUpdates: LiveData<Location> = _locationUpdates; // this makes it so location live data is read only
     val isTracking: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true);
 
-    var stopList: ArrayList<Stop> = ArrayList<Stop>();
     var busStopList: ArrayList<BusStop> = ArrayList<BusStop>();
-    var dynamicStopList: MutableLiveData<ArrayList<Stop>> = MutableLiveData<ArrayList<Stop>>();
 
     // -- methods
-    fun loadStopsFromCSV(context: Context) {
-        val minput = InputStreamReader(context?.assets?.open("stops.csv"))
-        val reader = BufferedReader(minput)
-
-        var line: String?
-        while (reader.readLine().also { line = it } != null) {
-            val row: List<String> = line!!.split(",")
-            try {
-                val stopId = row[1]
-                val stopName = row[2]
-                val stopLat = row[4].toDouble()
-                val stopLon = row[5].toDouble()
-
-                val newStop = Stop(stopId, stopName, stopLat, stopLon)
-                stopList.add(newStop)
-            } catch (e: NumberFormatException) {
-                println("Failed to parse row: ${line}. Error: ${e.message}")
-            } catch (e: IndexOutOfBoundsException) {
-                println("Row has insufficient columns: $line")
-            }
-        }
-    }
-
     fun loadStopsFromDatabase() {
         // do this in a coroutine as there's a lot of stops
         viewModelScope.launch {
