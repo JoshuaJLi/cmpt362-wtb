@@ -11,7 +11,8 @@ import ca.wheresthebus.data.model.FavouriteStop
 import java.time.Duration
 
 class FavStopAdapter(
-    private val dataSet: ArrayList<FavouriteStop>
+    private val dataSet: ArrayList<FavouriteStop>,
+    private val onDelete: (FavouriteStop) -> Unit
 ) : RecyclerView.Adapter<FavStopAdapter.FavStopViewHolder>() {
 
     private val busTimesMap: MutableMap<StopCode, List<Duration>> = mutableMapOf()
@@ -69,8 +70,12 @@ class FavStopAdapter(
     }
 
     override fun onBindViewHolder(holder: FavStopViewHolder, position: Int) {
-        dataSet[position].let {
-            holder.bind(it)
+        dataSet[position].let { stop ->
+            holder.bind(stop)
+            holder.itemView.setOnLongClickListener {
+                onDelete(stop)
+                true
+            }
         }
     }
 
