@@ -18,16 +18,13 @@ import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.StopId
-import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import ca.wheresthebus.service.GtfsRealtimeHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.Duration
 
 class HomeFragment : Fragment() {
@@ -44,7 +41,6 @@ class HomeFragment : Fragment() {
     private lateinit var mainDBViewModel: MainDBViewModel
 
     private val favouriteStopsList : ArrayList<FavouriteStop> = arrayListOf()
-    //private val allBusStops : ArrayList<BusStop> = arrayListOf()
     private lateinit var modelFactory: ModelFactory
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
