@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.Stop
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class NearbyBottomSheet(private val stops: List<Stop>) : BottomSheetDialogFragment() {
+class NearbyBottomSheet(private val stops: List<BusStop>) : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bottom_sheet_nearby, container, false)

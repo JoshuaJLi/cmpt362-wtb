@@ -14,7 +14,9 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.Stop
 import ca.wheresthebus.databinding.FragmentNearbyBinding
 import com.google.android.gms.location.LocationServices
@@ -97,7 +99,11 @@ class NearbyFragment :
     }
 
     private fun initializeViewModel() {
-        nearbyViewModel.loadStopsFromCSV(requireContext());
+//        nearbyViewModel.loadStopsFromCSV(requireContext());
+        val mainDBViewModel: MainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class.java]
+        nearbyViewModel.setMainDBViewModel(mainDBViewModel);
+        nearbyViewModel.loadStopsFromDatabase();
+
         nearbyViewModel.getLocationPermissions(requireContext());
         nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
     }
@@ -109,17 +115,18 @@ class NearbyFragment :
 
         expandListButton.setOnClickListener {
             try {
-                val nearbyStops: ArrayList<Stop> = ArrayList()
-                for (stop in nearbyViewModel.stopList) {
-                    val stopLocation = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble())
-                    val currentLocation = LatLng(nearbyViewModel.locationUpdates.value!!.latitude, nearbyViewModel.locationUpdates.value!!.longitude)
+                val nearbyStops: ArrayList<BusStop> = ArrayList<BusStop>();
+                for (stop in nearbyViewModel.busStopList) {
+                    val stopLocation: LatLng = LatLng(stop.location.latitude, stop.location.longitude);
+                    val currentLocation: LatLng = LatLng(nearbyViewModel.locationUpdates.value!!.latitude, nearbyViewModel.locationUpdates.value!!.longitude);
 
                     if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
-                        nearbyStops.add(stop)
+                        nearbyStops.add(stop);
                     }
                 }
-                nearbyBottomSheet = NearbyBottomSheet(nearbyStops)
-                nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
+
+                nearbyBottomSheet = NearbyBottomSheet(nearbyStops);
+                nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet");
             } catch (e: Exception) {
                 Log.e("NearbyFragment", "${e.message}");
                 Toast.makeText(context, "Failed to load nearby stops, please wait a moment.", Toast.LENGTH_SHORT).show();
@@ -173,10 +180,10 @@ class NearbyFragment :
             );
             currentLocationRadius!!.isVisible = true; // won't be null idt
 
-            // calculate the distances between the user's location and the stops and make sure it's within the radius
-            val nearbyStops: ArrayList<Stop> = ArrayList<Stop>();
-            for (stop in nearbyViewModel.stopList) {
-                val stopLocation: LatLng = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble());
+            // calculate the distance between the user and the stops
+            val nearbyStops: ArrayList<BusStop> = ArrayList<BusStop>();
+            for (stop in nearbyViewModel.busStopList) {
+                val stopLocation: LatLng = LatLng(stop.location.latitude, stop.location.longitude);
                 if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
                     nearbyStops.add(stop);
                 }
@@ -184,8 +191,8 @@ class NearbyFragment :
 
             // add the nearby stops to the map
             for (stop in nearbyStops) {
-                val newStopLatLng = LatLng(stop.latitude.toDouble(), stop.longitude.toDouble());
-                googleMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.stopNumber + " - " + stop.stopName));
+                val newStopLatLng = LatLng(stop.location.latitude, stop.location.longitude);
+                googleMap.addMarker(MarkerOptions().position(newStopLatLng).title(stop.code.value + " - " + stop.name));
             }
 
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f));

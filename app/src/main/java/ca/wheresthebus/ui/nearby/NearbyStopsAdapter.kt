@@ -8,9 +8,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.Stop
 
-class NearbyStopsAdapter(private val stops: List<Stop>) : RecyclerView.Adapter<NearbyStopsAdapter.ViewHolder>() {
+class NearbyStopsAdapter(private val stops: List<BusStop>) : RecyclerView.Adapter<NearbyStopsAdapter.ViewHolder>() {
 
     private var expandedPosition: Int = RecyclerView.NO_POSITION
 
@@ -20,7 +21,6 @@ class NearbyStopsAdapter(private val stops: List<Stop>) : RecyclerView.Adapter<N
         val stopUpcoming: TextView = view.findViewById(R.id.NearbyBottomSheet_stopUpcoming)
         val extraInfo: LinearLayout = view.findViewById(R.id.extra_info)
         val saveButton: Button = view.findViewById(R.id.save_button)
-        val discardButton: Button = view.findViewById(R.id.discard_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,8 +31,8 @@ class NearbyStopsAdapter(private val stops: List<Stop>) : RecyclerView.Adapter<N
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val stop = stops[position]
-        holder.stopNickname.text = stop.stopName
-        holder.stopID.text = stop.stopNumber
+        holder.stopNickname.text = stop.name;
+        holder.stopID.text = stop.code.value;
         holder.stopUpcoming.text = "Upcoming Buses: NOT YET IMPLEMENTED"
 
         val isExpanded = position == expandedPosition

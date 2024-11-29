@@ -11,7 +11,10 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import ca.wheresthebus.MainDBViewModel
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.Stop
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -27,10 +30,7 @@ import java.io.InputStreamReader
 
 class NearbyViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
-    }
-    val text: LiveData<String> = _text
+    private lateinit var mainDBViewModel: MainDBViewModel;
 
     // -- properties
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient;
@@ -42,6 +42,7 @@ class NearbyViewModel : ViewModel() {
     val isTracking: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true);
 
     var stopList: ArrayList<Stop> = ArrayList<Stop>();
+    var busStopList: ArrayList<BusStop> = ArrayList<BusStop>();
     var dynamicStopList: MutableLiveData<ArrayList<Stop>> = MutableLiveData<ArrayList<Stop>>();
 
     // -- methods
@@ -64,6 +65,15 @@ class NearbyViewModel : ViewModel() {
                 println("Failed to parse row: ${line}. Error: ${e.message}")
             } catch (e: IndexOutOfBoundsException) {
                 println("Row has insufficient columns: $line")
+            }
+        }
+    }
+
+    fun loadStopsFromDatabase() {
+        // do this in a coroutine as there's a lot of stops
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                busStopList = ArrayList(mainDBViewModel.getAllStops());
             }
         }
     }
@@ -101,6 +111,10 @@ class NearbyViewModel : ViewModel() {
 
             return
         }
+    }
+
+    fun setMainDBViewModel(mainDBViewModel: MainDBViewModel) {
+        this.mainDBViewModel = mainDBViewModel;
     }
 
     @SuppressLint("MissingPermission")
