@@ -4,6 +4,8 @@ import android.location.Location
 import ca.wheresthebus.data.model.*
 import ca.wheresthebus.data.mongo_model.*
 import io.realm.kotlin.ext.toRealmList
+import java.time.DayOfWeek
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -65,6 +67,40 @@ class ModelFactory() {
             id = route.id.value
             shortName = route.shortName
             longName = route.longName
+        }
+    }
+
+    private fun toSchedule(mongoSchedule: MongoSchedule) : Schedule {
+        return Schedule(
+            DayOfWeek.of(mongoSchedule.day),
+            java.time.LocalTime.of(mongoSchedule.hour, mongoSchedule.minute)
+        )
+    }
+
+    fun toScheduledTrip(mongoScheduledTrip: MongoScheduledTrip): ScheduledTrip {
+        return ScheduledTrip(
+            id = ScheduledTripId(mongoScheduledTrip.id),
+            nickname = mongoScheduledTrip.nickname,
+            stops = mongoScheduledTrip.stops.map { toFavouriteBusStop(it) } as ArrayList<FavouriteStop>,
+            activeTimes = mongoScheduledTrip.activeTimes.map { toSchedule(it) } as ArrayList<Schedule>,
+            duration = Duration.ofMinutes(mongoScheduledTrip.duration))
+    }
+
+    fun toMongoScheduledTrip(trip: ScheduledTrip): MongoScheduledTrip {
+        return MongoScheduledTrip().apply {
+            id = trip.id.value
+            nickname = trip.nickname
+            stops = trip.stops.map { toMongoFavouriteStop(it) }.toRealmList()
+            activeTimes = trip.activeTimes.map { toMongoSchedule(it) }.toRealmList()
+            duration = trip.duration.toMinutes()
+        }
+    }
+
+    private fun toMongoSchedule(schedule: Schedule) : MongoSchedule {
+        return MongoSchedule().apply {
+            day = schedule.day.value
+            minute = schedule.time.minute
+            hour = schedule.time.hour
         }
     }
 

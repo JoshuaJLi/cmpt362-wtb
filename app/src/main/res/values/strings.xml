@@ -7,4 +7,7 @@
     <string name="desc_fab_new_fav">Add new favourite bus stop button</string>
     <string name="fab_new_fav_text">Add Favourite</string>
     <string name="hint_fav_search">Type a bus number or street name</string>
+    <string name="recycler_all_trips">All Trips</string>
+    <string name="recycler_upcoming_trips">Upcoming Trips</string>
+    <string name="recycler_active_trips">Active Trips</string>
 </resources>
