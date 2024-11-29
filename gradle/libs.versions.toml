@@ -16,6 +16,9 @@ navigationFragmentKtx = "2.8.3"
 navigationUiKtx = "2.8.3"
 legacySupportV4 = "1.0.0"
 fragmentKtx = "1.8.5"
+playServicesMaps = "19.0.0"
+playServicesLocation = "21.3.0"
+lifecycleService = "2.8.7"
 runtimeLivedata = "1.7.5"
 secretsGradlePlugin = "2.0.1"
 ui = "1.7.5"
@@ -42,6 +45,9 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuJavalite" }
 okhttp = { module="com.squareup.okhttp3:okhttp", version.ref = "okHttp" }
