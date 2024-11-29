@@ -5,8 +5,9 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
 class MongoSchedule : RealmObject {
-    @PrimaryKey var _id: ObjectId = ObjectId()
-    var day : String = ""
+    @PrimaryKey var id: String = String()
+    var day : Int = 0
     //var time : LocalTime? = null
-    var time: Long = 0L // store this as system.timeinmillis and convert?
+    var hour : Int = 0
+    var minute : Int = 0
 }

@@ -15,6 +15,7 @@ import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
+import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
@@ -31,6 +32,8 @@ class MainDBViewModel : ViewModel() {
 
     // change to LiveData instead of MutableLiveDataLater, since we will only be accessing this part of the DB?
     val _allBusStopsList = MutableLiveData<MutableList<BusStop>>()
+
+    val allTripsList = realm.query<MongoScheduledTrip>().find()
 
     init {
         loadAllStops()
@@ -78,7 +81,7 @@ class MainDBViewModel : ViewModel() {
 
     // function to return bus stops by entering the stop code
     // TODO @Jonathan: have this function return a normal bus stop instead maybe?
-    fun getBusStopByCode(stopCode: String) : BusStop? {
+    fun getBusStopByCode(stopCode: String): BusStop? {
         return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
             ?.let { modelFactory.toBusStop(it) }
     }
@@ -111,7 +114,8 @@ class MainDBViewModel : ViewModel() {
 
     // Returns true if both MongoRoutes and MongoBusStops have already been initialized
     fun isStaticDataLoaded(): Boolean {
-        return !(realm.query<MongoRoute>().find().isEmpty() && realm.query<MongoBusStop>().find().isEmpty())
+        return !(realm.query<MongoRoute>().find().isEmpty() && realm.query<MongoBusStop>().find()
+            .isEmpty())
     }
 
     fun getAllStops(): List<BusStop>? {
@@ -134,7 +138,10 @@ class MainDBViewModel : ViewModel() {
             // Post the updated list back to LiveData
             _favouriteBusStopsList.postValue(updatedList)
             realm.write {
-                copyToRealm(modelFactory.toMongoFavouriteStop(favouriteStop), updatePolicy = UpdatePolicy.ALL)
+                copyToRealm(
+                    modelFactory.toMongoFavouriteStop(favouriteStop),
+                    updatePolicy = UpdatePolicy.ALL
+                )
             }
         }
     }
@@ -159,7 +166,7 @@ class MainDBViewModel : ViewModel() {
         return result.map { it -> modelFactory.toBusStop(it) }
     }
 
-    fun searchForRouteByShortName(shortName: String) : Route? {
+    fun searchForRouteByShortName(shortName: String): Route? {
         val route = realm.query<MongoRoute>("shortName == $0", shortName).find().take(1)
         if (route.isEmpty()) {
             return null
@@ -168,7 +175,6 @@ class MainDBViewModel : ViewModel() {
     }
 
     fun getTrips(): ArrayList<ScheduledTrip> {
-        val trips = ArrayList<ScheduledTrip>()
-        return trips
+        return allTripsList.map { modelFactory.toScheduledTrip(it) } as ArrayList<ScheduledTrip>
     }
 }
