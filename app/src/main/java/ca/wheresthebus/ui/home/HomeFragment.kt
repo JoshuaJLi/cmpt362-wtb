@@ -1,22 +1,34 @@
 package ca.wheresthebus.ui.home
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.ModelFactory
+import ca.wheresthebus.data.RouteId
+import ca.wheresthebus.data.StopCode
+import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
+import ca.wheresthebus.service.GtfsRealtimeHelper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.invoke
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.Duration
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -24,6 +36,7 @@ class HomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private val homeViewModel: HomeViewModel by viewModels()
 
     private lateinit var stopAdapter: FavStopAdapter
     private lateinit var stopsView : RecyclerView
@@ -33,6 +46,8 @@ class HomeFragment : Fragment() {
     private val favouriteStopsList : ArrayList<FavouriteStop> = arrayListOf()
     //private val allBusStops : ArrayList<BusStop> = arrayListOf()
     private lateinit var modelFactory: ModelFactory
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +62,7 @@ class HomeFragment : Fragment() {
         setUpAdapter()
         setUpFab()
         setUpObservers()
+        setUpSwipeRefresh()
         return root
     }
 
@@ -57,6 +73,11 @@ class HomeFragment : Fragment() {
             favouriteStopsList.clear()
             favouriteStopsList.addAll(favouriteStops)
             stopAdapter.notifyDataSetChanged()
+            refreshBusTimes()
+        }
+
+        homeViewModel.busTimes.observe(requireActivity()){
+            stopAdapter.updateBusTimes(it)
         }
     }
 
@@ -77,6 +98,38 @@ class HomeFragment : Fragment() {
         stopsView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = stopAdapter
+        }
+    }
+
+    private fun setUpSwipeRefresh() {
+        swipeRefreshLayout = binding.swipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshBusTimes()
+        }
+    }
+
+    private fun refreshBusTimes() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Create a map of favourite stops to their next bus times
+                val busTimesMap = mutableMapOf<StopCode, List<Duration>>()
+                favouriteStopsList.forEach { stop ->
+                    val nextBusTimes = GtfsRealtimeHelper.getBusTimes(
+                        StopId(stop.busStop.id.value),
+                        RouteId(stop.route.id.value))
+                    busTimesMap[stop.busStop.code] = nextBusTimes
+                }
+
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    homeViewModel.busTimes.value = busTimesMap
+                }
+
+                swipeRefreshLayout.isRefreshing = false
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "Error refreshing bus times", e)
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 

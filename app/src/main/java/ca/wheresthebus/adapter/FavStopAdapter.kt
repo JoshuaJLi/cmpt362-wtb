@@ -6,25 +6,22 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
+import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.model.FavouriteStop
+import java.time.Duration
 
 class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>,
-    private val type: Type = Type.HOME
+    private val type: Type = Type.HOME,
+    private val busTimesMap: MutableMap<StopCode, List<Duration>> = mutableMapOf()
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
-
-    companion object {
-        object ViewType {
-            const val ACTIVE = 1
-            const val INACTIVE = 2
-        }
-    }
 
     enum class Type {
         HOME,
         TRIP_ACTIVE,
         TRIP_INACTIVE
     }
+
 
     abstract inner class BindingFavStopHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bind(stop: FavouriteStop)
@@ -35,19 +32,35 @@ class FavStopAdapter(
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
 
-
         override fun bind(stop: FavouriteStop) {
             nickname.text = buildString {
                 append(stop.route.shortName)
-                append(" - ")
-                append(stop.nickname)
+                if (stop.nickname.isNotEmpty()) {
+                    append(" - ")
+                    append(stop.nickname)
+                }
             }
+
             id.text = buildString {
                 append("Stop Code: ")
                 append(stop.busStop.code.value)
             }
-            //todo: fixate with the live views.
-            upcoming.text = stop.busStop.location.toString()
+
+            val busTimes = busTimesMap[stop.busStop.code]
+            if (!busTimes.isNullOrEmpty()) {
+                val formattedTimes = busTimes.map { busArrivalTime ->
+                    val minutes = busArrivalTime.toMinutes()
+                    if (minutes >= 1) "$minutes min" else "Now"
+                }
+
+                upcoming.text = buildString {
+                    append(formattedTimes.joinToString(", "))
+                }
+            } else {
+                upcoming.text = buildString {
+                    append("No upcoming buses")
+                }
+            }
         }
     }
 
@@ -103,8 +116,10 @@ class FavStopAdapter(
         }
     }
 
-    // TODO: make an actual class to hold this information
-    fun updateNextBus(listOfBusCodeAndNextTime: List<String>) {
-
+    fun updateBusTimes(busTimes: Map<StopCode, List<Duration>>) {
+        busTimesMap.clear()
+        busTimesMap.putAll(busTimes)
+        // TODO: figure out a more efficient way to do this in the future
+        notifyDataSetChanged()
     }
 }
