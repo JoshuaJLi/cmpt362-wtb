@@ -17,3 +17,6 @@ value class ServiceId(val value : String)
 
 @JvmInline
 value class TripId(val value : String)
+
+@JvmInline
+value class ScheduledTripId(val value : String)
