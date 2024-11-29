@@ -1,5 +1,6 @@
 package ca.wheresthebus.ui.trips
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +47,7 @@ class TripsFragment : Fragment() {
         mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
 
         setUpAdapter()
+        setUpFab()
         return root
     }
 
@@ -100,6 +102,13 @@ class TripsFragment : Fragment() {
                 layoutManager = LinearLayoutManager(context)
                 adapter = inactiveTripAdapter
             }
+        }
+    }
+
+    private fun setUpFab() {
+        binding.fabNewTrip.setOnClickListener {
+            val intent = Intent(context, AddTripsActivity::class.java)
+            startActivity(intent)
         }
     }
 

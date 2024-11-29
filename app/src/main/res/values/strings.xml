@@ -10,4 +10,8 @@
     <string name="recycler_all_trips">All Trips</string>
     <string name="recycler_upcoming_trips">Upcoming Trips</string>
     <string name="recycler_active_trips">Active Trips</string>
+    <string name="fab_new_trip_text">Add Trip</string>
+    <string name="desc_fab_new_trip">Add Trip</string>
+    <string name="heading_trip_calendar">Starts On</string>
+    <string name="heading_trip_notification">Notification Duration</string>
 </resources>
