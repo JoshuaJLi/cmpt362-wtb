@@ -43,6 +43,8 @@ class NearbyViewModel : ViewModel() {
 
     var busStopList: ArrayList<BusStop> = ArrayList<BusStop>();
 
+    private var isLocationUpdatesRunning = false;
+
     // -- methods
     fun loadStopsFromDatabase() {
         // do this in a coroutine as there's a lot of stops
@@ -93,6 +95,13 @@ class NearbyViewModel : ViewModel() {
     }
 
     fun startLocationUpdates(context: Context) {
+        if (isLocationUpdatesRunning) {
+            Log.d("NearbyViewModel", "Location updates already running");
+            return;
+        }
+
+        isLocationUpdatesRunning = true;
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 locationRequest = LocationRequest.Builder(
@@ -131,7 +140,10 @@ class NearbyViewModel : ViewModel() {
 
     fun stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+
         isTracking.postValue(false);
+        isLocationUpdatesRunning = false;
+
         Log.d("NearbyViewModel", "Location updates stopped");
     }
 }
