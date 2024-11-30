@@ -65,13 +65,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpObservers() {
-        // when the app opens, the favourite stops list is updated.
-        mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { favouriteStops ->
-            Log.d("favStopsListUpdated", favouriteStops.toString())
-            favouriteStopsList.clear()
-            favouriteStopsList.addAll(favouriteStops)
-            stopAdapter.notifyDataSetChanged()
-            refreshBusTimes()
+        // Handles data sync between viewmodel and view
+        mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { newFavStopsList ->
+            // Initial data load -> notify entire dataset is new
+            if (newFavStopsList.size > 0 && favouriteStopsList.size == 0) {
+                favouriteStopsList.addAll(newFavStopsList)
+                stopAdapter.notifyDataSetChanged()
+                refreshBusTimes()
+            }
+            // A new stop was added -> only notify last index
+            else if (newFavStopsList.size == favouriteStopsList.size + 1) {
+                favouriteStopsList.add(newFavStopsList.last())
+                stopAdapter.notifyItemInserted(favouriteStopsList.size)
+                refreshBusTimes()
+            }
+            // Avoid refreshing bus times or notifying adapter view changes otherwise
+            // Updates to adapter for deletion is handled in onSwiped()
         }
 
         homeViewModel.busTimes.observe(requireActivity()){
@@ -120,7 +129,8 @@ class HomeFragment : Fragment() {
                     val position = viewHolder.adapterPosition
                     val stopToDelete = favouriteStopsList[position]
                     deleteFavouriteStop(stopToDelete)
-                    stopAdapter.notifyItemChanged(position)
+                    favouriteStopsList.removeAt(position)
+                    stopAdapter.notifyItemRemoved(position)
                     swipeRefreshLayout.isEnabled = true
                 }
             }
@@ -142,11 +152,6 @@ class HomeFragment : Fragment() {
             // user has to swipe 75% the width of the view to delete
             override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
                 return 0.75f
-            }
-
-            // Make swipe to delete less sensitive
-            override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
-                return defaultValue * 10
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
