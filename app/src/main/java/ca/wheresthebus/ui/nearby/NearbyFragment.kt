@@ -89,13 +89,22 @@ class NearbyFragment :
             false;
         }
 
-        // Set the camera move started listener
+        // set the camera move started listener: allows the user to move around the map freely
         googleMap.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
                 Log.d("NearbyFragment", "Camera move started by user gesture");
                 nearbyViewModel.stopLocationUpdates();
             }
         };
+
+        // when the map is moved by the user, once the user stops moving the map, show stops near the new location
+        googleMap.setOnCameraIdleListener {
+            // https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/CameraPosition
+            val cameraPosition = googleMap.cameraPosition.target;
+            Log.d("NearbyFragment", "Camera idle at: $cameraPosition");
+            updateNearbyStopMarkers(cameraPosition);
+            updateCurrentLocationRadius(cameraPosition);
+        }
     }
 
     override fun onDestroyView() {
@@ -128,12 +137,13 @@ class NearbyFragment :
 
         expandListButton.setOnClickListener {
             try {
+                // with the implementation of free movement, get the location of the camera's position instead
+                val cameraPosition: LatLng = googleMap.cameraPosition.target;
+
                 val nearbyStops: ArrayList<BusStop> = ArrayList<BusStop>();
                 for (stop in nearbyViewModel.busStopList) {
                     val stopLocation: LatLng = LatLng(stop.location.latitude, stop.location.longitude);
-                    val currentLocation: LatLng = LatLng(nearbyViewModel.locationUpdates.value!!.latitude, nearbyViewModel.locationUpdates.value!!.longitude);
-
-                    if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
+                    if (nearbyViewModel.isInRange(cameraPosition, stopLocation, 300.0)) {
                         nearbyStops.add(stop);
                     }
                 }
@@ -161,6 +171,7 @@ class NearbyFragment :
             try {
                 // if the location updates before the map is initialized, it can cause a crash
                 updateCurrentLocationMarker(currentLocation)
+                updateCurrentLocationRadius(currentLocation)
 
                 updateNearbyStopMarkers(currentLocation)
 
@@ -217,9 +228,8 @@ class NearbyFragment :
             )
         }
 
-        // Remove markers for stops that are no longer nearby
-        val currentMarkerIds =
-            nearbyMarkerManager.getMarkerIds().toList() // Create a copy of the marker IDs
+        // remove markers for stops that are no longer nearby
+        val currentMarkerIds: List<String> = nearbyMarkerManager.getMarkerIds().toList() // Create a copy of the marker IDs
         for (id in currentMarkerIds) {
             if (id != "currentLocation" && !stopIds.contains(id)) {
                 nearbyMarkerManager.removeMarker(id)
@@ -236,7 +246,13 @@ class NearbyFragment :
                     .title("Current Location")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             )
+        } else {
+            currentLocationMarker!!.position = currentLocation
+        }
+    }
 
+    private fun updateCurrentLocationRadius(currentLocation: LatLng) {
+        if (currentLocationRadius == null) {
             // add a circle radius around the user's location
             currentLocationRadius = googleMap.addCircle(
                 CircleOptions()
@@ -248,8 +264,7 @@ class NearbyFragment :
             );
             currentLocationRadius!!.isVisible = true; // won't be null idt
         } else {
-            currentLocationMarker!!.position = currentLocation
-            currentLocationRadius!!.center = currentLocation
+            currentLocationRadius!!.center = currentLocation;
         }
     }
 
