@@ -9,16 +9,20 @@ class NearbyMarkerManager (private val googleMap: GoogleMap) {
 
     private val markers = mutableMapOf<String, Marker>();
 
+    fun getMarkerIds(): Set<String> {
+        return markers.keys
+    }
+
     fun addOrUpdateMarker(id: String, position: LatLng, title: String) {
-        val marker = markers[id];
-        if (marker == null){
+        val marker = markers[id]; // get the marker with the given id if it exists in the map
+        if (marker == null){ // if the marker does not exist in the map
             // add a new marker
             val newMarker = googleMap.addMarker(
                 MarkerOptions()
                     .position(position)
                     .title(title)
             );
-            markers[id] = newMarker!!; // cannot be null in this instance
+            markers[id] = newMarker!!; // cannot be null in this instance because we just added it
         } else {
             // update an existing marker
             marker.position = position;
@@ -32,6 +36,7 @@ class NearbyMarkerManager (private val googleMap: GoogleMap) {
     }
 
     fun clearMarkers() {
+        // remove all markers from the google map fragment
         for (marker in markers.values) {
             marker.remove();
         }
