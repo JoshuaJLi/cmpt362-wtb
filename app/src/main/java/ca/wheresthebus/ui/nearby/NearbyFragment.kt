@@ -33,7 +33,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class NearbyFragment :
     Fragment(),
-    OnMapReadyCallback {
+    OnMapReadyCallback,
+    GoogleMap.OnCameraMoveStartedListener
+{
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -86,6 +88,17 @@ class NearbyFragment :
             Log.d("NearbyFragment", "Marker clicked");
             nearbyViewModel.stopLocationUpdates();
             false;
+        }
+
+        // Set the camera move started listener
+        googleMap.setOnCameraMoveStartedListener(this);
+    }
+
+    override fun onCameraMoveStarted(reason: Int) {
+        // https://developers.google.com/maps/documentation/android-sdk/events
+        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            Log.d("NearbyFragment", "Camera move started by user gesture");
+            nearbyViewModel.stopLocationUpdates();
         }
     }
 
