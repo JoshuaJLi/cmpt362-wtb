@@ -13,5 +13,5 @@ class HomeViewModel : ViewModel() {
     }
     val text: LiveData<String> = _text
 
-    val busTimes =  MutableLiveData<Map<StopCode, List<Duration>>>()
+    val busTimes =  MutableLiveData<MutableMap<StopCode, List<Duration>>>()
 }
