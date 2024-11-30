@@ -132,7 +132,6 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                println("selected ${s.toString()}")
                 selectedRoute = routesMap[s.toString()]
             }
         })
@@ -154,9 +153,9 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
                     routesDropdownLayout.error = null
                     mainDBViewModel.insertFavouriteStop(
                         FavouriteStop(
-                            nicknameEditText.text.toString(),
-                            selectedStop,
-                            selectedRoute!!
+                            nickname = nicknameEditText.text.toString(),
+                            busStop = selectedStop,
+                            route =  selectedRoute!!
                         )
                     )
                     dialog.dismiss() // dismiss this dialog
