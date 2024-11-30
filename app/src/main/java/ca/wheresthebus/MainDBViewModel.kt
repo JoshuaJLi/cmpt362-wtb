@@ -144,14 +144,6 @@ class MainDBViewModel : ViewModel() {
         return result.map { modelFactory.toBusStop(it) }
     }
 
-    fun searchForRouteByShortName(shortName: String): Route? {
-        val route = realm.query<MongoRoute>("shortName == $0", shortName).find().take(1)
-        if (route.isEmpty()) {
-            return null
-        }
-        return modelFactory.toRoute(route[0]) ?: null
-    }
-
     fun getTrips(): ArrayList<ScheduledTrip> {
         return allTripsList.map { modelFactory.toScheduledTrip(it) } as ArrayList<ScheduledTrip>
     }
