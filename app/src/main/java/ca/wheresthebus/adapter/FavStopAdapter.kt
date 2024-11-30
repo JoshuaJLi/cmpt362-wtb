@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.utils.TextUtils
 import java.time.Duration
 
 class FavStopAdapter(
@@ -52,20 +53,7 @@ class FavStopAdapter(
             }
 
             val busTimes = busTimesMap[Pair(stop.busStop.id, stop.route.id)]
-            if (!busTimes.isNullOrEmpty()) {
-                val formattedTimes = busTimes.map { busArrivalTime ->
-                    val minutes = busArrivalTime.toMinutes()
-                    if (minutes >= 1) "$minutes min" else "Now"
-                }
-
-                upcoming.text = buildString {
-                    append(formattedTimes.joinToString(", "))
-                }
-            } else {
-                upcoming.text = buildString {
-                    append("No upcoming buses")
-                }
-            }
+            upcoming.text = TextUtils.upcomingBusesString(busTimes)
         }
     }
 
