@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.data.StopCode
@@ -31,8 +32,12 @@ class FavStopAdapter(
         private val nickname: TextView = view.findViewById(R.id.text_stop_nickname)
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
+        private val foregroundView: CardView = view.findViewById(R.id.fav_card_view)
 
         override fun bind(stop: FavouriteStop) {
+            // Reset the swipe animation in case the view was reused
+            foregroundView.translationX = 0f
+
             nickname.text = buildString {
                 append(stop.route.shortName)
                 if (stop.nickname.isNotEmpty()) {
@@ -72,7 +77,6 @@ class FavStopAdapter(
             nickname.text = stop.nickname
             upcoming.text = stop.busStop.location.toString()
         }
-
     }
 
     inner class InactiveTripListViewHolder(view: View) : BindingFavStopHolder(view) {
@@ -119,7 +123,6 @@ class FavStopAdapter(
     fun updateBusTimes(busTimes: Map<StopCode, List<Duration>>) {
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
-        // TODO: figure out a more efficient way to do this in the future
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 }

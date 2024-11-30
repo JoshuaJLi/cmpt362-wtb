@@ -75,8 +75,9 @@ class HomeFragment : Fragment() {
             }
             // A new stop was added -> only notify last index
             else if (newFavStopsList.size == favouriteStopsList.size + 1) {
-                favouriteStopsList.add(newFavStopsList.last())
-                stopAdapter.notifyItemInserted(favouriteStopsList.size)
+                val index = favouriteStopsList.size
+                favouriteStopsList.add(index, newFavStopsList.last())
+                stopAdapter.notifyItemInserted(index)
                 refreshBusTimes()
             }
             // Avoid refreshing bus times or notifying adapter view changes otherwise
