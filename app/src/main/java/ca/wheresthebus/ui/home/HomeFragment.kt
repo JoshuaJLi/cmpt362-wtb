@@ -1,5 +1,6 @@
 package ca.wheresthebus.ui.home
 
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,26 +10,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ca.wheresthebus.MainDBViewModel
+import ca.wheresthebus.R
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.StopId
-import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
-import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import ca.wheresthebus.service.GtfsRealtimeHelper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.time.Duration
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -44,7 +40,6 @@ class HomeFragment : Fragment() {
     private lateinit var mainDBViewModel: MainDBViewModel
 
     private val favouriteStopsList : ArrayList<FavouriteStop> = arrayListOf()
-    //private val allBusStops : ArrayList<BusStop> = arrayListOf()
     private lateinit var modelFactory: ModelFactory
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -63,26 +58,33 @@ class HomeFragment : Fragment() {
         setUpFab()
         setUpObservers()
         setUpSwipeRefresh()
+        setUpSwipeToDelete()
         return root
     }
 
     private fun setUpObservers() {
-        // when the app opens, the favourite stops list is updated.
-        mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { favouriteStops ->
-            Log.d("favStopsListUpdated", favouriteStops.toString())
-            favouriteStopsList.clear()
-            favouriteStopsList.addAll(favouriteStops)
-            stopAdapter.notifyDataSetChanged()
-            refreshBusTimes()
+        // Handles data sync between viewmodel and view
+        mainDBViewModel._favouriteBusStopsList.observe(requireActivity()) { newFavStopsList ->
+            // Initial data load -> notify entire dataset is new
+            if (newFavStopsList.size > 0 && favouriteStopsList.size == 0) {
+                favouriteStopsList.addAll(newFavStopsList)
+                stopAdapter.notifyDataSetChanged()
+                refreshBusTimes()
+            }
+            // A new stop was added -> only notify last index
+            else if (newFavStopsList.size == favouriteStopsList.size + 1) {
+                val index = favouriteStopsList.size
+                favouriteStopsList.add(index, newFavStopsList.last())
+                stopAdapter.notifyItemInserted(index)
+                refreshBusTimes()
+            }
+            // Avoid refreshing bus times or notifying adapter view changes otherwise
+            // Updates to adapter for deletion is handled in onSwiped()
         }
 
         homeViewModel.busTimes.observe(requireActivity()){
             stopAdapter.updateBusTimes(it)
         }
-    }
-
-    suspend fun getFavStopsList(): List<MongoFavouriteStop> {
-        return mainDBViewModel.mongoFavouriteStops.firstOrNull() ?: emptyList()
     }
 
     private fun setUpFab() {
@@ -103,23 +105,67 @@ class HomeFragment : Fragment() {
 
     private fun setUpSwipeRefresh() {
         swipeRefreshLayout = binding.swipeRefreshLayout
+        swipeRefreshLayout.setDistanceToTriggerSync(resources.getDimensionPixelSize(R.dimen.swipe_refresh_trigger_distance))
         swipeRefreshLayout.setOnRefreshListener {
             refreshBusTimes()
         }
     }
 
+    private fun setUpSwipeToDelete() {
+        val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                swipeRefreshLayout.isEnabled = false
+                return false
+            }
+
+            // Delete on swipe left of card
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                if (direction == ItemTouchHelper.LEFT){
+                    val position = viewHolder.adapterPosition
+                    val stopToDelete = favouriteStopsList[position]
+                    deleteFavouriteStop(stopToDelete)
+                    favouriteStopsList.removeAt(position)
+                    stopAdapter.notifyItemRemoved(position)
+                    swipeRefreshLayout.isEnabled = true
+                }
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                // only move the foreground?
+                val itemView = viewHolder.itemView.findViewById<View>(R.id.fav_card_view)
+                itemView.translationX = dX
+            }
+
+            // user has to swipe 75% the width of the view to delete
+            override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
+                return 0.75f
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(stopsView)
+    }
+
     private fun refreshBusTimes() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                // Create a map of favourite stops to their next bus times
-                val busTimesMap = mutableMapOf<StopCode, List<Duration>>()
-                favouriteStopsList.forEach { stop ->
-                    val nextBusTimes = GtfsRealtimeHelper.getBusTimes(
-                        StopId(stop.busStop.id.value),
-                        RouteId(stop.route.id.value))
-                    busTimesMap[stop.busStop.code] = nextBusTimes
+                // Convert all favorite stops to pairs list and do GTFS realtime call
+                val stopRoutePairs = favouriteStopsList.map { stop ->
+                    StopId(stop.busStop.id.value) to RouteId(stop.route.id.value)
                 }
 
+                val busTimesMap = GtfsRealtimeHelper.getBusTimes(stopRoutePairs)
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     homeViewModel.busTimes.value = busTimesMap
@@ -131,6 +177,10 @@ class HomeFragment : Fragment() {
                 swipeRefreshLayout.isRefreshing = false
             }
         }
+    }
+
+    private fun deleteFavouriteStop(favStop: FavouriteStop) {
+        mainDBViewModel.deleteFavouriteStop(favStop._id)
     }
 
     override fun onDestroyView() {

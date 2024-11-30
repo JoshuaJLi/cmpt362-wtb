@@ -4,16 +4,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
-import ca.wheresthebus.data.StopCode
+import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.model.FavouriteStop
 import java.time.Duration
 
 class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>,
     private val type: Type = Type.HOME,
-    private val busTimesMap: MutableMap<StopCode, List<Duration>> = mutableMapOf()
+    private val busTimesMap: MutableMap<StopId, List<Duration>> = mutableMapOf()
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
 
     enum class Type {
@@ -31,8 +32,12 @@ class FavStopAdapter(
         private val nickname: TextView = view.findViewById(R.id.text_stop_nickname)
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
+        private val foregroundView: CardView = view.findViewById(R.id.fav_card_view)
 
         override fun bind(stop: FavouriteStop) {
+            // Reset the swipe animation in case the view was reused
+            foregroundView.translationX = 0f
+
             nickname.text = buildString {
                 append(stop.route.shortName)
                 if (stop.nickname.isNotEmpty()) {
@@ -46,7 +51,7 @@ class FavStopAdapter(
                 append(stop.busStop.code.value)
             }
 
-            val busTimes = busTimesMap[stop.busStop.code]
+            val busTimes = busTimesMap[stop.busStop.id]
             if (!busTimes.isNullOrEmpty()) {
                 val formattedTimes = busTimes.map { busArrivalTime ->
                     val minutes = busArrivalTime.toMinutes()
@@ -72,7 +77,6 @@ class FavStopAdapter(
             nickname.text = stop.nickname
             upcoming.text = stop.busStop.location.toString()
         }
-
     }
 
     inner class InactiveTripListViewHolder(view: View) : BindingFavStopHolder(view) {
@@ -111,15 +115,14 @@ class FavStopAdapter(
     }
 
     override fun onBindViewHolder(holder: BindingFavStopHolder, position: Int) {
-        dataSet[position].let {
-            holder.bind(it)
+        dataSet[position].let { stop ->
+            holder.bind(stop)
         }
     }
 
-    fun updateBusTimes(busTimes: Map<StopCode, List<Duration>>) {
+    fun updateBusTimes(busTimes: MutableMap<StopId, List<Duration>>) {
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
-        // TODO: figure out a more efficient way to do this in the future
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 }
