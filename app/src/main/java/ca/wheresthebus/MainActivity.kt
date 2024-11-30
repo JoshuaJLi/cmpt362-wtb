@@ -8,8 +8,6 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
-import androidx.lifecycle.enableSavedStateHandles
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,8 +19,9 @@ import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.NfcService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
-import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
+import androidx.media.session.MediaButtonReceiver.handleIntent
+import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
 import ca.wheresthebus.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,19 +43,42 @@ class MainActivity : AppCompatActivity() {
 
         requestNotificationPermission()
 
-        if (isStartedByNFC(intent)) {
-            NfcService.handleTap(this)
-            moveTaskToBack(true)
-        }
+        handleIncomingIntent(intent)
 
         loadStaticDataToDB()
+    }
+
+    private fun handleIncomingIntent(intent: Intent?) {
+        if (intent == null) {
+            return
+        }
+
+        when (intent.action) {
+            ACTION_NAVIGATE_TO_TRIP -> binding.navView.findNavController()
+                .navigate(R.id.action_trip_fragment)
+
+            NfcAdapter.ACTION_TECH_DISCOVERED -> {
+                NfcService.handleTap(this)
+                moveTaskToBack(true)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIncomingIntent(intent)
     }
 
     private fun loadStaticDataToDB() {
         // Only load static data if we haven't done it yet
         if (!mainDBViewModel.isStaticDataLoaded()) {
             val context = this
-            lifecycleScope.launch(Dispatchers.IO) { Utils.populateRealmDatabase(context, mainDBViewModel.getRealm()) }
+            lifecycleScope.launch(Dispatchers.IO) {
+                Utils.populateRealmDatabase(
+                    context,
+                    mainDBViewModel.getRealm()
+                )
+            }
         }
     }
 
@@ -75,10 +97,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun isStartedByNFC(intent: Intent?): Boolean {
-        return intent != null && intent.action == NfcAdapter.ACTION_TECH_DISCOVERED
-    }
-
     private fun setUpNavBar() {
         val navView: BottomNavigationView = binding.navView
 
@@ -87,29 +105,36 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_trips, R.id.navigation_nearby, R.id.navigation_settings
+                R.id.navigation_home,
+                R.id.navigation_trips,
+                R.id.navigation_nearby,
+                R.id.navigation_settings
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         NavigationBarView.OnItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.navigation_home -> {
                     // Respond to navigation item 1 click
                     true
                 }
+
                 R.id.navigation_trips -> {
                     // Respond to navigation item 2 click
                     true
                 }
+
                 R.id.navigation_nearby -> {
 
                     true
                 }
+
                 R.id.navigation_settings -> {
                     true
                 }
+
                 else -> false
             }
         }

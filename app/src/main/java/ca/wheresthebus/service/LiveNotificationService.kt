@@ -2,11 +2,14 @@ package ca.wheresthebus.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import ca.wheresthebus.MainActivity
 import ca.wheresthebus.R
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopId
@@ -35,6 +38,8 @@ class LiveNotificationService : LifecycleService() {
         const val EXTRA_ROUTE_IDS = "route_id"
         const val EXTRA_NOTIFICATION_ID = "notification_id"
         const val EXTRA_TRIP_NICKNAME = "trip_nickname"
+
+        const val ACTION_NAVIGATE_TO_TRIP = "navigate_to_trip"
     }
 
     override fun onCreate() {
@@ -102,17 +107,17 @@ class LiveNotificationService : LifecycleService() {
             .setSmallIcon(R.drawable.baseline_directions_bus_24)
             .setContentTitle(nickname)
             .setContentText("Here is the body of the text")
-//            .setContentIntent(
-//                PendingIntent.getActivity(
-//                    this,
-//                    0,
-//                    // set flag so it opens the activity instead of starting a new one
-//                    Intent(this, GpsActivity::class.java).apply {
-//                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-//                    },
-//                    FLAG_IMMUTABLE
-//                )
-//            )
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    // set flag so it opens the activity instead of starting a new one
+                    Intent(this, MainActivity::class.java).apply {
+                        action = ACTION_NAVIGATE_TO_TRIP
+                    },
+                    FLAG_IMMUTABLE
+                )
+            )
             .build()
         Log.d("LiveNotificationService", "Starting notification with information: $nickname, $notificationId, $watches")
 
