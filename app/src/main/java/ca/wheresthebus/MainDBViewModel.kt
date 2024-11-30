@@ -83,13 +83,13 @@ class MainDBViewModel : ViewModel() {
 
     // function to add a favourite stop
     fun insertFavouriteStop(favouriteStop: FavouriteStop) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val favList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
-            // Add the new favouriteStop to the list
-            favList.add(favouriteStop)
+        // Add new stop to the viewmodel first
+        val favList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
+        favList.add(favouriteStop)
+        _favouriteBusStopsList.postValue(favList)
 
-            // Post the updated list back to LiveData
-            _favouriteBusStopsList.postValue(favList)
+        // Write to database in the bg
+        viewModelScope.launch(Dispatchers.IO) {
             realm.write {
                 copyToRealm(
                     modelFactory.toMongoFavouriteStop(favouriteStop),
@@ -114,11 +114,10 @@ class MainDBViewModel : ViewModel() {
                 // Remove from db too
                 realm.write {
                     if (toDelete != null) {
-                        println("Attempting to delete fav stop w/ nickname: ${toDelete.nickname}")
                         findLatest(toDelete)?.also { delete(it) }
                     }
                     else {
-                        println("deleteFavouriteStop: Could not find the right record to delete")
+                        println("deleteFavouriteStop: Could not find the right record to delete for some reason...")
                     }
                 }
             }
