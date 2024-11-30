@@ -41,16 +41,16 @@ class NearbyFragment :
     private val binding get() = _binding!!
     private var _binding: FragmentNearbyBinding? = null
 
-    private lateinit var nearbyViewModel: NearbyViewModel;
+    private lateinit var nearbyViewModel: NearbyViewModel
 
     private lateinit var googleMap: GoogleMap
-    private var currentLocationMarker: Marker? = null;
-    private var currentLocationRadius: Circle? = null;
-    private lateinit var nearbyMarkerManager: NearbyMarkerManager;
+    private var currentLocationMarker: Marker? = null
+    private var currentLocationRadius: Circle? = null
+    private lateinit var nearbyMarkerManager: NearbyMarkerManager
 
-    private lateinit var expandListButton: ExtendedFloatingActionButton;
-    private lateinit var recenterButton: FloatingActionButton;
-    private lateinit var nearbyBottomSheet: BottomSheetDialogFragment;
+    private lateinit var expandListButton: ExtendedFloatingActionButton
+    private lateinit var recenterButton: FloatingActionButton
+    private lateinit var nearbyBottomSheet: BottomSheetDialogFragment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNearbyBinding.inflate(inflater, container, false)
@@ -62,56 +62,57 @@ class NearbyFragment :
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState)
 
-        initializeMapFragment();
-        initializeViewModel();
-        initializeInterface();
-        observeLocationUpdates();
+        initializeMapFragment()
+        initializeViewModel()
+        initializeInterface()
+        observeLocationUpdates()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
-        Toast.makeText(context, "Finding bus stops near you...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Finding bus stops near you...", Toast.LENGTH_SHORT).show()
 
-        nearbyMarkerManager = NearbyMarkerManager(googleMap);
+        nearbyMarkerManager = NearbyMarkerManager(googleMap)
 
         // apply dark mode if the phone is in dark mode
-        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK;
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
-            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_dark_mode));
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_dark_mode))
         }
 
         // disable location updates when a marker is clicked
         googleMap.setOnMarkerClickListener { marker ->
-            Log.d("NearbyFragment", "Marker clicked");
-            nearbyViewModel.stopLocationUpdates();
-            expandBottomSheetToBusStop(marker);
-            false;
+            Log.d("NearbyFragment", "Marker clicked")
+            nearbyViewModel.stopLocationUpdates()
+            expandBottomSheetToBusStop(marker)
+            marker.showInfoWindow()
+            true
         }
 
         // set the camera move started listener: allows the user to move around the map freely
         googleMap.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-                Log.d("NearbyFragment", "Camera move started by user gesture");
-                nearbyViewModel.stopLocationUpdates();
+                Log.d("NearbyFragment", "Camera move started by user gesture")
+                nearbyViewModel.stopLocationUpdates()
             }
-        };
+        }
 
         // when the map is moved by the user, once the user stops moving the map, show stops near the new location
         googleMap.setOnCameraIdleListener {
             // https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/CameraPosition
-            val cameraPosition = googleMap.cameraPosition.target;
-            Log.d("NearbyFragment", "Camera idle at: $cameraPosition");
-            updateNearbyStopMarkers(cameraPosition);
-            updateCurrentLocationRadius(cameraPosition);
+            val cameraPosition = googleMap.cameraPosition.target
+            Log.d("NearbyFragment", "Camera idle at: $cameraPosition")
+            updateNearbyStopMarkers(cameraPosition)
+            updateCurrentLocationRadius(cameraPosition)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        nearbyViewModel.stopLocationUpdates();
+        nearbyViewModel.stopLocationUpdates()
 
     }
 
@@ -124,43 +125,43 @@ class NearbyFragment :
     private fun initializeViewModel() {
 //        nearbyViewModel.loadStopsFromCSV(requireContext());
         val mainDBViewModel: MainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class.java]
-        nearbyViewModel.setMainDBViewModel(mainDBViewModel);
-        nearbyViewModel.loadStopsFromDatabase();
+        nearbyViewModel.setMainDBViewModel(mainDBViewModel)
+        nearbyViewModel.loadStopsFromDatabase()
 
-        nearbyViewModel.getLocationPermissions(requireContext());
-        nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        nearbyViewModel.getLocationPermissions(requireContext())
+        nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
     private fun initializeInterface() {
 
-        expandListButton = requireView().findViewById(R.id.NearbyFragment_expandListButton);
-        recenterButton = requireView().findViewById(R.id.NearbyFragment_recenterButton);
+        expandListButton = requireView().findViewById(R.id.NearbyFragment_expandListButton)
+        recenterButton = requireView().findViewById(R.id.NearbyFragment_recenterButton)
 
         expandListButton.setOnClickListener {
             try {
                 // with the implementation of free movement, get the location of the camera's position instead
-                val cameraPosition: LatLng = googleMap.cameraPosition.target;
+                val cameraPosition: LatLng = googleMap.cameraPosition.target
 
-                val nearbyStops: ArrayList<BusStop> = ArrayList<BusStop>();
+                val nearbyStops: ArrayList<BusStop> = ArrayList<BusStop>()
                 for (stop in nearbyViewModel.busStopList) {
-                    val stopLocation: LatLng = LatLng(stop.location.latitude, stop.location.longitude);
+                    val stopLocation: LatLng = LatLng(stop.location.latitude, stop.location.longitude)
                     if (nearbyViewModel.isInRange(cameraPosition, stopLocation, 300.0)) {
-                        nearbyStops.add(stop);
+                        nearbyStops.add(stop)
                     }
                 }
 
-                nearbyBottomSheet = NearbyBottomSheet(nearbyStops);
-                nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet");
+                nearbyBottomSheet = NearbyBottomSheet(nearbyStops)
+                nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
             } catch (e: Exception) {
-                Log.e("NearbyFragment", "${e.message}");
-                Toast.makeText(context, "Failed to load nearby stops, please wait a moment.", Toast.LENGTH_SHORT).show();
-                return@setOnClickListener;
+                Log.e("NearbyFragment", "${e.message}")
+                Toast.makeText(context, "Failed to load nearby stops, please wait a moment.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
         }
 
         recenterButton.setOnClickListener {
-            nearbyViewModel.startLocationUpdates(requireContext());
-            Toast.makeText(context, "Recentering...", Toast.LENGTH_SHORT).show();
+            nearbyViewModel.startLocationUpdates(requireContext())
+            Toast.makeText(context, "Recentering...", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -178,7 +179,7 @@ class NearbyFragment :
 
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f))
             } catch (e: Exception) {
-                Log.e("NearbyFragment", "${e.message}");
+                Log.e("NearbyFragment", "${e.message}")
             }
         }
         nearbyViewModel.startLocationUpdates(requireContext())
@@ -262,22 +263,22 @@ class NearbyFragment :
                     .strokeWidth(3f)
                     .strokeColor(Color.BLUE)
                     .fillColor(Color.argb(25, 0, 0, 255))
-            );
-            currentLocationRadius!!.isVisible = true; // won't be null idt
+            )
+            currentLocationRadius!!.isVisible = true // won't be null idt
         } else {
-            currentLocationRadius!!.center = currentLocation;
+            currentLocationRadius!!.center = currentLocation
         }
     }
 
     private fun expandBottomSheetToBusStop(marker: Marker) {
-        val markerId = marker.tag as? String;
-        val stop = nearbyViewModel.busStopList.find { it.id.value == markerId }; // find the stop with the matching
-        Log.d("NearbyFragment", "Marker clicked: $markerId");
+        val markerId = marker.tag as? String
+        val stop = nearbyViewModel.busStopList.find { it.id.value == markerId } // find the stop with the matching
+        Log.d("NearbyFragment", "Marker clicked: $markerId")
 
         if (stop != null) { // if a stop is found
-            Log.d("NearbyFragment", "Expanding bottom sheet to stop: ${stop.name}");
+            Log.d("NearbyFragment", "Expanding bottom sheet to stop: ${stop.name}")
 
-            val userLocation = googleMap.cameraPosition.target;
+//            val userLocation = googleMap.cameraPosition.target
 
             // Filter the nearby stops based on the user's last known location
 //            val nearbyStops = nearbyViewModel.busStopList.filter {
@@ -286,11 +287,11 @@ class NearbyFragment :
 //            }
 
             // create a nearbyStops list with ONLY the stop that was clicked
-            val nearbyStops = ArrayList<BusStop>();
-            nearbyStops.add(stop);
+            val nearbyStops = ArrayList<BusStop>()
+            nearbyStops.add(stop)
 
-            nearbyBottomSheet = NearbyBottomSheet(nearbyStops, markerId); // create a new bottom sheet with the stop
-            nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet");
+            nearbyBottomSheet = NearbyBottomSheet(nearbyStops, markerId) // create a new bottom sheet with the stop
+            nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
         }
     }
 
