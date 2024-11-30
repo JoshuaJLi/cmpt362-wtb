@@ -4,6 +4,7 @@ import android.location.Location
 import ca.wheresthebus.data.model.*
 import ca.wheresthebus.data.mongo_model.*
 import io.realm.kotlin.ext.toRealmList
+import org.mongodb.kbson.ObjectId
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.Instant
@@ -40,6 +41,7 @@ class ModelFactory() {
 
     fun toFavouriteBusStop(mongoFavouriteStop: MongoFavouriteStop): FavouriteStop {
         return FavouriteStop(
+            _id = mongoFavouriteStop._id,
             nickname = mongoFavouriteStop.nickname,
             busStop = toBusStop(mongoFavouriteStop.mongoBusStop!!),
             route = toRoute(mongoFavouriteStop.mongoRoute!!)
@@ -48,6 +50,7 @@ class ModelFactory() {
 
     fun toMongoFavouriteStop(favouriteStop: FavouriteStop) : MongoFavouriteStop {
         return MongoFavouriteStop(
+            _id = favouriteStop._id,
             nickname = favouriteStop.nickname,
             mongoBusStop = toMongoBusStop(favouriteStop.busStop),
             mongoRoute = toMongoRoute(favouriteStop.route)
