@@ -22,6 +22,8 @@ class NearbyMarkerManager (private val googleMap: GoogleMap) {
                     .position(position)
                     .title(title)
             );
+            newMarker?.tag = id; // set the tag of the marker to the bus stop code (for expanding the bottom sheet)
+
             markers[id] = newMarker!!; // cannot be null in this instance because we just added it
         } else {
             // update an existing marker

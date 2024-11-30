@@ -83,9 +83,10 @@ class NearbyFragment :
         }
 
         // disable location updates when a marker is clicked
-        googleMap.setOnMarkerClickListener {
+        googleMap.setOnMarkerClickListener { marker ->
             Log.d("NearbyFragment", "Marker clicked");
             nearbyViewModel.stopLocationUpdates();
+            expandBottomSheetToBusStop(marker);
             false;
         }
 
@@ -265,6 +266,27 @@ class NearbyFragment :
             currentLocationRadius!!.isVisible = true; // won't be null idt
         } else {
             currentLocationRadius!!.center = currentLocation;
+        }
+    }
+
+    private fun expandBottomSheetToBusStop(marker: Marker) {
+        val markerId = marker.tag as? String;
+        val stop = nearbyViewModel.busStopList.find { it.id.value == markerId }; // find the stop with the matching
+        Log.d("NearbyFragment", "Marker clicked: $markerId");
+
+        if (stop != null) { // if a stop is found
+            Log.d("NearbyFragment", "Expanding bottom sheet to stop: ${stop.name}");
+
+            val userLocation = googleMap.cameraPosition.target;
+
+            // Filter the nearby stops based on the user's last known location
+            val nearbyStops = nearbyViewModel.busStopList.filter {
+                val stopLocation = LatLng(it.location.latitude, it.location.longitude);
+                nearbyViewModel.isInRange(userLocation, stopLocation, 300.0);
+            }
+
+            nearbyBottomSheet = NearbyBottomSheet(nearbyStops, markerId); // create a new bottom sheet with the stop
+            nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet");
         }
     }
 

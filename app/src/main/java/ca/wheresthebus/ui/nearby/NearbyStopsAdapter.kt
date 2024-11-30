@@ -30,8 +30,8 @@ class NearbyStopsAdapter(private val stops: List<BusStop>) : RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val stop = stops[position]
-        holder.stopNickname.text = stop.name;
-        holder.stopID.text = stop.code.value;
+        holder.stopNickname.text = stop.name
+        holder.stopID.text = stop.code.value
         holder.stopUpcoming.text = "Upcoming Buses: NOT YET IMPLEMENTED"
 
         val isExpanded = position == expandedPosition
@@ -46,4 +46,11 @@ class NearbyStopsAdapter(private val stops: List<BusStop>) : RecyclerView.Adapte
     }
 
     override fun getItemCount() = stops.size
+
+    fun setExpandedPosition(position: Int) {
+        val previousExpandedPosition = expandedPosition
+        expandedPosition = position
+        notifyItemChanged(previousExpandedPosition)
+        notifyItemChanged(expandedPosition)
+    }
 }
