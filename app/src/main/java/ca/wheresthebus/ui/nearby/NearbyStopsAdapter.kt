@@ -1,7 +1,6 @@
 package ca.wheresthebus.ui.nearby
 
 import android.app.AlertDialog
-import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -38,8 +37,7 @@ class NearbyStopsAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val stopNickname: TextView = view.findViewById(R.id.NearbyBottomSheet_stopNickname)
-        val stopID: TextView = view.findViewById(R.id.NearbyBottomSheet_stopID)
-        val stopUpcoming: TextView = view.findViewById(R.id.NearbyBottomSheet_stopUpcoming)
+        val buses: TextView = view.findViewById(R.id.NearbyBottomSheet_buses)
         val extraInfo: LinearLayout = view.findViewById(R.id.extra_info)
         val saveButton: Button = view.findViewById(R.id.save_button)
     }
@@ -52,9 +50,13 @@ class NearbyStopsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val stop = stops[position]
-        holder.stopNickname.text = stop.name
-        holder.stopID.text = stop.code.value
-        holder.stopUpcoming.text = "Upcoming Buses: NOT YET IMPLEMENTED"
+        holder.stopNickname.text = buildString {
+            append(stop.name)
+        }
+        holder.buses.text = buildString {
+            append("Buses: ")
+            append(stop.routes.joinToString(", ") { it.shortName })
+        }
 
         val isExpanded = position == expandedPosition
         holder.extraInfo.visibility = if (isExpanded) View.VISIBLE else View.GONE
