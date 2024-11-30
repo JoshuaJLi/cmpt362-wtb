@@ -25,6 +25,7 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import ca.wheresthebus.service.GtfsRealtimeHelper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.Duration
 
