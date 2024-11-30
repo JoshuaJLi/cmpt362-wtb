@@ -34,7 +34,7 @@
                         android:id="@+id/search_bar_bus"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Type in a stop code!"
+                        android:hint="Search for a stop"
                         app:layout_scrollFlags="scroll|enterAlways" />
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_nearby_suggestions"

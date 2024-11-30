@@ -3,5 +3,7 @@
     android:id="@+id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="6dp"
-    android:textSize="16sp" />
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:padding="8dp"
+    android:textAppearance="?attr/textAppearanceBodyMedium" />
