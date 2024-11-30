@@ -35,8 +35,8 @@ class NearbyBottomSheet(
 
         val recyclerView: RecyclerView = dialog!!.findViewById(R.id.nearby_stops_recycler_view);
         recyclerView.layoutManager = LinearLayoutManager(context);
-        val recyclerViewAdapter: NearbyStopsAdapter = NearbyStopsAdapter(stops);
-        recyclerView.adapter = NearbyStopsAdapter(stops);
+        val recyclerViewAdapter: NearbyStopsAdapter = NearbyStopsAdapter(requireActivity(), stops, this);
+        recyclerView.adapter = NearbyStopsAdapter(requireActivity(), stops, this);
 
         // if there is a selected stop, scroll to it and expand it
         if (selectedStopId != null) {
@@ -46,9 +46,6 @@ class NearbyBottomSheet(
                 recyclerViewAdapter.setExpandedPosition(position);
             }
         }
-        val recyclerView: RecyclerView = dialog!!.findViewById(R.id.nearby_stops_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = NearbyStopsAdapter(requireActivity(), stops, this)
     }
 
     override fun onStopSaved() {
