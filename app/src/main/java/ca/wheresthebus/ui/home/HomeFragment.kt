@@ -19,14 +19,12 @@ import ca.wheresthebus.R
 import ca.wheresthebus.adapter.FavStopAdapter
 import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopCode
 import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import ca.wheresthebus.service.GtfsRealtimeHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.Duration
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -166,13 +164,8 @@ class HomeFragment : Fragment() {
                 val stopRoutePairs = favouriteStopsList.map { stop ->
                     StopId(stop.busStop.id.value) to RouteId(stop.route.id.value)
                 }
-                val busTimesLists = GtfsRealtimeHelper.getBusTimes(stopRoutePairs)
 
-                // Create a mutableMap of stop codes to their next bus times
-                val busTimesMap = mutableMapOf<StopCode, List<Duration>>()
-                for (i in busTimesLists.indices) {
-                    busTimesMap[favouriteStopsList[i].busStop.code] = busTimesLists[i]
-                }
+                val busTimesMap = GtfsRealtimeHelper.getBusTimes(stopRoutePairs)
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     homeViewModel.busTimes.value = busTimesMap

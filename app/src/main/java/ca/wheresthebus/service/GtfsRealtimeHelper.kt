@@ -25,22 +25,15 @@ class GtfsRealtimeHelper {
         private val client = OkHttpClient()
         private const val GTFS_API_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"
 
-        suspend fun getBusTimes(stopsInfo: List<Pair<StopId, RouteId>>): List<List<Duration>> {
+        suspend fun getBusTimes(stopsInfo: List<Pair<StopId, RouteId>>): MutableMap<StopId, List<Duration>> {
             return try {
                 val feedMessage = callGtfsRealtime()
-                stopsInfo.map { (stopId, routeId) ->
-                    try {
-                        val busTimes = grabBusTimes(feedMessage, stopId, routeId)
-                        convertBusTimes(busTimes)
-                    } catch (e: Exception) {
-                        Log.e("GTFS", "Error fetching bus times", e)
-                        emptyList()
-                    }
-                }
-
+                stopsInfo.associate { (stopId, routeId) ->
+                    stopId to convertBusTimes(grabBusTimes(feedMessage, stopId, routeId))
+                }.toMutableMap()
             } catch (e: Exception) {
                 Log.e("GTFS", "Error fetching GTFS realtime data", e)
-                emptyList()
+                mutableMapOf<StopId, List<Duration>>()
             }
         }
 
