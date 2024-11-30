@@ -1,5 +1,6 @@
 package ca.wheresthebus.ui.nearby
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -72,6 +74,12 @@ class NearbyFragment :
         Toast.makeText(context, "Finding bus stops near you...", Toast.LENGTH_SHORT).show();
 
         nearbyMarkerManager = NearbyMarkerManager(googleMap);
+
+        // apply dark mode if the phone is in dark mode
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_dark_mode));
+        }
 
         // disable location updates when a marker is clicked
         googleMap.setOnMarkerClickListener {
@@ -140,66 +148,98 @@ class NearbyFragment :
         nearbyViewModel.locationUpdates.observe(viewLifecycleOwner) { location ->
             val currentLocation = LatLng(location.latitude, location.longitude)
 
-            // update the current location marker
-            if (currentLocationMarker == null) {
-                currentLocationMarker = googleMap.addMarker(
-                    MarkerOptions()
-                        .position(currentLocation)
-                        .title("Current Location")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                )
+            try {
+                // if the location updates before the map is initialized, it can cause a crash
+                updateCurrentLocationMarker(currentLocation)
 
-                // add a circle radius around the user's location
-                currentLocationRadius = googleMap.addCircle(
-                    CircleOptions()
-                        .center(currentLocation)
-                        .radius(300.0)
-                        .strokeWidth(3f)
-                        .strokeColor(Color.BLUE)
-                        .fillColor(Color.argb(25, 0, 0, 255))
-                );
-                currentLocationRadius!!.isVisible = true; // won't be null idt
-            } else {
-                currentLocationMarker!!.position = currentLocation
-                currentLocationRadius!!.center = currentLocation
+                updateNearbyStopMarkers(currentLocation)
+
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f))
+            } catch (e: Exception) {
+                Log.e("NearbyFragment", "${e.message}");
             }
-
-            // calculate the distance between the user and the stops
-            // if within distance, add the stop to the nearby stops list
-            val nearbyStops = ArrayList<BusStop>()
-            for (stop in nearbyViewModel.busStopList) {
-                val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
-                if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
-                    nearbyStops.add(stop)
-                }
-            }
-
-            // on each interval of a location update, update the markers for the nearby stops
-            val stopIds = nearbyStops.map { it.id.value } // get the IDs of the nearby stops
-            for (stop in nearbyStops) {
-                val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
-                nearbyMarkerManager.addOrUpdateMarker(stop.id.value, stopLocation, "${stop.code.value} - ${stop.name}")
-            }
-
-            // Remove markers for stops that are no longer nearby
-            val currentMarkerIds = nearbyMarkerManager.getMarkerIds().toList() // Create a copy of the marker IDs
-            for (id in currentMarkerIds) {
-                if (id != "currentLocation" && !stopIds.contains(id)) {
-                    nearbyMarkerManager.removeMarker(id)
-                }
-            }
-
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f))
         }
         nearbyViewModel.startLocationUpdates(requireContext())
 
         // Observe the isTracking to change the icon respectively for the recenter button
         nearbyViewModel.isTracking.observe(viewLifecycleOwner) { isTracking ->
-            if (isTracking) {
-                recenterButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.baseline_gps_fixed_24))
-            } else {
-                recenterButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.baseline_gps_not_fixed_24))
+            updateRecenterIcon(isTracking)
+        }
+    }
+
+    private fun updateRecenterIcon(isTracking: Boolean) {
+        if (isTracking) {
+            recenterButton.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.baseline_gps_fixed_24
+                )
+            )
+        } else {
+            recenterButton.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.baseline_gps_not_fixed_24
+                )
+            )
+        }
+    }
+
+    private fun updateNearbyStopMarkers(currentLocation: LatLng) {
+        // calculate the distance between the user and the stops
+        // if within distance, add the stop to the nearby stops list
+        val nearbyStops = ArrayList<BusStop>()
+        for (stop in nearbyViewModel.busStopList) {
+            val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
+            if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
+                nearbyStops.add(stop)
             }
+        }
+
+        // on each interval of a location update, update the markers for the nearby stops
+        val stopIds = nearbyStops.map { it.id.value } // get the IDs of the nearby stops
+        for (stop in nearbyStops) {
+            val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
+            nearbyMarkerManager.addOrUpdateMarker(
+                stop.id.value,
+                stopLocation,
+                "${stop.code.value} - ${stop.name}"
+            )
+        }
+
+        // Remove markers for stops that are no longer nearby
+        val currentMarkerIds =
+            nearbyMarkerManager.getMarkerIds().toList() // Create a copy of the marker IDs
+        for (id in currentMarkerIds) {
+            if (id != "currentLocation" && !stopIds.contains(id)) {
+                nearbyMarkerManager.removeMarker(id)
+            }
+        }
+    }
+
+    private fun updateCurrentLocationMarker(currentLocation: LatLng) {
+        // update the current location marker
+        if (currentLocationMarker == null) {
+            currentLocationMarker = googleMap.addMarker(
+                MarkerOptions()
+                    .position(currentLocation)
+                    .title("Current Location")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+            )
+
+            // add a circle radius around the user's location
+            currentLocationRadius = googleMap.addCircle(
+                CircleOptions()
+                    .center(currentLocation)
+                    .radius(300.0)
+                    .strokeWidth(3f)
+                    .strokeColor(Color.BLUE)
+                    .fillColor(Color.argb(25, 0, 0, 255))
+            );
+            currentLocationRadius!!.isVisible = true; // won't be null idt
+        } else {
+            currentLocationMarker!!.position = currentLocation
+            currentLocationRadius!!.center = currentLocation
         }
     }
 
