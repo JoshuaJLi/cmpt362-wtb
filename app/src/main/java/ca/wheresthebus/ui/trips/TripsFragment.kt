@@ -1,24 +1,32 @@
 package ca.wheresthebus.ui.trips
 
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import ca.wheresthebus.data.model.Schedule
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
+import ca.wheresthebus.MainDBViewModel
+import ca.wheresthebus.adapter.TripAdapter
 import ca.wheresthebus.databinding.FragmentTripsBinding
-import ca.wheresthebus.service.AlarmService
-import ca.wheresthebus.service.AlarmService.Companion
-import ca.wheresthebus.service.AlarmService.Companion.notificationId
+import java.time.LocalDateTime
 
 class TripsFragment : Fragment() {
 
     private var _binding: FragmentTripsBinding? = null
+    private lateinit var tripsViewModel : TripsViewModel
+    private lateinit var mainDBViewModel: MainDBViewModel
+
+    private lateinit var activeTripAdapter: TripAdapter
+    private lateinit var upcomingTripAdapter: TripAdapter
+    private lateinit var inactiveTripAdapter: TripAdapter
+
+    private lateinit var activeTripsView : RecyclerView
+    private lateinit var upcomingTripsView : RecyclerView
+    private lateinit var inactiveTripsView : RecyclerView
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -29,49 +37,82 @@ class TripsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(TripsViewModel::class.java)
+        tripsViewModel = ViewModelProvider(this)[TripsViewModel::class.java]
 
         _binding = FragmentTripsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
 
-        scheduleTripNotifications(listOf(), requireContext())
+        mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
 
+        setUpAdapter()
         return root
     }
 
-    fun scheduleTripNotifications(trips : List<Schedule>, context: Context) {
-        val intent = Intent(context, AlarmService::class.java)
-        val title = "title"
-        val message = "message"
-        intent.putExtra(AlarmService.titleExtra, title)
-        intent.putExtra(AlarmService.messageExtra, message)
-        context.sendBroadcast(intent)
-        val pendingIntent =  PendingIntent.getBroadcast(
-            context,
-            notificationId,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+    private fun setUpAdapter() {
+        val currentTime = LocalDateTime.now()
 
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
-        val time = System.currentTimeMillis() + (1000 * 5)
-        alarmManager.setExactAndAllowWhileIdle(
-            android.app.AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
-        )
+        val trips = mainDBViewModel.getTrips()
+            .sortedBy { it.getClosestTime(currentTime) }
+            .groupBy { trip ->
+                when {
+                    trip.isActive(currentTime) -> TripType.ACTIVE
+                    trip.isToday(currentTime) -> TripType.TODAY
+                    else -> TripType.INACTIVE
+                }
+            }
+
+        activeTripsView = binding.recyclerActiveTrips
+        inactiveTripsView = binding.recyclerInactiveTrips
+        upcomingTripsView = binding.recyclerUpcomingTrips
+
+        trips[TripType.ACTIVE].orEmpty().let {
+            if (it.isEmpty()) {
+                binding.labelActive.visibility = View.GONE
+            }
+            activeTripAdapter = TripAdapter(it)
+
+            activeTripsView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = activeTripAdapter
+            }
+        }
+
+        trips[TripType.TODAY].orEmpty().let {
+            if (it.isEmpty()) {
+                binding.labelUpcomingTrips.visibility = View.GONE
+            }
+            upcomingTripAdapter = TripAdapter(it)
+
+            upcomingTripsView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = upcomingTripAdapter
+            }
+        }
+
+        trips[TripType.INACTIVE].orEmpty().let {
+            if (it.isEmpty()) {
+                binding.labelAllTrips.visibility = View.GONE
+            }
+            inactiveTripAdapter = TripAdapter(it)
+
+            inactiveTripsView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = inactiveTripAdapter
+            }
+        }
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        object TripType {
+            const val ACTIVE = "active"
+            const val INACTIVE = "inactive"
+            const val TODAY = "today"
+        }
     }
 }
