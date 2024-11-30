@@ -17,5 +17,16 @@
     <string name="desc_fab_save_trip">Save Trip</string>
     <string name="fab_save_trip">Save Trip</string>
     <string name="hint_trip_name">New Trip Name</string>
-    <string name="add_route_button_text">Add another route</string>
+    <string name="add_stop_button_text">Add a stop</string>
+    <string name="add_trip_time_button_text">Add a time</string>
+    <string name="send_notifications">Send Notifications</string>
+    <string name="heading_trip_stop">Bus Stops</string>
+    <string-array name="notification_timer_options">
+        <item>None</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+    </string-array>
 </resources>

@@ -1,6 +1,7 @@
 package ca.wheresthebus.ui.trips
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,7 +26,21 @@ class AddTripsActivity : AppCompatActivity() {
         binding = ActivityAddTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setUpAddStop()
+        setUpAddTime()
         setUpSaveFab()
+    }
+
+    private fun setUpAddStop() {
+        binding.buttonAddStop.setOnClickListener {
+            Log.d("AddTripsActivity", "Add stop button clicked")
+        }
+    }
+
+    private fun setUpAddTime() {
+        binding.buttonAddTime.setOnClickListener {
+            Log.d("AddTripsActivity", "Add time button clicked")
+        }
     }
 
     private fun setUpSaveFab() {

@@ -38,19 +38,38 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/stops_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="@string/heading_trip_stop" />
+
+
+            <Button
+                style="@style/Widget.Material3.Button.TextButton"
+                android:id="@+id/button_add_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_stop_button_text"
+                app:icon="@drawable/ic_add_black_dp24"
+                />
+
+            <TextView
                 android:id="@+id/calendar_heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:text="@string/heading_trip_calendar" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/add_route_button"
+            <Button
+                style="@style/Widget.Material3.Button.TextButton"
+                android:id="@+id/button_add_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/add_route_button_text"
-                style="@style/Widget.Material3.Button.TextButton"
+                android:text="@string/add_trip_time_button_text"
+                app:icon="@drawable/ic_add_black_dp24"
                 />
+
 
             <TextView
                 android:id="@+id/notification_heading"
@@ -59,7 +78,44 @@
                 android:textSize="16sp"
 
                 android:text="@string/heading_trip_notification" />
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/textView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="@string/send_notifications" />-->
+
+<!--                <com.google.android.material.materialswitch.MaterialSwitch-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1" />-->
+
+<!--            </LinearLayout>-->
+
+<!--            <com.google.android.material.textfield.TextInputLayout-->
+<!--                android:id="@+id/add_notification_time"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:hint="Duration (minutes)"-->
+<!--                app:boxBackgroundMode="outline"-->
+<!--                app:errorEnabled="true" >-->
+
+<!--                <com.google.android.material.textfield.TextInputEditText-->
+<!--                    android:id="@+id/notificationEditText"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:inputType="number"-->
+<!--                    android:importantForAccessibility="yes"/>-->
+<!--            </com.google.android.material.textfield.TextInputLayout>-->
+
         </LinearLayout>
+
     </ScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
