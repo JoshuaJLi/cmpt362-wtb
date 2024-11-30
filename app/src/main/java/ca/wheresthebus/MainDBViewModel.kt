@@ -1,8 +1,5 @@
 package ca.wheresthebus
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,10 +16,9 @@ import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.mongodb.kbson.ObjectId
 
 class MainDBViewModel : ViewModel() {
     private val realm = MyMongoDBApp.realm
@@ -38,52 +34,6 @@ class MainDBViewModel : ViewModel() {
     init {
         loadAllStops()
         loadAllFavoriteStops()
-    }
-
-    // NOTE: each view model for each frag can query for different class objects from the db when required
-    val mongoFavouriteStops = realm
-        .query<MongoFavouriteStop>(
-            // use this to filter entries in the view model; ex:
-            //"teacher.address.fullName CONTAINS $0", "John" queries any teachers named John
-        )
-        .find() // gets all the favourite stops and returns it as a StateFlow<List<MongoFavouriteStop>
-        .asFlow()
-        .map { results ->
-            results.list.toList()
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            emptyList()
-        )
-
-    var favStopDetails: MongoFavouriteStop? by mutableStateOf(null)
-        private set
-
-    fun deleteMongoFavStop() {
-        viewModelScope.launch {
-            realm.write {
-                //TODO: adapt later
-                val favStop = favStopDetails ?: return@write
-                delete(favStop)
-                favStopDetails = null
-            }
-        }
-    }
-
-    fun insertBusStop(newStop: BusStop) {
-        viewModelScope.launch {
-            realm.write {
-                copyToRealm(modelFactory.toMongoBusStop(newStop), updatePolicy = UpdatePolicy.ALL)
-            }
-        }
-    }
-
-    // function to return bus stops by entering the stop code
-    // TODO @Jonathan: have this function return a normal bus stop instead maybe?
-    fun getBusStopByCode(stopCode: String): BusStop? {
-        return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
-            ?.let { modelFactory.toBusStop(it) }
     }
 
     private fun loadAllFavoriteStops() {
@@ -126,22 +76,50 @@ class MainDBViewModel : ViewModel() {
         return _allBusStopsList.value
     }
 
-    // function to add a favourite stop (add route/mongo route parameter later??)
-    // TODO @Jonathan: have this function take in a normal bus stop and then convert it accordingly
+    fun getBusStopByCode(stopCode: String) : BusStop? {
+        return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
+            ?.let { modelFactory.toBusStop(it) }
+    }
+
+    // function to add a favourite stop
     fun insertFavouriteStop(favouriteStop: FavouriteStop) {
-        viewModelScope.launch {
-            val updatedList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
+        // Add new stop to the viewmodel first
+        val favList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
+        favList.add(favouriteStop)
+        _favouriteBusStopsList.postValue(favList)
 
-            // Add the new favouriteStop to the list
-            updatedList.add(favouriteStop)
-
-            // Post the updated list back to LiveData
-            _favouriteBusStopsList.postValue(updatedList)
+        // Write to database in the bg
+        viewModelScope.launch(Dispatchers.IO) {
             realm.write {
                 copyToRealm(
                     modelFactory.toMongoFavouriteStop(favouriteStop),
                     updatePolicy = UpdatePolicy.ALL
                 )
+            }
+        }
+    }
+
+    fun deleteFavouriteStop(_id: ObjectId) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val favList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
+
+            // Remove the fav stop from adapter list
+            if (favList.removeIf { it._id == _id }) {
+                // Post the updated list back to LiveData
+                _favouriteBusStopsList.postValue(favList)
+
+                // Find the value to delete
+                val toDelete = realm.query<MongoFavouriteStop>("_id == $0", _id).find().firstOrNull()
+
+                // Remove from db too
+                realm.write {
+                    if (toDelete != null) {
+                        findLatest(toDelete)?.also { delete(it) }
+                    }
+                    else {
+                        println("deleteFavouriteStop: Could not find the right record to delete for some reason...")
+                    }
+                }
             }
         }
     }
@@ -163,15 +141,7 @@ class MainDBViewModel : ViewModel() {
         ).find().take(10)
 
         // Return result as a List<BusStops> instead of List<MongoBusStops>
-        return result.map { it -> modelFactory.toBusStop(it) }
-    }
-
-    fun searchForRouteByShortName(shortName: String): Route? {
-        val route = realm.query<MongoRoute>("shortName == $0", shortName).find().take(1)
-        if (route.isEmpty()) {
-            return null
-        }
-        return modelFactory.toRoute(route[0]) ?: null
+        return result.map { modelFactory.toBusStop(it) }
     }
 
     fun getTrips(): ArrayList<ScheduledTrip> {

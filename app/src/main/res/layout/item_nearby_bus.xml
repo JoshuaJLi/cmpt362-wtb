@@ -1,0 +1,58 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:layout_margin="10dp"
+    card_view:cardCornerRadius="10dp"
+    card_view:cardElevation="4dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/NearbyBottomSheet_stopNickname"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Stop Nickname"
+            />
+        <TextView
+            android:id="@+id/NearbyBottomSheet_stopID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop ID"
+            />
+        <TextView
+            android:id="@+id/NearbyBottomSheet_stopUpcoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upcoming Buses"
+            />
+        <!-- Additional information and buttons -->
+        <LinearLayout
+            android:id="@+id/extra_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add to Favourites" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
