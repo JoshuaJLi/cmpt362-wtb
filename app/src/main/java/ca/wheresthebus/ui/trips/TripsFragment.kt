@@ -124,26 +124,28 @@ class TripsFragment : Fragment() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         clearNotifications(alarmManager, notificationId)
+        notificationId = 0
 
         trips.forEach {trip ->
             val intent = Intent(context, AlarmService::class.java).apply {
-                putExtra(LiveNotificationService.EXTRA_NICKNAMES, trip.stops.map { it.nickname }.toTypedArray())
-                putExtra(LiveNotificationService.EXTRA_STOP_IDS, trip.stops.map { it.busStop.id.value }.toTypedArray())
-                putExtra(LiveNotificationService.EXTRA_ROUTE_IDS, trip.stops.map { it.route.id.value }.toTypedArray())
+                putStringArrayListExtra(LiveNotificationService.EXTRA_NICKNAMES, trip.stops.map { it.nickname }.toCollection(ArrayList()))
+                putStringArrayListExtra(LiveNotificationService.EXTRA_STOP_IDS, trip.stops.map { it.busStop.id.value }.toCollection(ArrayList()))
+                putStringArrayListExtra(LiveNotificationService.EXTRA_ROUTE_IDS, trip.stops.map { it.route.id.value }.toCollection(ArrayList()))
                 putExtra(LiveNotificationService.EXTRA_DURATION, trip.duration.toMinutes())
+                putExtra(LiveNotificationService.EXTRA_NOTIFICATION_ID, notificationId)
+                putExtra(LiveNotificationService.EXTRA_TRIP_NICKNAME, trip.nickname)
             }
 
             val upcomingTimes = trip.activeTimes.map { it.getNextTime(LocalDateTime.now()) }
 
             upcomingTimes.forEach { time ->
-                context.sendBroadcast(intent)
-
                 val pendingIntent =  PendingIntent.getBroadcast(
                     context,
                     notificationId,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
+                Log.d("AlarmService", "Alarm set with id $notificationId")
                 notificationId++
 
 //                alarmManager.setInexactRepeating(
@@ -152,11 +154,10 @@ class TripsFragment : Fragment() {
 //                    AlarmManager.INTERVAL_DAY * 7,
 //                    pendingIntent
 //                    )
-                Log.d("AlarmService", "Alarm set")
 
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis() + (1000 * 10),
+                    System.currentTimeMillis() + (1000 * 5),
                     pendingIntent
                 )
             }
@@ -171,8 +172,9 @@ class TripsFragment : Fragment() {
                 context,
                 id,
                 intent,
-                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
+            Log.d("AlarmService", "Deleting alarm with id $id")
 
             alarmManager.cancel(pendingIntent)
             pendingIntent.cancel()
