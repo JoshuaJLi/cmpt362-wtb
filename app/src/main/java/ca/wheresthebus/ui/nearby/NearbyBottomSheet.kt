@@ -11,7 +11,7 @@ import ca.wheresthebus.data.model.BusStop
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class NearbyBottomSheet(private val stops: List<BusStop>) : BottomSheetDialogFragment() {
+class NearbyBottomSheet(private val stops: List<BusStop>) : BottomSheetDialogFragment(), NearbyStopSavedListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bottom_sheet_nearby, container, false)
@@ -32,6 +32,10 @@ class NearbyBottomSheet(private val stops: List<BusStop>) : BottomSheetDialogFra
 
         val recyclerView: RecyclerView = dialog!!.findViewById(R.id.nearby_stops_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = NearbyStopsAdapter(stops)
+        recyclerView.adapter = NearbyStopsAdapter(requireActivity(), stops, this)
+    }
+
+    override fun onStopSaved() {
+        this.dismiss()
     }
 }
