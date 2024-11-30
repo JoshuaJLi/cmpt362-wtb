@@ -49,6 +49,7 @@ class NearbyFragment :
     private lateinit var googleMap: GoogleMap
     private var currentLocationMarker: Marker? = null;
     private var currentLocationRadius: Circle? = null;
+    private lateinit var markerManager: NearbyMarkerManager;
 
     private lateinit var expandListButton: ExtendedFloatingActionButton;
     private lateinit var recenterButton: FloatingActionButton;
@@ -76,8 +77,11 @@ class NearbyFragment :
         this.googleMap = googleMap
         Toast.makeText(context, "Finding bus stops near you...", Toast.LENGTH_SHORT).show();
 
+        markerManager = NearbyMarkerManager(googleMap);
+
         // disable location updates when a marker is clicked
         googleMap.setOnMarkerClickListener {
+            Log.d("NearbyFragment", "Marker clicked");
             nearbyViewModel.stopLocationUpdates();
             false;
         }
