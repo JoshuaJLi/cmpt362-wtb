@@ -1,17 +1,15 @@
 package ca.wheresthebus.ui.home
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
-import android.widget.Spinner
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +21,8 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.databinding.BottomSheetAddFavBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 
 class AddFavBottomSheet : BottomSheetDialogFragment() {
     private var _binding: BottomSheetAddFavBinding? = null
@@ -115,33 +115,43 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         routesMap: Map<String, Route>,
         selectedStop: BusStop,
     ) {
-        val customView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_fav_stop, null)
+        val customView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_fav_stop, null)
         val nicknameEditText: EditText = customView.findViewById(R.id.nicknameEditText)
-        val routesSpinner: Spinner = customView.findViewById(R.id.routeChoiceSpinner)
+        val routesDropdown: AutoCompleteTextView = customView.findViewById(R.id.routes_dropdown)
+        val routesDropdownLayout: TextInputLayout = customView.findViewById(R.id.routes_dropdown_layout)
+
+        // set dropdown content
+        val routesAdapter =
+            ArrayAdapter(requireContext(), R.layout.route_spinner_item, routesMap.keys.toList())
+        routesDropdown.setAdapter(routesAdapter)
+
+        // Grab selected dropdown option
         var selectedRoute: Route? = null
-
-        // set spinner content
-        routesSpinner.adapter = ArrayAdapter(requireContext(), R.layout.route_spinner_item, routesMap.keys.toList())
-        routesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>, view: View?, position: Int, id: Long
-            ) {
-                val key = routesSpinner.adapter.getItem(position)
-                selectedRoute = routesMap[key]
+        routesDropdown.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                println("selected ${s.toString()}")
+                selectedRoute = routesMap[s.toString()]
             }
+        })
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                selectedRoute = null
-            }
-        }
-
-        val builder = AlertDialog.Builder(requireContext())
-        builder
+        // Build the dialog
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(customView)
-            .setTitle("Add Favourite Stop")
-            .setNegativeButton("Cancel") { _, _ -> } // do nothing on cancel press
-            .setPositiveButton("Confirm") { _, _ ->
+            .setTitle("Adding New Favourite Stop")
+            .setMessage(selectedStop.name)
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton("Confirm", null)
+            .create()
+
+        // override OK to check valid dropdown selections
+        dialog.setOnShowListener {
+            val confirmButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            confirmButton.setOnClickListener {
                 if (selectedRoute != null) {
+                    routesDropdownLayout.error = null
                     mainDBViewModel.insertFavouriteStop(
                         FavouriteStop(
                             nicknameEditText.text.toString(),
@@ -149,16 +159,15 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
                             selectedRoute!!
                         )
                     )
-                    dismiss() // successful OK -> close the bottom sheet
+                    dialog.dismiss() // dismiss this dialog
+                    this.dismiss() // close the bottom sheet fragment
                 } else {
-                    // In case selected route is invalid somehow..
-                    Toast.makeText(
-                        requireContext(),
-                        "Please select a valid bus route.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    routesDropdownLayout.error = "Please select a valid bus route."
                 }
-            }.create().show()
+            }
+        }
+
+        dialog.show()
     }
 
     companion object {

@@ -2,45 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
-    <TextView
-        android:id="@+id/nicknameHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="Nickname"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/nicknameEditText"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:height="48dp"
-        android:backgroundTint="@color/black"
-        android:ems="10"
-        android:hint="e.g. school commute"
-        android:minHeight="40dp"
-        android:padding="6dp"
-        android:textColor="?attr/editTextColor"
-        android:textSize="18sp" />
+        app:endIconMode="clear_text"
+        android:hint="Set a Stop Nickame"
+        app:helperText="e.g morning commute (optional)">
 
-    <TextView
-        android:id="@+id/routeHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:padding="6dp"
-        android:text="Selected Bus Route"
-        android:textSize="16sp" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nicknameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <Spinner
-        android:id="@+id/routeChoiceSpinner"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:id="@+id/routes_dropdown_layout"
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:padding="6dp" />
+        android:hint="Select a Bus Route"
+        app:errorEnabled="true">
+
+        <AutoCompleteTextView
+            android:id="@+id/routes_dropdown"
+            android:inputType="none"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
