@@ -147,6 +147,7 @@ class NearbyFragment :
     private fun observeLocationUpdates() {
         nearbyViewModel.locationUpdates.observe(viewLifecycleOwner) { location ->
             val currentLocation = LatLng(location.latitude, location.longitude)
+            Log.d("NearbyFragment", "Location updated: $currentLocation")
 
             try {
                 // if the location updates before the map is initialized, it can cause a crash
