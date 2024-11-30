@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.ModelFactory
-import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
@@ -19,6 +18,7 @@ import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.mongodb.kbson.ObjectId
 
 class MainDBViewModel : ViewModel() {
     private val realm = MyMongoDBApp.realm
@@ -85,7 +85,6 @@ class MainDBViewModel : ViewModel() {
     fun insertFavouriteStop(favouriteStop: FavouriteStop) {
         viewModelScope.launch(Dispatchers.IO) {
             val favList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
-
             // Add the new favouriteStop to the list
             favList.add(favouriteStop)
 
@@ -100,24 +99,26 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
-    fun deleteFavouriteStop(id: StopId) {
+    fun deleteFavouriteStop(_id: ObjectId) {
         viewModelScope.launch(Dispatchers.IO) {
             val favList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
 
-            // Remove the fav stop
-            if (favList.removeIf { it.busStop.id == id }) {
+            // Remove the fav stop from adapter list
+            if (favList.removeIf { it._id == _id }) {
                 // Post the updated list back to LiveData
                 _favouriteBusStopsList.postValue(favList)
 
+                // Find the value to delete
+                val toDelete = realm.query<MongoFavouriteStop>("_id == $0", _id).find().firstOrNull()
+
                 // Remove from db too
                 realm.write {
-                    val toDelete = query<MongoFavouriteStop>("mongoBusStop.id == $0", id.value).find().firstOrNull()
                     if (toDelete != null) {
-                        println("Deleting fav stop w/ nickname: ${toDelete.nickname}")
-                        delete(toDelete)
+                        println("Attempting to delete fav stop w/ nickname: ${toDelete.nickname}")
+                        findLatest(toDelete)?.also { delete(it) }
                     }
                     else {
-                        println("Could not find the right record to delete")
+                        println("deleteFavouriteStop: Could not find the right record to delete")
                     }
                 }
             }

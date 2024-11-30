@@ -13,7 +13,6 @@ import java.time.Duration
 class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>,
     private val type: Type = Type.HOME,
-    private val onDelete: (FavouriteStop) -> Unit,
     private val busTimesMap: MutableMap<StopCode, List<Duration>> = mutableMapOf()
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
 
@@ -114,10 +113,6 @@ class FavStopAdapter(
     override fun onBindViewHolder(holder: BindingFavStopHolder, position: Int) {
         dataSet[position].let { stop ->
             holder.bind(stop)
-            holder.itemView.setOnLongClickListener {
-                onDelete(stop)
-                true
-            }
         }
     }
 

@@ -25,7 +25,6 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
 import ca.wheresthebus.service.GtfsRealtimeHelper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.Duration
 
@@ -87,7 +86,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
-        stopAdapter = FavStopAdapter(favouriteStopsList, ::deleteFavouriteStop)
+        stopAdapter = FavStopAdapter(favouriteStopsList)
         stopsView = binding.recyclerFavStops
 
         stopsView.apply {
@@ -121,6 +120,7 @@ class HomeFragment : Fragment() {
                     val position = viewHolder.adapterPosition
                     val stopToDelete = favouriteStopsList[position]
                     deleteFavouriteStop(stopToDelete)
+                    stopAdapter.notifyItemChanged(position)
                     swipeRefreshLayout.isEnabled = true
                 }
             }
@@ -137,7 +137,16 @@ class HomeFragment : Fragment() {
                 // only move the foreground?
                 val itemView = viewHolder.itemView.findViewById<View>(R.id.fav_card_view)
                 itemView.translationX = dX
-//                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+
+            // user has to swipe 75% the width of the view to delete
+            override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
+                return 0.75f
+            }
+
+            // Make swipe to delete less sensitive
+            override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
+                return defaultValue * 10
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
@@ -169,7 +178,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun deleteFavouriteStop(favStop: FavouriteStop) {
-        mainDBViewModel.deleteFavouriteStop(favStop.busStop.id)
+        mainDBViewModel.deleteFavouriteStop(favStop._id)
     }
 
     override fun onDestroyView() {
