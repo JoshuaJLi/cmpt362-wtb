@@ -1,18 +1,30 @@
 package ca.wheresthebus.ui.trips
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Visibility
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.TripAdapter
+import ca.wheresthebus.data.model.Schedule
+import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
+import ca.wheresthebus.service.AlarmService
+import ca.wheresthebus.service.LiveNotificationService
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 class TripsFragment : Fragment() {
 
@@ -46,6 +58,9 @@ class TripsFragment : Fragment() {
         mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
 
         setUpAdapter()
+
+        scheduleTripNotifications(mainDBViewModel.getTrips(), requireContext())
+
         return root
     }
 
@@ -102,6 +117,68 @@ class TripsFragment : Fragment() {
             }
         }
     }
+
+    private fun scheduleTripNotifications(trips : List<ScheduledTrip>, context: Context) {
+        val sharedPreferences = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
+        var notificationId = sharedPreferences.getInt("notification_id", 0)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        clearNotifications(alarmManager, notificationId)
+
+        trips.forEach {trip ->
+            val intent = Intent(context, AlarmService::class.java).apply {
+                putExtra(LiveNotificationService.EXTRA_NICKNAMES, trip.stops.map { it.nickname }.toTypedArray())
+                putExtra(LiveNotificationService.EXTRA_STOP_IDS, trip.stops.map { it.busStop.id.value }.toTypedArray())
+                putExtra(LiveNotificationService.EXTRA_ROUTE_IDS, trip.stops.map { it.route.id.value }.toTypedArray())
+                putExtra(LiveNotificationService.EXTRA_DURATION, trip.duration.toMinutes())
+            }
+
+            val upcomingTimes = trip.activeTimes.map { it.getNextTime(LocalDateTime.now()) }
+
+            upcomingTimes.forEach { time ->
+                context.sendBroadcast(intent)
+
+                val pendingIntent =  PendingIntent.getBroadcast(
+                    context,
+                    notificationId,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                notificationId++
+
+//                alarmManager.setInexactRepeating(
+//                    AlarmManager.RTC_WAKEUP,
+//                    time.toEpochSecond(ZoneOffset.of(ZoneId.systemDefault().id)) * 1000,
+//                    AlarmManager.INTERVAL_DAY * 7,
+//                    pendingIntent
+//                    )
+                Log.d("AlarmService", "Alarm set")
+
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis() + (1000 * 10),
+                    pendingIntent
+                )
+            }
+        }
+        sharedPreferences.edit().putInt("notification_id", notificationId).apply()
+    }
+
+    private fun clearNotifications(alarmManager: AlarmManager, notificationId: Int) {
+        for (id in 0 until notificationId) {
+            val intent = Intent(context, AlarmService::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                id,
+                intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

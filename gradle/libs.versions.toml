@@ -24,7 +24,6 @@ secretsGradlePlugin = "2.0.1"
 ui = "1.7.5"
 protobuJavalite = "3.21.12"
 okHttp = "4.10.0"
-lifecycleService = "2.8.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -52,7 +51,6 @@ androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-s
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuJavalite" }
 okhttp = { module="com.squareup.okhttp3:okhttp", version.ref = "okHttp" }
-androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

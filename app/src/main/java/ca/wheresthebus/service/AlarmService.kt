@@ -13,8 +13,12 @@ import ca.wheresthebus.data.model.Schedule
 
 class AlarmService : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("AlarmService", "Alarm received")
+
         Intent(context, LiveNotificationService::class.java).also {
+            it.putExtras(intent)
             context.startService(it)
         }
+
     }
 }
