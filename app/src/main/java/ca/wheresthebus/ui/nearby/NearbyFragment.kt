@@ -280,10 +280,14 @@ class NearbyFragment :
             val userLocation = googleMap.cameraPosition.target;
 
             // Filter the nearby stops based on the user's last known location
-            val nearbyStops = nearbyViewModel.busStopList.filter {
-                val stopLocation = LatLng(it.location.latitude, it.location.longitude);
-                nearbyViewModel.isInRange(userLocation, stopLocation, 300.0);
-            }
+//            val nearbyStops = nearbyViewModel.busStopList.filter {
+//                val stopLocation = LatLng(it.location.latitude, it.location.longitude);
+//                nearbyViewModel.isInRange(userLocation, stopLocation, 300.0);
+//            }
+
+            // create a nearbyStops list with ONLY the stop that was clicked
+            val nearbyStops = ArrayList<BusStop>();
+            nearbyStops.add(stop);
 
             nearbyBottomSheet = NearbyBottomSheet(nearbyStops, markerId); // create a new bottom sheet with the stop
             nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet");
