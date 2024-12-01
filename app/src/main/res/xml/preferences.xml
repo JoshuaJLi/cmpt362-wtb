@@ -47,6 +47,13 @@
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/JoshuaJLi/cmpt362-wtb/" />
         </Preference>
+
+        <Preference
+            app:title="@string/send_feedback"
+            app:summary="@string/wtb_feedback">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+        </Preference>
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>
