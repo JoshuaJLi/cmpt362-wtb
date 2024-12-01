@@ -8,8 +8,7 @@
     tools:context=".ui.home.HomeFragment"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:fitsSystemWindows="true"
-    android:windowSoftInputMode="adjustResize"
-    >
+    android:windowSoftInputMode="adjustResize">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -51,8 +50,6 @@
                     android:text="@string/heading_trip_stop"
                     android:textSize="16sp" />
 
-
-
                 <Button
                     android:id="@+id/button_add_stop"
                     style="@style/Widget.Material3.Button.TextButton"
@@ -61,8 +58,6 @@
                     android:text="@string/add_stop_button_text"
                     app:icon="@drawable/ic_add_black_dp24" />
             </LinearLayout>
-
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -105,13 +100,11 @@
 <!--                    android:textSize="16sp"-->
 <!--                    android:text="@string/heading_trip_notification" />-->
 
-
-
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/notificationEditTextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Notification Duration (minutes)"
+                    android:hint="@string/notification_duration_minutes"
                     app:boxBackgroundMode="outline"
                     app:errorEnabled="true">
 
@@ -123,67 +116,7 @@
                         android:importantForAccessibility="yes"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <!--                <RadioGroup-->
-<!--                    android:checkedButton="@+id/enabled_selected"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content">-->
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/enabled_selected"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:enabled="true"-->
-<!--                        android:text="No Notifications"/>-->
-<!--                    <RadioButton-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:checked="false"-->
-<!--                        android:enabled="true"-->
-<!--                        android:text="5 minutes"/>-->
-<!--                    <RadioButton-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:checked="false"-->
-<!--                        android:enabled="true"-->
-<!--                        android:text="30 minutes"/>-->
-<!--                </RadioGroup>-->
-
             </LinearLayout>
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal">-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/textView"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:text="@string/send_notifications" />-->
-
-<!--                <com.google.android.material.materialswitch.MaterialSwitch-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1" />-->
-
-<!--            </LinearLayout>-->
-
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:id="@+id/add_notification_time"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="Duration (minutes)"-->
-<!--                app:boxBackgroundMode="outline"-->
-<!--                app:errorEnabled="true" >-->
-
-<!--                <com.google.android.material.textfield.TextInputEditText-->
-<!--                    android:id="@+id/notificationEditText"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:inputType="number"-->
-<!--                    android:importantForAccessibility="yes"/>-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
 
         </LinearLayout>
 
@@ -195,7 +128,7 @@
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="bottom"
-        >
+        android:clipToPadding="false">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_cancel_trip"
@@ -203,12 +136,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/desc_fab_save_trip"
             android:text="@string/fab_cancel_trip"
-            android:layout_weight="0"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginEnd="10sp"/>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_new_trip"
@@ -216,7 +145,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/desc_fab_save_trip"
             android:text="@string/fab_save_trip"
-            android:layout_weight="0"/>
+            android:layout_weight="1"/>
 
     </LinearLayout>
 

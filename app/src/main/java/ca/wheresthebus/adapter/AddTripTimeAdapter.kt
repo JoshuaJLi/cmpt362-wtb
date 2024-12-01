@@ -129,7 +129,7 @@ class AddTripTimeAdapter(
 
     fun addTime(schedulePair: Pair<MutableList<DayOfWeek>, LocalTime>) {
         if (schedules.size >= 5) {
-            Snackbar.make(rootView, "Maximum number of schedules reached", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(rootView, "Maximum number of schedules reached.", Snackbar.LENGTH_SHORT).show()
             return
         }
         schedules.add(schedulePair)

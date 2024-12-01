@@ -56,6 +56,7 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
     <string name="at">\@</string>
+    <string name="notification_duration_minutes">Notification Duration (minutes)</string>
     <string-array name="notification_timer_options">
         <item>No notification</item>
         <item>1 minute</item>
