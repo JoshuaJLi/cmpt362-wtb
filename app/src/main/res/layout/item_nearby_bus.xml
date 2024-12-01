@@ -16,19 +16,12 @@
             android:id="@+id/NearbyBottomSheet_stopNickname"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Stop Nickname"
+            android:textSize="16sp"
             />
         <TextView
-            android:id="@+id/NearbyBottomSheet_stopID"
+            android:id="@+id/NearbyBottomSheet_buses"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stop ID"
-            />
-        <TextView
-            android:id="@+id/NearbyBottomSheet_stopUpcoming"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upcoming Buses"
+            android:layout_height="match_parent"
             />
         <!-- Additional information and buttons -->
         <LinearLayout
@@ -37,10 +30,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,7 +40,7 @@
                     android:id="@+id/save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add to Favourites" />
+                    android:text="@string/add_to_favourites" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
