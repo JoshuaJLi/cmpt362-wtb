@@ -14,11 +14,11 @@
             android:id="@+id/add_trip_days_button"
             android:layout_width="150sp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/black"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="@android:color/primary_text_light"
             android:layout_marginEnd="10dp"
             app:cornerRadius="8dp"
-            app:strokeColor="@color/cardview_dark_background"
+            app:strokeColor="@android:color/secondary_text_dark"
             app:strokeWidth="1dp"
             android:singleLine="true"
             android:ellipsize="end"/>
@@ -32,13 +32,15 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_trip_time_button"
-            android:layout_width="wrap_content"
+            android:layout_width="120sp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/black"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="@android:color/primary_text_light"
             app:cornerRadius="8dp"
-            app:strokeColor="@color/black"
-            app:strokeWidth="1dp"/>
+            app:strokeColor="@android:color/secondary_text_dark"
+            app:strokeWidth="1dp"
+            android:singleLine="true"
+            android:ellipsize="end"/>
 
         <View
             android:layout_width="0dp"

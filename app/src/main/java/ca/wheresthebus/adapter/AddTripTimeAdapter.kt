@@ -9,14 +9,17 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.time.DayOfWeek
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class AddTripTimeAdapter(
     private val schedules: MutableList<Pair<MutableList<DayOfWeek>, LocalTime>>,
-    private val supportFragmentManager: FragmentManager
+    private val supportFragmentManager: FragmentManager,
+    private val rootView: View
 ) : RecyclerView.Adapter<AddTripTimeAdapter.AddTripTimeViewHolder>() {
 
     class AddTripTimeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -33,8 +36,14 @@ class AddTripTimeAdapter(
     override fun onBindViewHolder(holder: AddTripTimeViewHolder, position: Int) {
         val schedule = schedules[position]
 
-        holder.daysButton.text = schedule.first.joinToString(", ") { it.name.substring(0, 3) }
-        holder.timeButton.text = schedule.second.toString()
+        holder.daysButton.text = schedule.first.joinToString(", ") {
+            it.name.substring(0, 3)
+                .lowercase()
+                .replaceFirstChar { char -> char.uppercase() }
+        }
+
+        val timeString = schedule.second.format(DateTimeFormatter.ofPattern("h:mm a"))
+        holder.timeButton.text = timeString
 
         holder.daysButton.setOnClickListener { handleDaysButtonClick(holder) }
         holder.timeButton.setOnClickListener { handleTimeButtonClick(holder) }
@@ -66,6 +75,18 @@ class AddTripTimeAdapter(
         // Attach listener to update currentDays according to checked boxes
         checkBoxes.forEach { (day, checkBox) ->
             checkBox.isChecked = currentDays.contains(day)
+        }
+
+        // Attach listener to enforce at least one checkbox is checked
+        checkBoxes.forEach { (_, checkBox) ->
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                if (!isChecked) {
+                    val checkedCount = checkBoxes.values.count { it.isChecked }
+                    if (checkedCount == 0) {
+                        checkBox.isChecked = true
+                    }
+                }
+            }
         }
 
         val dialog = MaterialAlertDialogBuilder(holder.itemView.context)
@@ -107,14 +128,12 @@ class AddTripTimeAdapter(
     }
 
     fun addTime(schedulePair: Pair<MutableList<DayOfWeek>, LocalTime>) {
+        if (schedules.size >= 5) {
+            Snackbar.make(rootView, "Maximum number of schedules reached", Snackbar.LENGTH_SHORT).show()
+            return
+        }
         schedules.add(schedulePair)
         notifyItemInserted(schedules.size - 1)
-    }
-
-    fun updateSchedules(newSchedules: List<Pair<MutableList<DayOfWeek>, LocalTime>>) {
-        schedules.clear()
-        schedules.addAll(newSchedules)
-        notifyDataSetChanged()
     }
 
 }

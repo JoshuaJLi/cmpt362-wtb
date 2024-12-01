@@ -21,6 +21,8 @@ class AddTripsActivity : AppCompatActivity() {
 
     private lateinit var addTripsViewModel: AddTripsViewModel
 
+    private val schedulePairs: MutableList<Pair<MutableList<DayOfWeek>, LocalTime>> = mutableListOf()
+
     private lateinit var addTripsView : RecyclerView
 
     private lateinit var tripTimeAdapter: AddTripTimeAdapter
@@ -54,7 +56,9 @@ class AddTripsActivity : AppCompatActivity() {
     }
 
     private fun setUpTripTimeAdapter() {
-        tripTimeAdapter = AddTripTimeAdapter(mutableListOf(), supportFragmentManager)
+        binding.recyclerViewTimes.itemAnimator = null
+
+        tripTimeAdapter = AddTripTimeAdapter(schedulePairs, supportFragmentManager, binding.root)
 
         addTripsView = binding.recyclerViewTimes
         addTripsView.apply {
