@@ -54,8 +54,16 @@ class FavStopAdapter(
             val busTimes = busTimesMap[stop.busStop.id]
             if (!busTimes.isNullOrEmpty()) {
                 val formattedTimes = busTimes.map { busArrivalTime ->
-                    val minutes = busArrivalTime.toMinutes()
-                    if (minutes >= 1) "$minutes min" else "Now"
+                    val durationInMin = busArrivalTime.toMinutes()
+                    val hour = durationInMin / 60
+                    val min = durationInMin % 60
+
+                    when {
+                        hour >= 1 && min == 0L -> "$hour hr"
+                        hour == 0L && min >= 1 -> "$min min"
+                        hour >= 1 && min >= 1 -> "$hour hr $min min"
+                        else -> "Now"
+                    }
                 }
 
                 upcoming.text = buildString {

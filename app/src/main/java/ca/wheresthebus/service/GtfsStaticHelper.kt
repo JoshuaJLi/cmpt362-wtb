@@ -27,7 +27,6 @@ class GtfsStaticHelper {
         }
 
         fun getBusTimes(stopsInfo: List<Pair<StopId, RouteId>>): MutableMap<StopId, List<Duration>> {
-            println("Called getBusTimes static")
             return try {
                 stopsInfo.associate { (stopId, routeId) ->
                     stopId to getTimeUntilNextBus(stopId.value.toInt(), routeId.value.toInt())
