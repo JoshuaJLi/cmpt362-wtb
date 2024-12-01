@@ -6,12 +6,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
+import ca.wheresthebus.adapter.AddTripTimeAdapter
 import ca.wheresthebus.databinding.ActivityAddTripsBinding
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 class AddTripsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddTripsBinding
+
+    private lateinit var addTripsViewModel: AddTripsViewModel
+
+    private lateinit var addTripsView : RecyclerView
+
+    private lateinit var tripTimeAdapter: AddTripTimeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +38,29 @@ class AddTripsActivity : AppCompatActivity() {
         binding = ActivityAddTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        addTripsViewModel = ViewModelProvider(this)[AddTripsViewModel::class.java]
+
+        setUpTripStopsAdapter()
+        setUpTripTimeAdapter()
+
         setUpAddStop()
         setUpAddTime()
-        setUpSaveFab()
+        setUpCancel()
+        setUpSave()
+    }
+
+    private fun setUpTripStopsAdapter() {
+        // do trip stops stuff
+    }
+
+    private fun setUpTripTimeAdapter() {
+        tripTimeAdapter = AddTripTimeAdapter(mutableListOf(), supportFragmentManager)
+
+        addTripsView = binding.recyclerViewTimes
+        addTripsView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = tripTimeAdapter
+        }
     }
 
     private fun setUpAddStop() {
@@ -39,13 +71,24 @@ class AddTripsActivity : AppCompatActivity() {
 
     private fun setUpAddTime() {
         binding.buttonAddTime.setOnClickListener {
-            Log.d("AddTripsActivity", "Add time button clicked")
+            val newSchedule = Pair(
+                mutableListOf(DayOfWeek.MONDAY),
+                LocalTime.of(8, 0)
+            )
+            tripTimeAdapter.addTime(newSchedule)
         }
     }
 
-    private fun setUpSaveFab() {
+    private fun setUpCancel() {
+        binding.fabCancelTrip.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun setUpSave() {
         binding.fabNewTrip.setOnClickListener {
             finish()
+            // do save stuff
         }
     }
 }

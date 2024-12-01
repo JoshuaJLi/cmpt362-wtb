@@ -26,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_trip_name"
+                android:layout_marginBottom="8dp"
                 app:boxBackgroundMode="outline"
                 app:errorEnabled="true">
 
@@ -37,47 +38,117 @@
                     android:importantForAccessibility="yes"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/stops_heading"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="@string/heading_trip_stop" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/stops_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/heading_trip_stop"
+                    android:textSize="16sp" />
 
 
-            <Button
-                style="@style/Widget.Material3.Button.TextButton"
-                android:id="@+id/button_add_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_stop_button_text"
-                app:icon="@drawable/ic_add_black_dp24"
-                />
 
-            <TextView
-                android:id="@+id/calendar_heading"
+                <Button
+                    android:id="@+id/button_add_stop"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_stop_button_text"
+                    app:icon="@drawable/ic_add_black_dp24" />
+            </LinearLayout>
+
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="@string/heading_trip_calendar" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="8dp">
 
-            <Button
-                style="@style/Widget.Material3.Button.TextButton"
-                android:id="@+id/button_add_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_trip_time_button_text"
-                app:icon="@drawable/ic_add_black_dp24"
-                />
+                <TextView
+                    android:id="@+id/calendar_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/heading_trip_calendar"
+                    android:textSize="16sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_times"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/button_add_time"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_trip_time_button_text"
+                    app:icon="@drawable/ic_add_black_dp24" />
+            </LinearLayout>
 
 
-            <TextView
-                android:id="@+id/notification_heading"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                android:text="@string/heading_trip_notification" />
+<!--                <TextView-->
+<!--                    android:id="@+id/notification_heading"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:text="@string/heading_trip_notification" />-->
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/notificationEditTextLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Notification Duration (minutes)"
+                    app:boxBackgroundMode="outline"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/notificationEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:importantForAccessibility="yes"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!--                <RadioGroup-->
+<!--                    android:checkedButton="@+id/enabled_selected"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content">-->
+<!--                    <RadioButton-->
+<!--                        android:id="@+id/enabled_selected"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:enabled="true"-->
+<!--                        android:text="No Notifications"/>-->
+<!--                    <RadioButton-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:checked="false"-->
+<!--                        android:enabled="true"-->
+<!--                        android:text="5 minutes"/>-->
+<!--                    <RadioButton-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:checked="false"-->
+<!--                        android:enabled="true"-->
+<!--                        android:text="30 minutes"/>-->
+<!--                </RadioGroup>-->
+
+            </LinearLayout>
 
 <!--            <LinearLayout-->
 <!--                android:layout_width="match_parent"-->
@@ -118,14 +189,35 @@
 
     </ScrollView>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab_new_trip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_gravity="bottom|center"
-        android:contentDescription="@string/desc_fab_save_trip"
-        android:text="@string/fab_save_trip"
-        app:icon="@drawable/baseline_draw_24"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="bottom"
+        >
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_cancel_trip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_fab_save_trip"
+            android:text="@string/fab_cancel_trip"
+            android:layout_weight="0"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_new_trip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_fab_save_trip"
+            android:text="@string/fab_save_trip"
+            android:layout_weight="0"/>
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
