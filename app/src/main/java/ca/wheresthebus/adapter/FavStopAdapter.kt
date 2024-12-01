@@ -7,14 +7,14 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
-import ca.wheresthebus.data.StopCode
+import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.model.FavouriteStop
 import java.time.Duration
 
 class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>,
     private val type: Type = Type.HOME,
-    private val busTimesMap: MutableMap<StopCode, List<Duration>> = mutableMapOf()
+    private val busTimesMap: MutableMap<StopId, List<Duration>> = mutableMapOf()
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
 
     enum class Type {
@@ -51,7 +51,7 @@ class FavStopAdapter(
                 append(stop.busStop.code.value)
             }
 
-            val busTimes = busTimesMap[stop.busStop.code]
+            val busTimes = busTimesMap[stop.busStop.id]
             if (!busTimes.isNullOrEmpty()) {
                 val formattedTimes = busTimes.map { busArrivalTime ->
                     val minutes = busArrivalTime.toMinutes()
@@ -120,7 +120,7 @@ class FavStopAdapter(
         }
     }
 
-    fun updateBusTimes(busTimes: Map<StopCode, List<Duration>>) {
+    fun updateBusTimes(busTimes: MutableMap<StopId, List<Duration>>) {
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
         notifyItemRangeChanged(0, itemCount)
