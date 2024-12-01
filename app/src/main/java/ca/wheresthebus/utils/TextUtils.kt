@@ -1,6 +1,7 @@
 package ca.wheresthebus.utils
 
 import ca.wheresthebus.data.model.ScheduledTrip
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -42,4 +43,16 @@ object TextUtils {
             return "Active on $activeTimes"
         }
     }
+
+    fun upcomingBusesString(busTimes : List<Duration>?) : String {
+        if (!busTimes.isNullOrEmpty()) {
+            val formattedTimes = busTimes.map { busArrivalTime ->
+                val minutes = busArrivalTime.toMinutes()
+                if (minutes >= 1) "$minutes min" else "Now"
+            }
+            return formattedTimes.joinToString(", ")
+        }
+        return "No upcoming busses"
+    }
+
 }

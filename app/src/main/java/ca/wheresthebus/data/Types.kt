@@ -20,3 +20,5 @@ value class TripId(val value : String)
 
 @JvmInline
 value class ScheduledTripId(val value : String)
+
+typealias StopRequest = Pair<StopId, RouteId>
