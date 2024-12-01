@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
@@ -22,7 +21,6 @@ class AddTripTimeAdapter(
 
     class AddTripTimeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val daysButton: Button = view.findViewById(R.id.add_trip_days_button)
-        val timeTextView: TextView = view.findViewById(R.id.textView)
         val timeButton: Button = view.findViewById(R.id.add_trip_time_button)
         val deleteButton: Button = view.findViewById(R.id.add_trip_delete_button)
     }
@@ -35,8 +33,8 @@ class AddTripTimeAdapter(
     override fun onBindViewHolder(holder: AddTripTimeViewHolder, position: Int) {
         val schedule = schedules[position]
 
-        holder.timeTextView.text = schedule.second.toString()
         holder.daysButton.text = schedule.first.joinToString(", ") { it.name.substring(0, 3) }
+        holder.timeButton.text = schedule.second.toString()
 
         holder.daysButton.setOnClickListener { handleDaysButtonClick(holder) }
         holder.timeButton.setOnClickListener { handleTimeButtonClick(holder) }
