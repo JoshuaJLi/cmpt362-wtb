@@ -4,10 +4,14 @@ import android.content.Context
 import ca.wheresthebus.R
 import ca.wheresthebus.data.json.JsonRoute
 import ca.wheresthebus.data.json.JsonStop
+import ca.wheresthebus.data.json.JsonStopTime
+import ca.wheresthebus.data.mongo_model.MongoArrivalTime
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
+import ca.wheresthebus.data.mongo_model.MongoStopTime
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.toRealmList
@@ -18,6 +22,7 @@ object Utils {
     // Populates the Realm database with json data from files in resources/raw
     suspend fun populateRealmDatabase(context: Context, realm: Realm) {
         withContext(Dispatchers.IO) {
+            val start = System.currentTimeMillis()
             // read json file contents
             val gson = Gson()
             val stopsJsonContent = context.resources.openRawResource(R.raw.stops).bufferedReader()
@@ -66,6 +71,55 @@ object Utils {
                     copyToRealm(realmStop)
                 }
             }
+            val end = System.currentTimeMillis()
+            println("Populating database with stop and route data took ${(end-start)/1000} seconds")
         }
+
+        // read and process the file contents
+        withContext(Dispatchers.IO) {
+            val start = System.currentTimeMillis()
+            println("MongoStopTime: Starting work")
+
+            val gson = Gson()
+            val reader = JsonReader(context.resources.openRawResource(R.raw.stop_times).bufferedReader())
+
+            realm.write {
+                reader.use { r ->
+                    r.beginArray()
+
+                    while (r.hasNext()) {
+                        val jsonStopTime = gson.fromJson<JsonStopTime>(r, JsonStopTime::class.java)
+
+                        // build list of MongoArrivalTimes
+                        val arrivalTimes: List<MongoArrivalTime> = jsonStopTime.arrival_times.map { time ->
+                            MongoArrivalTime(
+                                hour = time.h,
+                                minute = time.m,
+                            )
+                        }
+
+                        // build new MongoStopTime object
+                        val mongoStopTime = MongoStopTime(
+                            stopId = jsonStopTime.stop_id,
+                            routeId = jsonStopTime.route_id,
+                            serviceId = jsonStopTime.service_id,
+                            arrivalTimes = arrivalTimes.toRealmList()
+                        )
+
+                        // push mongoStopTime to a producer/consumer
+                        copyToRealm(mongoStopTime)
+                    }
+                    r.endArray()
+                }
+            }
+            println("MongoStopTime: Finished to writing stop time data to database")
+            val end = System.currentTimeMillis()
+            println("Populating database with stop time data took ${(end-start)/1000} seconds")
+        }
+
+//        // grab from queue and insert into realm
+//        withContext(Dispatchers.IO) {
+//
+//        }
     }
 }
