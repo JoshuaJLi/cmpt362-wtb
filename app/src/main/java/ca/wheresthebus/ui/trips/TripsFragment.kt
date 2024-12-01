@@ -1,18 +1,30 @@
 package ca.wheresthebus.ui.trips
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Visibility
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.TripAdapter
+import ca.wheresthebus.data.model.Schedule
+import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
+import ca.wheresthebus.service.AlarmService
+import ca.wheresthebus.service.LiveNotificationService
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 class TripsFragment : Fragment() {
 
@@ -46,6 +58,9 @@ class TripsFragment : Fragment() {
         mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
 
         setUpAdapter()
+
+        AlarmService.scheduleTripNotifications(mainDBViewModel.getTrips(), requireContext())
+
         return root
     }
 
@@ -102,6 +117,7 @@ class TripsFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

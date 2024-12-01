@@ -5,6 +5,10 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
+    <action android:id="@+id/action_trip_fragment"
+        app:destination="@id/navigation_trips"
+        app:launchSingleTop="true"/>
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="ca.wheresthebus.ui.home.HomeFragment"
