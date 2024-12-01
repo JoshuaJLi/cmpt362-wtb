@@ -8,8 +8,6 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
-import androidx.lifecycle.enableSavedStateHandles
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,9 +19,8 @@ import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.NfcService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
-import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
-import ca.wheresthebus.utils.Utils
+import ca.wheresthebus.utils.StaticDataLoadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -56,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         // Only load static data if we haven't done it yet
         if (!mainDBViewModel.isStaticDataLoaded()) {
             val context = this
-            lifecycleScope.launch(Dispatchers.IO) { Utils.populateRealmDatabase(context, mainDBViewModel.getRealm()) }
+            lifecycleScope.launch(Dispatchers.IO) { StaticDataLoadHelper.populateRealmDatabase(context, mainDBViewModel.getRealm()) }
         }
     }
 
