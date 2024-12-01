@@ -46,12 +46,15 @@ class MainActivity : AppCompatActivity() {
             moveTaskToBack(true)
         }
 
-        loadStaticDataToDB()
+        // NOTE: Comment this line of code out if you need to load database from the res/raw files
+        // Should only do this to generate a default.realm file
+        // loadStaticDataToDB()
     }
 
     private fun loadStaticDataToDB() {
         // Only load static data if we haven't done it yet
         if (!mainDBViewModel.isStaticDataLoaded()) {
+            println("loading data from static resource files...")
             val context = this
             lifecycleScope.launch(Dispatchers.IO) { StaticDataLoadHelper.populateRealmDatabase(context, mainDBViewModel.getRealm()) }
         }
