@@ -20,5 +20,17 @@
         <item>@string/preference_appearance_light_value</item>
         <item>@string/preference_appearance_dark_value</item>
     </string-array>
+    
+    <string-array name="trip_polling_entries">
+        <item>@string/preferences_poll_1_entry</item>
+        <item>@string/preferences_poll_3_entry</item>
+        <item>@string/preferences_poll_5_entry</item>
+    </string-array>
+    
+    <string-array name="trip_polling_values">
+        <item>@string/preferences_poll_1_value</item>
+        <item>@string/preferences_poll_3_value</item>
+        <item>@string/preferences_poll_5_value</item>
+    </string-array>
 
 </resources>

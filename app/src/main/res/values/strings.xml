@@ -22,5 +22,16 @@
     <string name="preference_appearance_default_value">DEFAULT</string>
     <string name="preference_appearance_light_value">LIGHT</string>
     <string name="preference_appearance_dark_value">DARK</string>
+    <string name="preferences_poll_1_entry">1 minute</string>
+    <string name="preferences_poll_3_entry">3 minutes</string>
+    <string name="preferences_poll_5_entry">5 minutes</string>
+    <string name="preferences_poll_1_value">1</string>
+    <string name="preferences_poll_3_value">3</string>
+    <string name="preferences_poll_5_value">5</string>
+    <string name="category_about">About</string>
+    <string name="preference_webpage">Webpage</string>
+    <string name="wtb_url">wheres-the-bus.pages.dev</string>
+    <string name="preference_repo">GitHub Repo</string>
+    <string name="wtb_repo">github.com/JoshuaJLi/cmpt362-wtb</string>
 
 </resources>
