@@ -35,6 +35,10 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
 
+        if (handleIncomingIntent(intent)) {
+            finish()
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -42,27 +46,31 @@ class MainActivity : AppCompatActivity() {
 
         requestNotificationPermission()
 
-        handleIncomingIntent(intent)
-
         loadStaticDataToDB()
     }
 
-    private fun handleIncomingIntent(intent: Intent?) {
+    // Returns true if the rest of the app doesn't need to load
+    private fun handleIncomingIntent(intent: Intent?) : Boolean {
         if (intent == null) {
-            return
+            return false
         }
 
         when (intent.action) {
-            ACTION_NAVIGATE_TO_TRIP -> binding.navView.findNavController()
-                .navigate(R.id.action_trip_fragment)
+            ACTION_NAVIGATE_TO_TRIP -> {
+                binding.navView.findNavController()
+                    .navigate(R.id.action_trip_fragment)
+                return false
+            }
 
             NfcAdapter.ACTION_TECH_DISCOVERED -> {
                 Intent(this, BusNotifierService::class.java).also {
                     startService(it)
                 }
                 moveTaskToBack(true)
+                return true
             }
         }
+        return false
     }
 
     override fun onNewIntent(intent: Intent?) {

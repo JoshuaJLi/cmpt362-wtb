@@ -126,30 +126,28 @@ class BusNotifierService : LifecycleService() {
         return nearestStop
     }
 
-    private fun notifyNextBusses(stop: BusStop) = runBlocking {
-        serviceScope.launch {
-            val busTimes =
-                GtfsRealtimeHelper.getBusTimes(stop.routes.map { Pair(stop.id, it.id) })
-            val routeTimePair = stop.routes.associateBy {
-                busTimes[Pair(stop.id, it.id)]
-            }
-
-            val content = routeTimePair.map {
-                "${it.value.shortName}: ${TextUtils.upcomingBusesString(it.key)}"
-            }.joinToString(separator = "\n")
-
-            val notification = NotificationCompat.Builder(this@BusNotifierService, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_nearby_black_dp24)
-                .setContentTitle(stop.name)
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .build()
-
-            val notificationManager =
-                this@BusNotifierService.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-            notificationManager.notify(20, notification)
+    private fun notifyNextBusses(stop: BusStop) = serviceScope.launch {
+        val busTimes =
+            GtfsRealtimeHelper.getBusTimes(stop.routes.map { Pair(stop.id, it.id) })
+        val routeTimePair = stop.routes.associateBy {
+            busTimes[Pair(stop.id, it.id)]
         }
+
+        val content = routeTimePair.map {
+            "${it.value.shortName}: ${TextUtils.upcomingBusesString(it.key)}"
+        }.joinToString(separator = "\n")
+
+        val notification = NotificationCompat.Builder(this@BusNotifierService, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_nearby_black_dp24)
+            .setContentTitle(stop.name)
+            .setContentText(content)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .build()
+
+        val notificationManager =
+            this@BusNotifierService.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.notify(20, notification)
     }
 }
