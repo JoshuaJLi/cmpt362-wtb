@@ -7,14 +7,15 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
-import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.utils.TextUtils
 import java.time.Duration
 
 class FavStopAdapter(
     private val dataSet: ArrayList<FavouriteStop>,
     private val type: Type = Type.HOME,
-    private val busTimesMap: MutableMap<StopId, List<Duration>> = mutableMapOf()
+    private val busTimesMap: MutableMap<StopRequest, List<Duration>> = mutableMapOf()
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
 
     enum class Type {
@@ -51,29 +52,31 @@ class FavStopAdapter(
                 append(stop.busStop.code.value)
             }
 
-            val busTimes = busTimesMap[stop.busStop.id]
-            if (!busTimes.isNullOrEmpty()) {
-                val formattedTimes = busTimes.map { busArrivalTime ->
-                    val durationInMin = busArrivalTime.toMinutes()
-                    val hour = durationInMin / 60
-                    val min = durationInMin % 60
-
-                    when {
-                        hour >= 1 && min == 0L -> "$hour hr"
-                        hour == 0L && min >= 1 -> "$min min"
-                        hour >= 1 && min >= 1 -> "$hour hr $min min"
-                        else -> "Now"
-                    }
-                }
-
-                upcoming.text = buildString {
-                    append(formattedTimes.joinToString(", "))
-                }
-            } else {
-                upcoming.text = buildString {
-                    append("No upcoming buses")
-                }
-            }
+            val busTimes = busTimesMap[Pair(stop.busStop.id, stop.route.id)]
+//            upcoming.text = TextUtils.upcomingBusesString(busTimes)
+            // TODO:
+//            if (!busTimes.isNullOrEmpty()) {
+//                val formattedTimes = busTimes.map { busArrivalTime ->
+//                    val durationInMin = busArrivalTime.toMinutes()
+//                    val hour = durationInMin / 60
+//                    val min = durationInMin % 60
+//
+//                    when {
+//                        hour >= 1 && min == 0L -> "$hour hr"
+//                        hour == 0L && min >= 1 -> "$min min"
+//                        hour >= 1 && min >= 1 -> "$hour hr $min min"
+//                        else -> "Now"
+//                    }
+//                }
+//
+//                upcoming.text = buildString {
+//                    append(formattedTimes.joinToString(", "))
+//                }
+//            } else {
+//                upcoming.text = buildString {
+//                    append("No upcoming buses")
+//                }
+//            }
         }
     }
 
@@ -128,7 +131,7 @@ class FavStopAdapter(
         }
     }
 
-    fun updateBusTimes(busTimes: MutableMap<StopId, List<Duration>>) {
+    fun updateBusTimes(busTimes: MutableMap<StopRequest, List<Duration>>) {
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
         notifyItemRangeChanged(0, itemCount)

@@ -19,7 +19,13 @@ import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.NfcService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
+import android.util.Log
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import androidx.media.session.MediaButtonReceiver.handleIntent
+import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
+import ca.wheresthebus.utils.Utils
 import ca.wheresthebus.utils.StaticDataLoadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,17 +44,32 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setUpNavBar()
+        loadStaticDataToDB()
 
-        requestNotificationPermission()
+        handleIncomingIntent(intent)
 
-        if (isStartedByNFC(intent)) {
-            NfcService.handleTap(this)
-            moveTaskToBack(true)
+        requestAllPermissions()
+    }
+
+    private fun handleIncomingIntent(intent: Intent?) {
+        if (intent == null) {
+            return
         }
 
-        // NOTE: Comment this line of code out if you need to load database from the res/raw files
-        // Should only do this to generate a default.realm file
-        // loadStaticDataToDB()
+        when (intent.action) {
+            ACTION_NAVIGATE_TO_TRIP -> binding.navView.findNavController()
+                .navigate(R.id.action_trip_fragment)
+
+            NfcAdapter.ACTION_TECH_DISCOVERED -> {
+                NfcService.handleTap(this)
+                moveTaskToBack(true)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIncomingIntent(intent)
     }
 
     private fun loadStaticDataToDB() {
@@ -56,8 +77,43 @@ class MainActivity : AppCompatActivity() {
         if (!mainDBViewModel.isStaticDataLoaded()) {
             println("loading data from static resource files...")
             val context = this
-            lifecycleScope.launch(Dispatchers.IO) { StaticDataLoadHelper.populateRealmDatabase(context, mainDBViewModel.getRealm()) }
+            lifecycleScope.launch(Dispatchers.IO) {
+                StaticDataLoadHelper.populateRealmDatabase(
+                    context,
+                    mainDBViewModel.getRealm()
+                )
+            }
         }
+    }
+
+    /**
+     * i tried to put this within its own controller, but requesting permissions requires its own lifecycle
+     * not sure of how to give a static object its own lifecycle, more on that later maybe
+     * TODO: define a proper permissions workflow for if the user denies permissions more than twice
+     * android 11 and up stops asking after the 2nd time and the user must go to settings to enable manually
+     */
+    private fun requestAllPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            val requestMultiplePermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                permissions.entries.forEach {
+                    Log.d("MainActivity", "${it.key} = ${it.value}")
+                }
+            }
+            requestMultiplePermissionsLauncher.launch(permissionsToRequest.toTypedArray())
+        }
+
     }
 
     private fun requestNotificationPermission() {
@@ -75,10 +131,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun isStartedByNFC(intent: Intent?): Boolean {
-        return intent != null && intent.action == NfcAdapter.ACTION_TECH_DISCOVERED
-    }
-
     private fun setUpNavBar() {
         val navView: BottomNavigationView = binding.navView
 
@@ -87,29 +139,36 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_trips, R.id.navigation_nearby, R.id.navigation_settings
+                R.id.navigation_home,
+                R.id.navigation_trips,
+                R.id.navigation_nearby,
+                R.id.navigation_settings
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         NavigationBarView.OnItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.navigation_home -> {
                     // Respond to navigation item 1 click
                     true
                 }
+
                 R.id.navigation_trips -> {
                     // Respond to navigation item 2 click
                     true
                 }
+
                 R.id.navigation_nearby -> {
 
                     true
                 }
+
                 R.id.navigation_settings -> {
                     true
                 }
+
                 else -> false
             }
         }
