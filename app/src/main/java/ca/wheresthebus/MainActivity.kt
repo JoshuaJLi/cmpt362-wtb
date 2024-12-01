@@ -16,11 +16,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import ca.wheresthebus.databinding.ActivityMainBinding
-import ca.wheresthebus.service.NfcService
+import ca.wheresthebus.service.BusNotifierService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
 import androidx.lifecycle.lifecycleScope
-import androidx.media.session.MediaButtonReceiver.handleIntent
 import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
 import ca.wheresthebus.utils.Utils
 import kotlinx.coroutines.Dispatchers
@@ -58,7 +57,9 @@ class MainActivity : AppCompatActivity() {
                 .navigate(R.id.action_trip_fragment)
 
             NfcAdapter.ACTION_TECH_DISCOVERED -> {
-                NfcService.handleTap(this)
+                Intent(this, BusNotifierService::class.java).also {
+                    startService(it)
+                }
                 moveTaskToBack(true)
             }
         }
