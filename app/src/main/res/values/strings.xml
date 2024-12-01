@@ -35,5 +35,7 @@
     <string name="wtb_repo">github.com/JoshuaJLi/cmpt362-wtb</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="wtb_feedback">wheres-the-bus.pages.dev/feedback</string>
+    <string name="preference_trip_poll_time">trip_poll_time</string>
+    <string name="key_tap_action">tap_action</string>
 
 </resources>

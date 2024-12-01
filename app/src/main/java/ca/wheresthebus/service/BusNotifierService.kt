@@ -5,13 +5,18 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import androidx.preference.PreferenceManager
 import ca.wheresthebus.R
 import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
+import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.mongo_model.MongoBusStop
+import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.utils.TextUtils
 import ca.wheresthebus.utils.Utils
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -22,11 +27,9 @@ import io.realm.kotlin.ext.query
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import java.time.Duration
 
 
 class BusNotifierService : LifecycleService() {
@@ -79,6 +82,11 @@ class BusNotifierService : LifecycleService() {
         return result.find().map { modelFactory.toBusStop(it) }
     }
 
+    private fun getAllFavourites(): List<FavouriteStop> {
+        val result = realm.query<MongoFavouriteStop>()
+        return result.find().map { modelFactory.toFavouriteBusStop(it) }
+    }
+
     private fun getStopById(stopId: String): BusStop? {
         val result = realm.query<MongoBusStop>("id == $0", stopId)
         return result.find().map { modelFactory.toBusStop(it) }.firstOrNull()
@@ -97,6 +105,10 @@ class BusNotifierService : LifecycleService() {
         notificationManager.createNotificationChannel(channel)
     }
 
+    private fun getNearestFavourite(location : Location) = getAllFavourites()
+            .associateBy { location.distanceTo(it.busStop.location) }
+            .minBy { (location, _) -> location }
+            .value
 
     private fun getNearestStopAndSendNotification() {
         if (!Utils.checkLocationPermission(this)) return
@@ -110,9 +122,25 @@ class BusNotifierService : LifecycleService() {
                 CancellationTokenSource().token
             )
                 .addOnSuccessListener { location ->
-                    val closestStop = getClosestStop(location)
-                    notifyNextBusses(closestStop)
+                    determineFavouriteOrAll(location)
                 }
+        }
+    }
+
+    private fun determineFavouriteOrAll(location: Location) {
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this@BusNotifierService)
+        when (sharedPreferences.getString(getString(R.string.key_tap_action), "")) {
+            getString(R.string.preference_tap_action_favourites_value) -> {
+                val closestStop = getNearestFavourite(location)
+                notifyNextBusses(closestStop)
+            }
+
+            else -> {
+                val closestStop = getClosestStop(location)
+                notifyNextBusses(closestStop)
+
+            }
         }
     }
 
@@ -125,6 +153,13 @@ class BusNotifierService : LifecycleService() {
 
         return nearestStop
     }
+    private fun notifyNextBusses(stop: FavouriteStop) = serviceScope.launch {
+        val busTimes =
+            GtfsRealtimeHelper.getBusTimes(listOf( Pair(stop.busStop.id, stop.route.id)) )
+        val routeTimePair = mapOf(busTimes[Pair(stop.busStop.id, stop.route.id)] to stop.route)
+
+        notifyRoute(routeTimePair, stop.nickname)
+    }
 
     private fun notifyNextBusses(stop: BusStop) = serviceScope.launch {
         val busTimes =
@@ -133,13 +168,20 @@ class BusNotifierService : LifecycleService() {
             busTimes[Pair(stop.id, it.id)]
         }
 
+        notifyRoute(routeTimePair, stop.name)
+    }
+
+    private fun notifyRoute(
+        routeTimePair: Map<List<Duration>?, Route>,
+        title : String
+    ) {
         val content = routeTimePair.map {
             "${it.value.shortName}: ${TextUtils.upcomingBusesString(it.key)}"
         }.joinToString(separator = "\n")
 
         val notification = NotificationCompat.Builder(this@BusNotifierService, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_nearby_black_dp24)
-            .setContentTitle(stop.name)
+            .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
