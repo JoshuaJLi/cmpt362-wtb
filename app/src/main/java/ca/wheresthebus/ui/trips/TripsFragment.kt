@@ -59,7 +59,7 @@ class TripsFragment : Fragment() {
 
         setUpAdapter()
 
-        scheduleTripNotifications(mainDBViewModel.getTrips(), requireContext())
+        AlarmService.scheduleTripNotifications(mainDBViewModel.getTrips(), requireContext())
 
         return root
     }
@@ -115,69 +115,6 @@ class TripsFragment : Fragment() {
                 layoutManager = LinearLayoutManager(context)
                 adapter = inactiveTripAdapter
             }
-        }
-    }
-
-    private fun scheduleTripNotifications(trips : List<ScheduledTrip>, context: Context) {
-        val sharedPreferences = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
-        var notificationId = sharedPreferences.getInt("notification_id", 0)
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        clearNotifications(alarmManager, notificationId)
-        notificationId = 0
-
-        trips.forEach {trip ->
-            val intent = Intent(context, AlarmService::class.java).apply {
-                putStringArrayListExtra(LiveNotificationService.EXTRA_NICKNAMES, trip.stops.map { it.nickname }.toCollection(ArrayList()))
-                putStringArrayListExtra(LiveNotificationService.EXTRA_STOP_IDS, trip.stops.map { it.busStop.id.value }.toCollection(ArrayList()))
-                putStringArrayListExtra(LiveNotificationService.EXTRA_ROUTE_IDS, trip.stops.map { it.route.id.value }.toCollection(ArrayList()))
-                putExtra(LiveNotificationService.EXTRA_DURATION, trip.duration.toMinutes())
-                putExtra(LiveNotificationService.EXTRA_NOTIFICATION_ID, notificationId)
-                putExtra(LiveNotificationService.EXTRA_TRIP_NICKNAME, trip.nickname)
-            }
-
-            val upcomingTimes = trip.activeTimes.map { it.getNextTime(LocalDateTime.now()) }
-
-            upcomingTimes.forEach { time ->
-                val pendingIntent =  PendingIntent.getBroadcast(
-                    context,
-                    notificationId,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-                Log.d("AlarmService", "Alarm set with id $notificationId")
-                notificationId++
-
-//                alarmManager.setInexactRepeating(
-//                    AlarmManager.RTC_WAKEUP,
-//                    time.toEpochSecond(ZoneOffset.of(ZoneId.systemDefault().id)) * 1000,
-//                    AlarmManager.INTERVAL_DAY * 7,
-//                    pendingIntent
-//                    )
-
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis() + (1000 * 5),
-                    pendingIntent
-                )
-            }
-        }
-        sharedPreferences.edit().putInt("notification_id", notificationId).apply()
-    }
-
-    private fun clearNotifications(alarmManager: AlarmManager, notificationId: Int) {
-        for (id in 0 until notificationId) {
-            val intent = Intent(context, AlarmService::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                id,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            Log.d("AlarmService", "Deleting alarm with id $id")
-
-            alarmManager.cancel(pendingIntent)
-            pendingIntent.cancel()
         }
     }
 
