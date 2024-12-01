@@ -13,5 +13,10 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="colorSurface">@color/white</item>
+
+        <!--        Fixes dialogs in preferences -->
+        <item name="colorAccent">?colorPrimary</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
+        <item name="dialogCornerRadius">28dp</item>
     </style>
 </resources>

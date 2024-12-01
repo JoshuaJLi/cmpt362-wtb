@@ -27,7 +27,7 @@
             android:orientation="horizontal"
             android:padding="16dp"
             android:layout_margin="10dp"
-            card_view:cardCornerRadius="10dp"
+            card_view:cardCornerRadius="@dimen/card_corner"
             card_view:cardElevation="4dp">
 
                 <LinearLayout
