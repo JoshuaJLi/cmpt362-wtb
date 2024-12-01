@@ -13,8 +13,10 @@
     <string name="add_to_favourites">Add to Favourites</string>
     <string name="preference_tap_action_all">Get nearest from all stops</string>
     <string name="preference_tap_action_favourites">Get nearest from favourites</string>
+    <string name="preference_tap_action_hybrid">Get favourites first, if none nearby then check from all</string>
     <string name="preference_tap_action_all_value">all</string>
     <string name="preference_tap_action_favourites_value">fav</string>
+    <string name="preference_tap_action_hybrid_value">hybrid</string>
 
     <string name="preference_appearance_default_entry">System default</string>
     <string name="preference_appearance_light_entry">Light</string>

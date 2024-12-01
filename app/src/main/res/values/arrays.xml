@@ -3,10 +3,12 @@
     <string-array name="tap_action_values">
         <item>@string/preference_tap_action_all_value</item>
         <item>@string/preference_tap_action_favourites_value</item>
+        <item>@string/preference_tap_action_hybrid_value</item>
     </string-array>
     <string-array name="tap_action_entries" >
         <item>@string/preference_tap_action_all</item>
         <item>@string/preference_tap_action_favourites</item>
+        <item>@string/preference_tap_action_hybrid</item>
     </string-array>
 
     <string-array name="appearance_entries">

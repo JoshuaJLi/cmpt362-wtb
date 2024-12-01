@@ -44,6 +44,7 @@ class BusNotifierService : LifecycleService() {
         private const val CHANNEL_ID = "WTB_NOTIF_CHANNEL_ID"
         private const val INTENT_STOP_ID = "STOP_ID"
         private const val LAT_LNG_BUFFERS = 0.005
+        private const val FAVOURITE_NEARBY_DISTANCE = 1000
     }
 
     private val realm = MyMongoDBApp.realm
@@ -107,8 +108,16 @@ class BusNotifierService : LifecycleService() {
 
     private fun getNearestFavourite(location : Location) = getAllFavourites()
             .associateBy { location.distanceTo(it.busStop.location) }
-            .minBy { (location, _) -> location }
-            .value
+            .minByOrNull { (location, _) -> location }
+            ?.value
+
+    private fun getNearestFavouriteInRange(location : Location) = getAllFavourites()
+        .filter {
+            it.busStop.location.distanceTo(location) < FAVOURITE_NEARBY_DISTANCE
+        }
+        .associateBy { location.distanceTo(it.busStop.location) }
+        .minByOrNull { (location, _) -> location }
+        ?.value
 
     private fun getNearestStopAndSendNotification() {
         if (!Utils.checkLocationPermission(this)) return
@@ -133,17 +142,30 @@ class BusNotifierService : LifecycleService() {
         when (sharedPreferences.getString(getString(R.string.key_tap_action), "")) {
             getString(R.string.preference_tap_action_favourites_value) -> {
                 val closestStop = getNearestFavourite(location)
-                notifyNextBusses(closestStop)
+                if (closestStop != null) {
+                    notifyNextBusses(closestStop)
+                } else {
+                    sendNotification("Next Favourite Bus", "No favourite buses were found")
+                }
+
+            }
+
+            getString(R.string.preference_tap_action_hybrid_value) -> {
+                val closestFavourite = getNearestFavouriteInRange(location)
+                if (closestFavourite != null) {
+                    notifyNextBusses(closestFavourite)
+                } else {
+                    val closestStop = getClosestStop(location)
+                    notifyNextBusses(closestStop)
+                }
             }
 
             else -> {
                 val closestStop = getClosestStop(location)
                 notifyNextBusses(closestStop)
-
             }
         }
     }
-
 
     private fun getClosestStop(location: Location): BusStop {
         val nearestStop = getNearbyStops(location.latitude, location.longitude)
@@ -158,7 +180,7 @@ class BusNotifierService : LifecycleService() {
             GtfsRealtimeHelper.getBusTimes(listOf( Pair(stop.busStop.id, stop.route.id)) )
         val routeTimePair = mapOf(busTimes[Pair(stop.busStop.id, stop.route.id)] to stop.route)
 
-        notifyRoute(routeTimePair, stop.nickname)
+        sendNotification(stop.nickname, routeTimeToString(routeTimePair))
     }
 
     private fun notifyNextBusses(stop: BusStop) = serviceScope.launch {
@@ -168,17 +190,11 @@ class BusNotifierService : LifecycleService() {
             busTimes[Pair(stop.id, it.id)]
         }
 
-        notifyRoute(routeTimePair, stop.name)
+        sendNotification(stop.name, routeTimeToString(routeTimePair))
     }
 
-    private fun notifyRoute(
-        routeTimePair: Map<List<Duration>?, Route>,
-        title : String
-    ) {
-        val content = routeTimePair.map {
-            "${it.value.shortName}: ${TextUtils.upcomingBusesString(it.key)}"
-        }.joinToString(separator = "\n")
 
+    private fun sendNotification(title: String, content: String) {
         val notification = NotificationCompat.Builder(this@BusNotifierService, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_nearby_black_dp24)
             .setContentTitle(title)
@@ -192,4 +208,9 @@ class BusNotifierService : LifecycleService() {
 
         notificationManager.notify(20, notification)
     }
+
+    private fun routeTimeToString(routeTimePair: Map<List<Duration>?, Route>) =
+        routeTimePair.map {
+            "${it.value.shortName}: ${TextUtils.upcomingBusesString(it.key)}"
+        }.joinToString(separator = "\n")
 }
