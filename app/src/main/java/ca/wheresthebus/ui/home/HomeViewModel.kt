@@ -3,7 +3,7 @@ package ca.wheresthebus.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.StopRequest
 import java.time.Duration
 
 class HomeViewModel : ViewModel() {
@@ -13,5 +13,5 @@ class HomeViewModel : ViewModel() {
     }
     val text: LiveData<String> = _text
 
-    val busTimes =  MutableLiveData<MutableMap<StopId, List<Duration>>>()
+    val busTimes =  MutableLiveData<MutableMap<StopRequest, List<Duration>>>()
 }

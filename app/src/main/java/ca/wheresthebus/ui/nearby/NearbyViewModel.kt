@@ -1,8 +1,6 @@
 package ca.wheresthebus.ui.nearby
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -12,8 +10,9 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import ca.wheresthebus.Globals.LOCATION_UPDATE_MAXIMUM_AGE
+import ca.wheresthebus.Globals.LOCATION_UPDATE_MINIMUM_INTERVAL
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.data.model.BusStop
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -25,32 +24,30 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 class NearbyViewModel : ViewModel() {
 
-    private lateinit var mainDBViewModel: MainDBViewModel;
+    private lateinit var mainDBViewModel: MainDBViewModel
 
     // -- properties
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient;
-    lateinit var locationCallback: LocationCallback;
-    lateinit var locationRequest: LocationRequest;
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
 
-    private val _locationUpdates: MutableLiveData<Location> = MutableLiveData<Location>();
-    val locationUpdates: LiveData<Location> = _locationUpdates; // this makes it so location live data is read only
-    val isTracking: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true);
+    private val _locationUpdates: MutableLiveData<Location> = MutableLiveData<Location>()
+    val locationUpdates: LiveData<Location> = _locationUpdates // this makes it so location live data is read only
+    val isTracking: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
 
-    var busStopList: ArrayList<BusStop> = ArrayList<BusStop>();
+    var busStopList: ArrayList<BusStop> = ArrayList()
 
-    private var isLocationUpdatesRunning = false;
+    private var isLocationUpdatesRunning = false
 
     // -- methods
     fun loadStopsFromDatabase() {
         // do this in a coroutine as there's a lot of stops
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                busStopList = ArrayList(mainDBViewModel.getAllStops());
+                busStopList = mainDBViewModel.getAllStops()?.let { ArrayList(it) }!!
             }
         }
     }
@@ -58,10 +55,10 @@ class NearbyViewModel : ViewModel() {
     // all calculations will be done in meters
     // https://stackoverflow.com/questions/43080343/calculate-distance-between-two-locations-in-metre
     fun isInRange(userLocation: LatLng, stopLocation: LatLng, distanceThreshold: Double): Boolean {
-        var inRange: Boolean = false;
+        var inRange = false
 
         try {
-            var distance: FloatArray = FloatArray(2);
+            val distance = FloatArray(2)
 
             Location.distanceBetween(
                 userLocation.latitude,
@@ -69,47 +66,38 @@ class NearbyViewModel : ViewModel() {
                 stopLocation.latitude,
                 stopLocation.longitude,
                 distance
-            );
+            )
 
             if (distance[0] < distanceThreshold) {
-                inRange = true;
+                inRange = true
             }
         } catch (e: Exception) {
             println("Error: ${e.message}")
         }
 
-        return inRange;
-    }
-
-    fun getLocationPermissions(context: Context) {
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(context as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 101)
-
-            return
-        }
+        return inRange
     }
 
     fun setMainDBViewModel(mainDBViewModel: MainDBViewModel) {
-        this.mainDBViewModel = mainDBViewModel;
+        this.mainDBViewModel = mainDBViewModel
     }
 
     fun startLocationUpdates(context: Context) {
         if (isLocationUpdatesRunning) {
-            Log.d("NearbyViewModel", "Location updates already running");
-            return;
+            Log.d("NearbyViewModel", "Location updates already running")
+            return
         }
 
-        isLocationUpdatesRunning = true;
+        isLocationUpdatesRunning = true
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 locationRequest = LocationRequest.Builder(
                     Priority.PRIORITY_HIGH_ACCURACY,
-                    20L
-                ).setMinUpdateIntervalMillis(20L)
-                    .setMaxUpdateAgeMillis(500L)
-                    .build();
+                    LOCATION_UPDATE_MINIMUM_INTERVAL
+                ).setMinUpdateIntervalMillis(LOCATION_UPDATE_MINIMUM_INTERVAL)
+                    .setMaxUpdateAgeMillis(LOCATION_UPDATE_MAXIMUM_AGE)
+                    .build()
 
                 locationCallback = object : LocationCallback() {
                     override fun onLocationResult(locationResult: LocationResult) {
@@ -118,7 +106,7 @@ class NearbyViewModel : ViewModel() {
                             _locationUpdates.postValue(location)
                         }
                     }
-                };
+                }
 
                 if (
                     ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -128,22 +116,22 @@ class NearbyViewModel : ViewModel() {
                         locationRequest,
                         locationCallback,
                         Looper.getMainLooper()
-                    );
+                    )
                 }
             }
-        };
+        }
 
-        isTracking.postValue(true);
+        isTracking.postValue(true)
 
-        Log.d("NearbyViewModel", "Location updates started");
+        Log.d("NearbyViewModel", "Location updates started")
     }
 
     fun stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
 
-        isTracking.postValue(false);
-        isLocationUpdatesRunning = false;
+        isTracking.postValue(false)
+        isLocationUpdatesRunning = false
 
-        Log.d("NearbyViewModel", "Location updates stopped");
+        Log.d("NearbyViewModel", "Location updates stopped")
     }
 }

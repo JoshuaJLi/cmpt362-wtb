@@ -25,9 +25,6 @@
     <string name="preferences_poll_1_entry">1 minute</string>
     <string name="preferences_poll_3_entry">3 minutes</string>
     <string name="preferences_poll_5_entry">5 minutes</string>
-    <string name="preferences_poll_1_value">1</string>
-    <string name="preferences_poll_3_value">3</string>
-    <string name="preferences_poll_5_value">5</string>
     <string name="category_about">About</string>
     <string name="preference_webpage">Webpage</string>
     <string name="wtb_url">wheres-the-bus.pages.dev</string>
@@ -35,6 +32,7 @@
     <string name="wtb_repo">github.com/JoshuaJLi/cmpt362-wtb</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="wtb_feedback">wheres-the-bus.pages.dev/feedback</string>
+    <string name="key_trip_poll_time">trip_poll_time</string>
 
     <string name="fab_new_trip_text">Add Trip</string>
     <string name="desc_fab_new_trip">Add Trip</string>
