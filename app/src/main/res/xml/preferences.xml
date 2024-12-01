@@ -13,10 +13,10 @@
                 />
 
         <ListPreference
-            app:key="trip_poll_time"
+            app:key="@string/key_trip_poll_time"
             android:title="Trip Polling Interval"
             app:summary="How often an active trip will check bus times"
-            app:defaultValue="@string/preferences_poll_1_value"
+            app:defaultValue="1"
             app:entryValues="@array/trip_polling_values"
             app:entries="@array/trip_polling_entries"
             />

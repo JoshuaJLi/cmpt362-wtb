@@ -19,6 +19,8 @@ import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.BusNotifierService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
 import ca.wheresthebus.utils.Utils
@@ -35,42 +37,37 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
 
-        if (handleIncomingIntent(intent)) {
-            finish()
-        }
+        handleIncomingIntent(intent)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setUpNavBar()
 
-        requestNotificationPermission()
+        requestAllPermissions()
 
         loadStaticDataToDB()
+
+        handleIncomingIntent(intent)
     }
 
-    // Returns true if the rest of the app doesn't need to load
-    private fun handleIncomingIntent(intent: Intent?) : Boolean {
+    private fun handleIncomingIntent(intent: Intent?) {
         if (intent == null) {
-            return false
+            return
         }
 
         when (intent.action) {
-            ACTION_NAVIGATE_TO_TRIP -> {
-                binding.navView.findNavController()
-                    .navigate(R.id.action_trip_fragment)
-                return false
-            }
+            ACTION_NAVIGATE_TO_TRIP -> binding.navView.findNavController()
+                .navigate(R.id.action_trip_fragment)
 
             NfcAdapter.ACTION_TECH_DISCOVERED -> {
                 Intent(this, BusNotifierService::class.java).also {
                     startService(it)
                 }
                 moveTaskToBack(true)
-                return true
+                finish()
             }
         }
-        return false
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -89,6 +86,36 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    /**
+     * i tried to put this within its own controller, but requesting permissions requires its own lifecycle
+     * not sure of how to give a static object its own lifecycle, more on that later maybe
+     * TODO: define a proper permissions workflow for if the user denies permissions more than twice
+     * android 11 and up stops asking after the 2nd time and the user must go to settings to enable manually
+     */
+    private fun requestAllPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            val requestMultiplePermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                permissions.entries.forEach {
+                    Log.d("MainActivity", "${it.key} = ${it.value}")
+                }
+            }
+            requestMultiplePermissionsLauncher.launch(permissionsToRequest.toTypedArray())
+        }
+
     }
 
     private fun requestNotificationPermission() {

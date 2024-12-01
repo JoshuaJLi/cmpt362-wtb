@@ -30,9 +30,9 @@
     </string-array>
     
     <string-array name="trip_polling_values">
-        <item>@string/preferences_poll_1_value</item>
-        <item>@string/preferences_poll_3_value</item>
-        <item>@string/preferences_poll_5_value</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
 </resources>
