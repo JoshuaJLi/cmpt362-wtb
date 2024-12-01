@@ -21,7 +21,9 @@ import ca.wheresthebus.databinding.ActivityMainBinding
 import ca.wheresthebus.service.NfcService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import ca.wheresthebus.utils.Utils
 import kotlinx.coroutines.Dispatchers
@@ -41,15 +43,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setUpNavBar()
-
-        requestNotificationPermission()
+        loadStaticDataToDB()
 
         if (isStartedByNFC(intent)) {
             NfcService.handleTap(this)
             moveTaskToBack(true)
         }
 
-        loadStaticDataToDB()
+        requestAllPermissions()
     }
 
     private fun loadStaticDataToDB() {
@@ -58,6 +59,36 @@ class MainActivity : AppCompatActivity() {
             val context = this
             lifecycleScope.launch(Dispatchers.IO) { Utils.populateRealmDatabase(context, mainDBViewModel.getRealm()) }
         }
+    }
+
+    /**
+     * i tried to put this within its own controller, but requesting permissions requires its own lifecycle
+     * not sure of how to give a static object its own lifecycle, more on that later maybe
+     * TODO: define a proper permissions workflow for if the user denies permissions more than twice
+     * android 11 and up stops asking after the 2nd time and the user must go to settings to enable manually
+     */
+    private fun requestAllPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            val requestMultiplePermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                permissions.entries.forEach {
+                    Log.d("MainActivity", "${it.key} = ${it.value}")
+                }
+            }
+            requestMultiplePermissionsLauncher.launch(permissionsToRequest.toTypedArray())
+        }
+
     }
 
     private fun requestNotificationPermission() {

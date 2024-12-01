@@ -123,12 +123,9 @@ class NearbyFragment :
     }
 
     private fun initializeViewModel() {
-//        nearbyViewModel.loadStopsFromCSV(requireContext());
         val mainDBViewModel: MainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class.java]
         nearbyViewModel.setMainDBViewModel(mainDBViewModel)
         nearbyViewModel.loadStopsFromDatabase()
-
-        nearbyViewModel.getLocationPermissions(requireContext())
         nearbyViewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
@@ -177,7 +174,7 @@ class NearbyFragment :
 
                 updateNearbyStopMarkers(currentLocation)
 
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f))
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f))
             } catch (e: Exception) {
                 Log.e("NearbyFragment", "${e.message}")
             }

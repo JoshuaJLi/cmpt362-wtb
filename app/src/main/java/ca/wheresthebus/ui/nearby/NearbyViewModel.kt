@@ -81,15 +81,6 @@ class NearbyViewModel : ViewModel() {
         return inRange;
     }
 
-    fun getLocationPermissions(context: Context) {
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(context as Activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 101)
-
-            return
-        }
-    }
-
     fun setMainDBViewModel(mainDBViewModel: MainDBViewModel) {
         this.mainDBViewModel = mainDBViewModel;
     }
