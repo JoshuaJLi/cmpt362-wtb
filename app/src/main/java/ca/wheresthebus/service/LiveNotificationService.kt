@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import ca.wheresthebus.MainActivity
 import ca.wheresthebus.R
 import ca.wheresthebus.data.RouteId
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import java.time.Duration
+import kotlin.math.min
 
 class LiveNotificationService : LifecycleService() {
     private val activeIds: MutableList<Int> = mutableListOf()
@@ -122,9 +124,20 @@ class LiveNotificationService : LifecycleService() {
         flow {
             while (true) {
                 emit(GtfsRealtimeHelper.getBusTimes(watches.map { Pair(it.stopId, it.routeId) }))
-                delay(Duration.ofMinutes(11))
+
+                val minutes = determineDelay()
+                delay(Duration.ofMinutes(minutes))
             }
         }
+
+    private fun determineDelay() : Long {
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+
+        val pollTime = sharedPreferences.getString(getString(R.string.key_trip_poll_time), "1")
+
+        return  pollTime?.toLong() ?: 1L
+    }
 
     private fun createActiveNotification(
         nickname: String,
