@@ -1,5 +1,6 @@
 package ca.wheresthebus.ui.nearby
 
+import android.animation.ValueAnimator
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -11,6 +12,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import ca.wheresthebus.Globals.NEARBY_DISTANCE_THRESHOLD
+import ca.wheresthebus.Globals.NEARBY_ZOOM_LEVEL
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
 import ca.wheresthebus.data.model.BusStop
@@ -139,10 +142,10 @@ class NearbyFragment :
                 // with the implementation of free movement, get the location of the camera's position instead
                 val cameraPosition: LatLng = googleMap.cameraPosition.target
 
-                val nearbyStops: ArrayList<BusStop> = ArrayList<BusStop>()
+                val nearbyStops: ArrayList<BusStop> = ArrayList()
                 for (stop in nearbyViewModel.busStopList) {
-                    val stopLocation: LatLng = LatLng(stop.location.latitude, stop.location.longitude)
-                    if (nearbyViewModel.isInRange(cameraPosition, stopLocation, 300.0)) {
+                    val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
+                    if (nearbyViewModel.isInRange(cameraPosition, stopLocation, NEARBY_DISTANCE_THRESHOLD)) {
                         nearbyStops.add(stop)
                     }
                 }
@@ -174,7 +177,7 @@ class NearbyFragment :
 
                 updateNearbyStopMarkers(currentLocation)
 
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f))
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, NEARBY_ZOOM_LEVEL))
             } catch (e: Exception) {
                 Log.e("NearbyFragment", "${e.message}")
             }
@@ -211,7 +214,7 @@ class NearbyFragment :
         val nearbyStops = ArrayList<BusStop>()
         for (stop in nearbyViewModel.busStopList) {
             val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
-            if (nearbyViewModel.isInRange(currentLocation, stopLocation, 300.0)) {
+            if (nearbyViewModel.isInRange(currentLocation, stopLocation, NEARBY_DISTANCE_THRESHOLD)) {
                 nearbyStops.add(stop)
             }
         }
@@ -236,6 +239,34 @@ class NearbyFragment :
         }
     }
 
+    private fun animateMarker(marker: Marker, toPosition: LatLng) {
+        val fromPosition = marker.position
+
+        // represents the fraction of the animation that has been completed (like percentage of animation shown)
+        val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
+
+        valueAnimator.duration = 1000 // duration of the animation in milliseconds
+
+        // call a listener on each frame of the animation
+        valueAnimator.addUpdateListener { animation ->
+            // on every frame of the animation
+            val fraction = animation.animatedFraction // get the fraction of the animation that has been completed
+
+            // interpolate the position of the marker from the previous position to the new position
+            /**
+             * calculates the intermediate latitude/longitude and finds the difference between it and the target latitude/longitude
+             * multiplies the difference by the fraction and adds the starting latitude to calculate where the marker should be in between
+             */
+            val lat = (toPosition.latitude - fromPosition.latitude) * fraction + fromPosition.latitude
+            val lng = (toPosition.longitude - fromPosition.longitude) * fraction + fromPosition.longitude
+
+            // set the position of the marker to the new interpolated position
+            marker.position = LatLng(lat, lng)
+        }
+
+        valueAnimator.start()
+    }
+
     private fun updateCurrentLocationMarker(currentLocation: LatLng) {
         // update the current location marker
         if (currentLocationMarker == null) {
@@ -246,7 +277,7 @@ class NearbyFragment :
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             )
         } else {
-            currentLocationMarker!!.position = currentLocation
+            animateMarker(currentLocationMarker!!, currentLocation)
         }
     }
 
