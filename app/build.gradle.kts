@@ -103,4 +103,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.protobuf.javalite)
     implementation(libs.gson)
+    implementation(libs.androidx.preference.ktx)
+
 }
