@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.TripAdapter
 import ca.wheresthebus.databinding.FragmentTripsBinding
+import ca.wheresthebus.service.AlarmService
 import java.time.LocalDateTime
 
 class TripsFragment : Fragment() {
@@ -49,8 +50,6 @@ class TripsFragment : Fragment() {
         listenForChanges()
         setUpAdapter()
         setUpFab()
-
-//        AlarmService.scheduleTripNotifications(mainDBViewModel.getTrips(), requireContext())
 
         return root
     }
@@ -117,6 +116,9 @@ class TripsFragment : Fragment() {
                 }
                 inactiveTripAdapter.updateData(it)
             }
+
+            AlarmService.scheduleTripNotifications(data, requireContext())
+
         }
     }
 

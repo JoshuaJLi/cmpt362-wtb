@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.ModelFactory
+import ca.wheresthebus.data.ScheduledTripId
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
@@ -24,6 +25,16 @@ import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
 class MainDBViewModel : ViewModel() {
+    companion object {
+        val realm = MyMongoDBApp.realm
+        private val staticModelFactory = ModelFactory()
+
+        fun getTripById(scheduledTripId: ScheduledTripId) : ScheduledTrip? {
+            return realm.query<MongoScheduledTrip>("id == $0", ObjectId(scheduledTripId.value)).find().firstOrNull()
+                ?.let { staticModelFactory.toScheduledTrip(it) }
+        }
+    }
+
     private val realm = MyMongoDBApp.realm
     private val modelFactory = ModelFactory()
 

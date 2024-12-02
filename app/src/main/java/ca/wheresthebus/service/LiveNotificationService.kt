@@ -5,16 +5,20 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import ca.wheresthebus.MainActivity
+import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
+import ca.wheresthebus.data.IntentRequestCode
 import ca.wheresthebus.data.RouteId
+import ca.wheresthebus.data.ScheduledTripId
 import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.utils.TextUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -22,81 +26,47 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import java.time.Duration
-import kotlin.math.min
 
 class LiveNotificationService : LifecycleService() {
-    private val activeIds: MutableList<Int> = mutableListOf()
+    private val activeIds: MutableSet<ScheduledTripId> = mutableSetOf()
 
     private val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
-
-    data class StopWatches(
-        val notificationId: Int,
-        val nickname: String,
-        val stopId: StopId,
-        val routeId: RouteId,
-        val duration: Duration
-    )
-
 
     companion object {
         const val CHANNEL_ID = "live_notification_channel_id"
 
-        const val EXTRA_NICKNAMES = "bus_nicknames"
-        const val EXTRA_DURATION = "duration_minutes"
-        const val EXTRA_STOP_IDS = "stop_id"
-        const val EXTRA_ROUTE_IDS = "route_id"
-        const val EXTRA_NOTIFICATION_ID = "notification_id"
-        const val EXTRA_TRIP_NICKNAME = "trip_nickname"
+        const val EXTRA_TRIP_ID = "schedule_trip_ids"
 
         const val ACTION_NAVIGATE_TO_TRIP = "navigate_to_trip"
         const val ACTION_STOP = "action_stop"
     }
 
+    override fun onCreate() {
+        super.onCreate()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == ACTION_STOP) {
-            cancelForegroundService(intent.getIntExtra(EXTRA_NOTIFICATION_ID, 1))
-            return START_NOT_STICKY
-        }
-
         intent?.let {
-            val nicknames = it.getStringArrayListExtra(EXTRA_NICKNAMES)
-            val duration = it.getLongExtra(EXTRA_DURATION, 60)
-            val stopIds = it.getStringArrayListExtra(EXTRA_STOP_IDS)
-            val routeIds = it.getStringArrayListExtra(EXTRA_ROUTE_IDS)
-            val notificationId = it.getIntExtra(EXTRA_NOTIFICATION_ID, 1)
-            val tripNickname = it.getStringExtra(EXTRA_TRIP_NICKNAME)
+            val tripId = it.getStringExtra(EXTRA_TRIP_ID) ?: return START_STICKY
+            val trip = MainDBViewModel.getTripById(ScheduledTripId(tripId)) ?: return START_STICKY
 
-            if (nicknames == null || stopIds == null || routeIds == null || tripNickname == null) {
-                return super.onStartCommand(intent, flags, startId)
+            if (intent.action == ACTION_STOP) {
+                cancelForegroundService(trip)
+                return START_NOT_STICKY
             }
 
-            val watches = stopIds
-                .zip(routeIds)
-                .zip(nicknames)
-                { (stopId, routeId), nickname ->
-                    StopWatches(
-                        0,
-                        nickname,
-                        StopId(stopId),
-                        RouteId(routeId),
-                        Duration.ofMinutes(duration)
-                    )
-                }
-                .toList()
 
-            activeIds.add(notificationId)
-
-            startBusPolling(tripNickname, notificationId, watches)
+            startBusPolling(trip)
             return START_STICKY
         }
 
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun cancelForegroundService(notificationId: Int) {
+    private fun cancelForegroundService(trip: ScheduledTrip) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(notificationId)
-        activeIds.removeIf{ it == notificationId }
+        notificationManager.cancel(trip.requestCode.value)
+        activeIds.remove(trip.id)
 
 
         if (activeIds.isEmpty()) {
@@ -105,25 +75,23 @@ class LiveNotificationService : LifecycleService() {
         }
     }
 
-    private fun startBusPolling(
-        nickname: String, notificationId: Int, watches: List<StopWatches>
-    ) {
-        createActiveNotification(nickname, notificationId)
+    private fun startBusPolling(trip : ScheduledTrip) {
+        createActiveNotification(trip)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            pollBuses(watches).collect { result ->
-                updateNotification(nickname, notificationId, watches.associateWith {
-                    result[Pair(it.stopId, it.routeId)]
+            pollBuses(trip.stops).collect { result ->
+                updateNotification(trip, trip.stops.associateWith {
+                    result[Pair(it.busStop.id, it.route.id)]
                 })
             }
         }
     }
 
 
-    private fun pollBuses(watches: List<StopWatches>): Flow<Map<StopRequest, List<Duration>>> =
+    private fun pollBuses(watches: ArrayList<FavouriteStop>): Flow<Map<StopRequest, List<Duration>>> =
         flow {
             while (true) {
-                emit(GtfsRealtimeHelper.getBusTimes(watches.map { Pair(it.stopId, it.routeId) }))
+                emit(GtfsRealtimeHelper.getBusTimes(watches.map { Pair(it.busStop.id, it.route.id) }))
 
                 val minutes = determineDelay()
                 delay(Duration.ofMinutes(minutes))
@@ -140,8 +108,7 @@ class LiveNotificationService : LifecycleService() {
     }
 
     private fun createActiveNotification(
-        nickname: String,
-        notificationId: Int,
+        trip: ScheduledTrip,
     ) {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -151,37 +118,38 @@ class LiveNotificationService : LifecycleService() {
             notificationManager.createNotificationChannel(it)
         }
 
+        activeIds.add(trip.id)
 
         // notification for telling the user the app is running
-        val notification = getBasicNotification(notificationId)
-            .setContentTitle(nickname)
+        val notification = getBasicNotification(trip)
+            .setContentTitle(trip.nickname)
             .build()
 
-        startForeground(notificationId, notification)
+        startForeground(trip.requestCode.value, notification)
     }
 
-    private fun updateNotification(nickname: String, notificationId: Int, stopTimes: Map<StopWatches, List<Duration>?>) {
+    private fun updateNotification(trip: ScheduledTrip, stopTimes: Map<FavouriteStop, List<Duration>?>) {
         val content = stopTimes.map {
             "${it.key.nickname}: ${TextUtils.upcomingBusesString(it.value)}"
         }.joinToString(separator = "\n")
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification = getBasicNotification(notificationId)
-            .setContentTitle(nickname)
+        val notification = getBasicNotification(trip)
+            .setContentTitle(trip.nickname)
             .setContentText(content)
 
-        notificationManager.notify(notificationId, notification.build())
+        notificationManager.notify(trip.requestCode.value, notification.build())
     }
 
-    private fun getBasicNotification(notificationId: Int): NotificationCompat.Builder {
+    private fun getBasicNotification(trip : ScheduledTrip): NotificationCompat.Builder {
         val stopIntent = Intent(this, AlarmService::class.java).apply {
             action = ACTION_STOP
-            putExtra(EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(EXTRA_TRIP_ID, trip.id.value)
         }
         val pendingStopIntent =  PendingIntent.getBroadcast(
             this,
-            notificationId,
+            trip.requestCode.value,
             stopIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
