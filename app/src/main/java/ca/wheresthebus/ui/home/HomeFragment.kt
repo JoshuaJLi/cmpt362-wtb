@@ -22,7 +22,9 @@ import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.databinding.FragmentHomeBinding
+import ca.wheresthebus.service.GtfsData
 import ca.wheresthebus.service.GtfsRealtimeHelper
+import ca.wheresthebus.service.GtfsStaticHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -165,10 +167,13 @@ class HomeFragment : Fragment() {
                     StopId(stop.busStop.id.value) to RouteId(stop.route.id.value)
                 }
 
-                val busTimesMap = GtfsRealtimeHelper.getBusTimes(stopRoutePairs)
+                val realtime = GtfsRealtimeHelper.getBusTimes(stopRoutePairs)
+                val static = GtfsStaticHelper.getBusTimes(stopRoutePairs)
+
+                // todo: combine the static and realtime results
 
                 lifecycleScope.launch(Dispatchers.Main) {
-                    homeViewModel.busTimes.value = busTimesMap
+                    homeViewModel.busTimes.value = GtfsData.combine(static, realtime)
                 }
 
                 swipeRefreshLayout.isRefreshing = false

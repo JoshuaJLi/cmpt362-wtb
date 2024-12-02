@@ -15,6 +15,7 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.model.Schedule
 import ca.wheresthebus.data.model.ScheduledTrip
+import ca.wheresthebus.data.mongo_model.MongoArrivalTime
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
@@ -48,6 +49,7 @@ class MainDBViewModel : ViewModel() {
         _favouriteBusStopsList.postValue(mutableListOf())
         val updatedList = mutableListOf<FavouriteStop>()
         val allMongoFavStops = realm.query<MongoFavouriteStop>().find()
+        println("Found ${allMongoFavStops.size} fav stops in db to load...")
         for (mongoBusStop in allMongoFavStops) {
             updatedList.add(modelFactory.toFavouriteBusStop(mongoBusStop))
         }
@@ -73,7 +75,7 @@ class MainDBViewModel : ViewModel() {
     // Returns true if both MongoRoutes and MongoBusStops have already been initialized
     fun isStaticDataLoaded(): Boolean {
         return !(realm.query<MongoRoute>().find().isEmpty() && realm.query<MongoBusStop>().find()
-            .isEmpty())
+            .isEmpty() && realm.query<MongoArrivalTime>().find().isEmpty())
     }
 
     fun getAllStops(): List<BusStop>? {

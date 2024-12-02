@@ -15,6 +15,7 @@ import ca.wheresthebus.R
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.utils.TextUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -120,7 +121,7 @@ class LiveNotificationService : LifecycleService() {
     }
 
 
-    private fun pollBuses(watches: List<StopWatches>): Flow<Map<StopRequest, List<Duration>>> =
+    private fun pollBuses(watches: List<StopWatches>): Flow<Map<StopRequest, List<UpcomingTime>>> =
         flow {
             while (true) {
                 emit(GtfsRealtimeHelper.getBusTimes(watches.map { Pair(it.stopId, it.routeId) }))
@@ -160,7 +161,7 @@ class LiveNotificationService : LifecycleService() {
         startForeground(notificationId, notification)
     }
 
-    private fun updateNotification(nickname: String, notificationId: Int, stopTimes: Map<StopWatches, List<Duration>?>) {
+    private fun updateNotification(nickname: String, notificationId: Int, stopTimes: Map<StopWatches, List<UpcomingTime>?>) {
         val content = stopTimes.map {
             "${it.key.nickname}: ${TextUtils.upcomingBusesString(it.value)}"
         }.joinToString(separator = "\n")

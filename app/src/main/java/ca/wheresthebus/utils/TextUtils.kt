@@ -1,7 +1,11 @@
 package ca.wheresthebus.utils
 
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.model.ScheduledTrip
-import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -44,15 +48,50 @@ object TextUtils {
         }
     }
 
-    fun upcomingBusesString(busTimes : List<Duration>?) : String {
-        if (!busTimes.isNullOrEmpty()) {
-            val formattedTimes = busTimes.map { busArrivalTime ->
-                val minutes = busArrivalTime.toMinutes()
-                if (minutes >= 1) "$minutes min" else "Now"
-            }
-            return formattedTimes.joinToString(", ")
+    fun upcomingBusesString(busTimes : List<UpcomingTime>?) : CharSequence {
+        if (busTimes.isNullOrEmpty()) {
+            return "No upcoming busses"
         }
-        return "No upcoming busses"
-    }
 
+        val stringBuilder = SpannableStringBuilder()
+
+        busTimes.forEachIndexed { index, it ->
+            val durationInMin = it.duration.toMinutes()
+            val hour = durationInMin / 60
+            val min = durationInMin % 60
+
+            val timeString = when {
+                hour >= 1 && min == 0L -> {
+                    "$hour hr"
+                }
+                hour == 0L && min >= 1 -> {
+                    "$min min"
+                }
+                hour >= 1 && min >= 1 -> {
+                    "$hour hr $min min"
+                }
+                else -> "Now"
+            }
+
+            // Set bold if isRealtime
+            val formatTimeString = if (it.isRealtime) {
+                SpannableString(timeString).apply {
+                    setSpan(StyleSpan(Typeface.BOLD), 0, timeString.length, 0)
+                }
+            } else {
+                SpannableString(timeString)
+            }
+            stringBuilder.append(formatTimeString)
+
+            // Add separators
+            if (index != busTimes.lastIndex) {
+                stringBuilder.append(", ")
+            }
+
+            println(it.duration.toMinutes())
+            println(it.isRealtime)
+        }
+
+        return stringBuilder
+    }
 }

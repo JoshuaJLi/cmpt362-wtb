@@ -9,7 +9,6 @@ import androidx.activity.enableEdgeToEdge
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -23,7 +22,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
-import ca.wheresthebus.utils.Utils
+import ca.wheresthebus.utils.StaticDataLoadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -37,18 +36,15 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
 
-        handleIncomingIntent(intent)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setUpNavBar()
-
-        requestAllPermissions()
-
-        loadStaticDataToDB()
+        // loadStaticDataToDB() NOTE: uncomment only if you need to generate realm from static data
 
         handleIncomingIntent(intent)
+
+        requestAllPermissions()
     }
 
     private fun handleIncomingIntent(intent: Intent?) {
@@ -78,9 +74,10 @@ class MainActivity : AppCompatActivity() {
     private fun loadStaticDataToDB() {
         // Only load static data if we haven't done it yet
         if (!mainDBViewModel.isStaticDataLoaded()) {
+            println("loading data from static resource files...")
             val context = this
             lifecycleScope.launch(Dispatchers.IO) {
-                Utils.populateRealmDatabase(
+                StaticDataLoadHelper.populateRealmDatabase(
                     context,
                     mainDBViewModel.getRealm()
                 )
@@ -116,21 +113,6 @@ class MainActivity : AppCompatActivity() {
             requestMultiplePermissionsLauncher.launch(permissionsToRequest.toTypedArray())
         }
 
-    }
-
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                // Request the permission
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    101
-                )
-            }
-        }
     }
 
     private fun setUpNavBar() {
