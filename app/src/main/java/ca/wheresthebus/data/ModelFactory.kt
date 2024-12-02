@@ -48,6 +48,15 @@ class ModelFactory() {
         )
     }
 
+    fun toFavouriteBusStop(mongoFavouriteStop: MongoScheduledTripStop): FavouriteStop {
+        return FavouriteStop(
+            _id = mongoFavouriteStop._id,
+            nickname = mongoFavouriteStop.nickname,
+            busStop = toBusStop(mongoFavouriteStop.mongoBusStop!!),
+            route = toRoute(mongoFavouriteStop.mongoRoute!!)
+        )
+    }
+
     fun toMongoFavouriteStop(favouriteStop: FavouriteStop) : MongoFavouriteStop {
         return MongoFavouriteStop(
             _id = favouriteStop._id,
@@ -95,9 +104,18 @@ class ModelFactory() {
             id = ObjectId(trip.id.value)
             requestCode = trip.requestCode.value
             nickname = trip.nickname
-            stops = trip.stops.map { toMongoFavouriteStop(it) }.toRealmList()
+            stops = trip.stops.map { toMongoTripStop(it) }.toRealmList()
             activeTimes = trip.activeTimes.map { toMongoSchedule(it) }.toRealmList()
             duration = trip.duration.toMinutes()
+        }
+    }
+
+    private fun toMongoTripStop(stop: FavouriteStop) : MongoScheduledTripStop {
+        return MongoScheduledTripStop().apply {
+            _id = stop._id
+            nickname = stop.nickname
+            mongoBusStop = toMongoBusStop(stop.busStop)
+            mongoRoute = toMongoRoute(stop.route)
         }
     }
 

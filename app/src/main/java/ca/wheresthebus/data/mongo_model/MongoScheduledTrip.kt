@@ -11,7 +11,7 @@ class MongoScheduledTrip : RealmObject {
     var id: ObjectId = ObjectId()
     var requestCode = 0
     var nickname : String = String()
-    var stops : RealmList<MongoFavouriteStop> = realmListOf()
+    var stops : RealmList<MongoScheduledTripStop> = realmListOf()
     var activeTimes: RealmList<MongoSchedule> = realmListOf()
     var duration : Long = 0L
 
