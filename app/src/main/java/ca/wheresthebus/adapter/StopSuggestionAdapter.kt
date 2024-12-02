@@ -27,6 +27,8 @@ class StopSuggestionAdapter(
                 append(stop.code.value)
             }
 
+
+
             val routesMap = stop.routes.associateBy { it.shortName }
 
             routesAtStop.text = buildString {
