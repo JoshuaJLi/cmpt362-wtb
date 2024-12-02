@@ -4,12 +4,8 @@ import android.location.Location
 import ca.wheresthebus.data.model.*
 import ca.wheresthebus.data.mongo_model.*
 import io.realm.kotlin.ext.toRealmList
-import org.mongodb.kbson.ObjectId
 import java.time.DayOfWeek
 import java.time.Duration
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 class ModelFactory() {
     
@@ -124,29 +120,6 @@ class ModelFactory() {
             day = schedule.day.value
             minute = schedule.time.minute
             hour = schedule.time.hour
-        }
-    }
-
-    fun toStopTime(mongoStopTime: MongoStopTime): StopTime {
-        return StopTime(
-            arrivalTime = LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(mongoStopTime.arrivalTime),
-                ZoneId.systemDefault()
-            ),
-            id = StopId(mongoStopTime.id),
-            routeId = RouteId(mongoStopTime.routeId),
-            serviceId = ServiceId(mongoStopTime.serviceId),
-            tripId = TripId(mongoStopTime.tripId)
-        )
-    }
-
-    fun toMongoStopTime(stopTime: StopTime): MongoStopTime {
-        return MongoStopTime().apply {
-            arrivalTime = stopTime.arrivalTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            id = stopTime.id.value
-            routeId = stopTime.routeId.value
-            serviceId = stopTime.serviceId.value
-            tripId = stopTime.tripId.value
         }
     }
 }

@@ -14,6 +14,7 @@ import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
 import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
+import ca.wheresthebus.data.mongo_model.MongoStopTime
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
@@ -81,6 +82,7 @@ class MainDBViewModel : ViewModel() {
         _favouriteBusStopsList.postValue(mutableListOf())
         val updatedList = mutableListOf<FavouriteStop>()
         val allMongoFavStops = realm.query<MongoFavouriteStop>().find()
+        println("Found ${allMongoFavStops.size} fav stops in db to load...")
         for (mongoBusStop in allMongoFavStops) {
             updatedList.add(modelFactory.toFavouriteBusStop(mongoBusStop))
         }
@@ -106,7 +108,7 @@ class MainDBViewModel : ViewModel() {
     // Returns true if both MongoRoutes and MongoBusStops have already been initialized
     fun isStaticDataLoaded(): Boolean {
         return !(realm.query<MongoRoute>().find().isEmpty() && realm.query<MongoBusStop>().find()
-            .isEmpty())
+            .isEmpty() && realm.query<MongoStopTime>().find().isEmpty())
     }
 
     fun getAllStops(): List<BusStop>? {
@@ -184,18 +186,15 @@ class MainDBViewModel : ViewModel() {
     // todo: can improve search by sorting by closest location
     fun searchForStop(input: String): List<BusStop> {
         // search the name parts by any matching string tokens
-        val words = input.split(" ").filter { it.isNotEmpty() }
-        val fuzzyQuery = List(words.size) { i ->
-            "(name CONTAINS[c] $${i + 1} OR ANY mongoRoutes.longName CONTAINS[c] $${i + 1})"
+        val tokens = input.split(" ").filter { it.isNotEmpty() }
+        val fuzzyQuery = List(tokens.size) { i ->
+            "(code == $${i} OR ANY mongoRoutes.shortName == $${i} OR name CONTAINS[c] $${i})"
         }.joinToString(" AND ")
 
-        // Strict search by code or route shortname
-        val query = "code == $0 OR ANY mongoRoutes.shortName == $0 OR ($fuzzyQuery)"
         val result = realm.query<MongoBusStop>(
-            query,
-            input,
-            *words.toTypedArray() // spread operator to pass string tokens as query params
-        ).find().take(10)
+            fuzzyQuery,
+            *tokens.toTypedArray() // spread operator to pass string tokens as query params
+        ).find().takeWhile { true }
 
         // Return result as a List<BusStops> instead of List<MongoBusStops>
         return result.map { modelFactory.toBusStop(it) }

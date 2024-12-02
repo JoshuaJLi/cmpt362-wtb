@@ -38,6 +38,7 @@ class NearbyStopsAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val stopNickname: TextView = view.findViewById(R.id.NearbyBottomSheet_stopNickname)
         val buses: TextView = view.findViewById(R.id.NearbyBottomSheet_buses)
+        val stopCode: TextView = view.findViewById(R.id.NearbyBottomSheet_stopCode)
         val extraInfo: LinearLayout = view.findViewById(R.id.extra_info)
         val saveButton: Button = view.findViewById(R.id.save_button)
     }
@@ -56,6 +57,10 @@ class NearbyStopsAdapter(
         holder.buses.text = buildString {
             append("Buses: ")
             append(stop.routes.joinToString(", ") { it.shortName })
+        }
+        holder.stopCode.text = buildString {
+            append("Stop Code: ")
+            append(stop.code.value)
         }
 
         val isExpanded = position == expandedPosition
@@ -85,7 +90,9 @@ class NearbyStopsAdapter(
 
         // set dropdown content
         val routesAdapter =
-            ArrayAdapter(activity, R.layout.route_spinner_item, routesMap.keys.toList())
+            ArrayAdapter(activity, R.layout.route_spinner_item, routesMap.values.map {
+                "${it.shortName} - ${it.longName}"
+            })
         routesDropdown.setAdapter(routesAdapter)
 
         // Grab selected dropdown option
@@ -94,7 +101,8 @@ class NearbyStopsAdapter(
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                selectedRoute = routesMap[s.toString()]
+                // index routesMap using the shortname part of the dropdown content
+                selectedRoute = routesMap[s?.split(" - ")?.get(0)?.trim()]
             }
         })
 

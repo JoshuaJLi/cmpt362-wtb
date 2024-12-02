@@ -9,7 +9,6 @@ import androidx.activity.enableEdgeToEdge
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -20,12 +19,12 @@ import ca.wheresthebus.service.NfcService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
 import android.util.Log
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import androidx.media.session.MediaButtonReceiver.handleIntent
+import androidx.preference.PreferenceManager
 import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
-import ca.wheresthebus.utils.Utils
+import ca.wheresthebus.utils.StaticDataLoadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -42,8 +41,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setUpTheme()
         setUpNavBar()
-        loadStaticDataToDB()
+//        loadStaticDataToDB() // NOTE: uncomment only if you need to generate realm from static data
 
         handleIncomingIntent(intent)
 
@@ -74,9 +74,10 @@ class MainActivity : AppCompatActivity() {
     private fun loadStaticDataToDB() {
         // Only load static data if we haven't done it yet
         if (!mainDBViewModel.isStaticDataLoaded()) {
+            println("loading data from static resource files...")
             val context = this
             lifecycleScope.launch(Dispatchers.IO) {
-                Utils.populateRealmDatabase(
+                StaticDataLoadHelper.populateRealmDatabase(
                     context,
                     mainDBViewModel.getRealm()
                 )
@@ -114,19 +115,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                // Request the permission
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    101
-                )
-            }
+    private fun setUpTheme() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val themeValue = sharedPreferences.getString("appearance", "system")
+        val themeMode = when (themeValue) {
+            getString(R.string.preference_appearance_light_value)  -> AppCompatDelegate.MODE_NIGHT_NO
+            getString(R.string.preference_appearance_dark_value) -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
+        AppCompatDelegate.setDefaultNightMode(themeMode)
     }
 
     private fun setUpNavBar() {
@@ -143,6 +140,20 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_settings
             )
         )
+
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        toolbar.setOnApplyWindowInsetsListener { view, insets ->
+            val statusBarHeight = insets.systemWindowInsetTop
+            view.setPadding(
+                view.paddingLeft,
+                statusBarHeight,
+                view.paddingRight,
+                view.paddingBottom
+            )
+            insets.consumeSystemWindowInsets()
+        }
+
+        setSupportActionBar(toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 

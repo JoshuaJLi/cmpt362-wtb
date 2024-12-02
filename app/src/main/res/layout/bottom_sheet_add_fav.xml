@@ -29,7 +29,8 @@
                 android:layout_height="wrap_content">
                 <com.google.android.material.appbar.AppBarLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent">
                     <com.google.android.material.search.SearchBar
                         android:id="@+id/search_bar_bus"
                         android:layout_width="match_parent"
