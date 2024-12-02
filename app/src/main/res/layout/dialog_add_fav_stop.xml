@@ -12,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:endIconMode="clear_text"
-        android:hint="Set a Stop Nickame"
-        app:helperText="e.g morning commute (optional)">
+        android:hint="Set a Stop Nickname"
+        app:helperText="e.g morning commute">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nicknameEditText"
+            android:id="@+id/nicknameEditTsext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
@@ -28,7 +28,7 @@
         android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Select a Bus Route"
+        android:hint="Select a Bus Route *"
         app:errorEnabled="true">
 
         <AutoCompleteTextView

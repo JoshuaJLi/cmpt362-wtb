@@ -1,11 +1,19 @@
 package ca.wheresthebus.ui.home
 
+import android.content.Intent
 import android.graphics.Canvas
+import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -82,6 +90,13 @@ class HomeFragment : Fragment() {
             }
             // Avoid refreshing bus times or notifying adapter view changes otherwise
             // Updates to adapter for deletion is handled in onSwiped()
+
+            if (_binding == null) return@observe
+            if (newFavStopsList.size == 0) {
+                binding.layoutFavEmpty.visibility = View.VISIBLE
+            } else {
+                binding.layoutFavEmpty.visibility = View.GONE
+            }
         }
 
         homeViewModel.busTimes.observe(requireActivity()){
@@ -96,13 +111,58 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
-        stopAdapter = FavStopAdapter(favouriteStopsList)
+        stopAdapter = FavStopAdapter(
+            favouriteStopsList,
+            onMoreOptionsClick = { view, stop ->
+                showPopupMenu(view, stop)
+            }
+        )
         stopsView = binding.recyclerFavStops
 
         stopsView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = stopAdapter
         }
+    }
+
+    private fun showPopupMenu(view: View, stop: FavouriteStop) {
+        val popupMenu = PopupMenu(view.context, view)
+        popupMenu.inflate(R.menu.fav_bus_overflow_menu)
+        popupMenu.gravity = Gravity.END
+
+        // change delete to red
+        val deleteItem = popupMenu.menu.findItem(R.id.option_delete)
+        val spannableTitle = SpannableString(deleteItem.title)
+        spannableTitle.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(view.context, android.R.color.holo_red_dark)),
+            0,
+            spannableTitle.length,
+            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+        )
+        deleteItem.title = spannableTitle
+
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.option_open_schedule -> {
+                    val url = "https://www.translink.ca/schedules-and-maps/stop/${stop.busStop.code.value}/schedule"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    startActivity(intent)
+                    true
+                }
+                R.id.option_delete -> {
+                    val position = favouriteStopsList.indexOf(stop)
+                    if (position != -1) {
+                        deleteFavouriteStop(stop)
+                        favouriteStopsList.removeAt(position)
+                        stopAdapter.notifyItemRemoved(position)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
     }
 
     private fun setUpSwipeRefresh() {
@@ -185,6 +245,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun deleteFavouriteStop(favStop: FavouriteStop) {
+        if (favouriteStopsList.size == 1) {
+            Log.d("HomeFragment", "Deleting last favourite stop")
+            binding.layoutFavEmpty.visibility = View.VISIBLE
+        }
         mainDBViewModel.deleteFavouriteStop(favStop._id)
     }
 
