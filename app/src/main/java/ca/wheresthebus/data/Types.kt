@@ -1,5 +1,7 @@
 package ca.wheresthebus.data
 
+import java.time.Duration
+
 // Trying out tiny types idiom here to use less primitives
 // see https://kotlinlang.org/docs/inline-classes.html
 
@@ -22,3 +24,5 @@ value class TripId(val value : String)
 value class ScheduledTripId(val value : String)
 
 typealias StopRequest = Pair<StopId, RouteId>
+
+data class UpcomingTime(val isRealtime: Boolean, val duration: Duration)
