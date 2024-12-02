@@ -16,7 +16,7 @@
         app:helperText="e.g morning commute">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nicknameEditTsext"
+            android:id="@+id/nicknameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
