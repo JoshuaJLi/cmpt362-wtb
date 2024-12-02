@@ -87,9 +87,6 @@ object TextUtils {
             if (index != busTimes.lastIndex) {
                 stringBuilder.append(", ")
             }
-
-            println(it.duration.toMinutes())
-            println(it.isRealtime)
         }
 
         return stringBuilder

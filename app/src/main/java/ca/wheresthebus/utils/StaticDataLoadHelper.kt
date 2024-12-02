@@ -2,10 +2,10 @@ package ca.wheresthebus.utils
 
 import android.content.Context
 import ca.wheresthebus.R
+import ca.wheresthebus.data.StopTimestamp
 import ca.wheresthebus.data.json.JsonRoute
 import ca.wheresthebus.data.json.JsonStop
 import ca.wheresthebus.data.json.JsonStopTime
-import ca.wheresthebus.data.mongo_model.MongoArrivalTime
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
 import ca.wheresthebus.data.mongo_model.MongoStopTime
@@ -30,7 +30,7 @@ object StaticDataLoadHelper {
         realm: Realm
     ) = withContext(Dispatchers.IO) {
         val start = System.currentTimeMillis()
-        println("MongoStopTime: Starting work")
+        println("MongoStopTime: Starting work on loading stop times")
 
         val gson = Gson()
         val reader =
@@ -43,14 +43,10 @@ object StaticDataLoadHelper {
                 while (r.hasNext()) {
                     val jsonStopTime = gson.fromJson<JsonStopTime>(r, JsonStopTime::class.java)
 
-                    // build list of MongoArrivalTimes
-                    val arrivalTimes: List<MongoArrivalTime> =
-                        jsonStopTime.arrival_times.map { time ->
-                            MongoArrivalTime(
-                                hour = time.h,
-                                minute = time.m,
-                            )
-                        }
+                    // build list of "minutes since midnight"
+                    val arrivalTimes: List<StopTimestamp> = jsonStopTime.arrival_times.map { time ->
+                        (time.h * 60) + time.m
+                    }
 
                     // build new MongoStopTime object
                     val mongoStopTime = MongoStopTime(

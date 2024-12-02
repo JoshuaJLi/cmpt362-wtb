@@ -25,4 +25,6 @@ value class ScheduledTripId(val value : String)
 
 typealias StopRequest = Pair<StopId, RouteId>
 
+typealias StopTimestamp = Int
+
 data class UpcomingTime(val isRealtime: Boolean, val duration: Duration)

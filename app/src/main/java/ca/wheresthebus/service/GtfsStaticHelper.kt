@@ -7,10 +7,12 @@ import ca.wheresthebus.Globals.SERVICE_ID_MON_TO_FRI
 import ca.wheresthebus.Globals.SERVICE_ID_SAT
 import ca.wheresthebus.Globals.SERVICE_ID_SUN
 import ca.wheresthebus.data.StopRequest
+import ca.wheresthebus.data.StopTimestamp
 import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.db.MyMongoDBApp
-import ca.wheresthebus.data.mongo_model.MongoArrivalTime
 import ca.wheresthebus.data.mongo_model.MongoStopTime
+import ca.wheresthebus.utils.Utils.getHourPart
+import ca.wheresthebus.utils.Utils.getMinPart
 import io.realm.kotlin.ext.query
 import java.time.Duration
 import java.time.LocalTime
@@ -56,8 +58,8 @@ class GtfsStaticHelper {
             realm.query<MongoStopTime>(
                 SEARCH_QUERY, stopId, routeId, currentServiceId
             ).find().firstOrNull()?.let { stopTime ->
-                arrivalTimes.addAll(stopTime.arrivalTimes.map { arrivalTime ->
-                    LocalTime.of((arrivalTime.hour % 24), arrivalTime.minute)
+                arrivalTimes.addAll(stopTime.arrivalTimes.map {
+                    LocalTime.of((getHourPart(it) % 24), getMinPart(it))
                 })
             }
 
@@ -65,18 +67,22 @@ class GtfsStaticHelper {
         }
 
         // Because there are scheduled busses that actually over flows to the next day
-            // Their service runs past midnight -> but will have the previous days serviceId
+        // Their service runs past midnight -> but will have the previous days serviceId
         private fun getServiceOverflows(stopId: Int, routeId: Int, serviceId: Int): List<LocalTime> {
             val stopTime = realm.query<MongoStopTime>(
                 SEARCH_QUERY, stopId, routeId, serviceId
             ).find().firstOrNull()
 
-            val overflowTimes: List<MongoArrivalTime> =
-                stopTime?.arrivalTimes?.filter { it.hour > 23 } ?: listOf()
+            // Filter for arrival times past midnight
+            val overflowTimes: List<StopTimestamp> =
+                stopTime?.arrivalTimes?.filter { getHourPart(it) > 23 } ?: listOf()
 
             // convert to valid 24 hour local times -> 24:00 becomes 00:00 etc..
-            return overflowTimes.map { LocalTime.of(it.hour - 24, it.minute) }
-                .takeIf { overflowTimes.isNotEmpty() } ?: mutableListOf()
+            return overflowTimes.map {
+                LocalTime.of(
+                    getHourPart(it) % 24, getMinPart(it) // % 24 to time relative to today
+                )
+            }.takeIf { overflowTimes.isNotEmpty() } ?: mutableListOf()
         }
 
         // Return future scheduled times as time until

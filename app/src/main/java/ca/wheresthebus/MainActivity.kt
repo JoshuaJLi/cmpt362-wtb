@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setUpNavBar()
-        // loadStaticDataToDB() NOTE: uncomment only if you need to generate realm from static data
+//        loadStaticDataToDB() // NOTE: uncomment only if you need to generate realm from static data
 
         handleIncomingIntent(intent)
 
