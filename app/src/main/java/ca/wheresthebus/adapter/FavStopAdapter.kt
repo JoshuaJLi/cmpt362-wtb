@@ -65,7 +65,8 @@ class FavStopAdapter(
 
         override fun bind(stop: FavouriteStop) {
             nickname.text = stop.nickname.ifEmpty { stop.busStop.name }
-            upcoming.text = stop.busStop.location.toString()
+            val busTimes = busTimesMap[Pair(stop.busStop.id, stop.route.id)]
+            upcoming.text = TextUtils.upcomingBusesString(busTimes)
         }
     }
 

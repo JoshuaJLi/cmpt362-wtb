@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
@@ -61,19 +62,22 @@ class TripsFragment : Fragment() {
 
         activeTripAdapter = TripAdapter()
         activeTripsView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = object : LinearLayoutManager(context)
+            { override fun canScrollVertically() = false }
             adapter = activeTripAdapter
         }
 
         upcomingTripAdapter = TripAdapter()
         upcomingTripsView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = object : LinearLayoutManager(context)
+            { override fun canScrollVertically() = false }
             adapter = upcomingTripAdapter
         }
 
         inactiveTripAdapter = TripAdapter()
         inactiveTripsView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = object : LinearLayoutManager(context)
+            { override fun canScrollVertically() = false }
             adapter = inactiveTripAdapter
         }
 
@@ -127,52 +131,6 @@ class TripsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-//    private fun setUpSwipeToDelete() {
-//        val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-//            override fun onMove(
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder,
-//                target: RecyclerView.ViewHolder
-//            ): Boolean {
-//                swipeRefreshLayout.isEnabled = false
-//                return false
-//            }
-//
-//            // Delete on swipe left of card
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                if (direction == ItemTouchHelper.LEFT){
-//                    val position = viewHolder.adapterPosition
-//                    val stopToDelete = favouriteStopsList[position]
-//                    deleteFavouriteStop(stopToDelete)
-//                    favouriteStopsList.removeAt(position)
-//                    stopAdapter.notifyItemRemoved(position)
-//                    swipeRefreshLayout.isEnabled = true
-//                }
-//            }
-//
-//            override fun onChildDraw(
-//                c: Canvas,
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder,
-//                dX: Float,
-//                dY: Float,
-//                actionState: Int,
-//                isCurrentlyActive: Boolean
-//            ) {
-//                // only move the foreground?
-//                val itemView = viewHolder.itemView.findViewById<View>(R.id.fav_card_view)
-//                itemView.translationX = dX
-//            }
-//
-//            // user has to swipe 75% the width of the view to delete
-//            override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-//                return 0.75f
-//            }
-//        }
-//        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-//        itemTouchHelper.attachToRecyclerView(stopsView)
-//    }
 
     companion object {
         object TripType {
