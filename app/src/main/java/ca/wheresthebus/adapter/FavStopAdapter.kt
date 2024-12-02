@@ -1,10 +1,19 @@
 package ca.wheresthebus.adapter
 
+import android.content.Intent
+import android.net.Uri
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.data.StopRequest
@@ -34,6 +43,7 @@ class FavStopAdapter(
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
         private val foregroundView: CardView = view.findViewById(R.id.fav_card_view)
+        private val moreOptionsButton: ImageButton = view.findViewById(R.id.options_button)
 
         override fun bind(stop: FavouriteStop) {
             // Reset the swipe animation in case the view was reused
@@ -54,7 +64,47 @@ class FavStopAdapter(
 
             val busTimes = busTimesMap[Pair(stop.busStop.id, stop.route.id)]
             upcoming.text = TextUtils.upcomingBusesString(context = itemView.context, busTimes)
+
+            moreOptionsButton.setOnClickListener {
+                showPopupMenu(it, stop)
+            }
         }
+    }
+
+    private fun showPopupMenu(view: View, stop: FavouriteStop) {
+        val popupMenu = PopupMenu(view.context, view)
+        popupMenu.inflate(R.menu.fav_bus_overflow_menu)
+
+        popupMenu.gravity = Gravity.END
+
+        // change delete to red
+        val deleteItem = popupMenu.menu.findItem(R.id.option_delete)
+        val spannableTitle = SpannableString(deleteItem.title)
+        spannableTitle.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(view.context, android.R.color.holo_red_dark)),
+            0,
+            spannableTitle.length,
+            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+        )
+        deleteItem.title = spannableTitle
+
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.option_open_schedule -> {
+                    val url = "https://www.translink.ca/schedules-and-maps/stop/${stop.busStop.code.value}/schedule"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    view.context.startActivity(intent)
+                    true
+                }
+                R.id.option_delete -> {
+                    // do something
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
     }
 
     inner class TripListViewHolder(view: View) : BindingFavStopHolder(view) {
