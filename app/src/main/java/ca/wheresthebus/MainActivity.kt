@@ -20,7 +20,9 @@ import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
 import ca.wheresthebus.utils.StaticDataLoadHelper
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setUpTheme()
         setUpNavBar()
         // loadStaticDataToDB() NOTE: uncomment only if you need to generate realm from static data
 
@@ -110,6 +113,17 @@ class MainActivity : AppCompatActivity() {
             requestMultiplePermissionsLauncher.launch(permissionsToRequest.toTypedArray())
         }
 
+    }
+
+    private fun setUpTheme() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val themeValue = sharedPreferences.getString("appearance", "system")
+        val themeMode = when (themeValue) {
+            getString(R.string.preference_appearance_light_value)  -> AppCompatDelegate.MODE_NIGHT_NO
+            getString(R.string.preference_appearance_dark_value) -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        AppCompatDelegate.setDefaultNightMode(themeMode)
     }
 
     private fun setUpNavBar() {
