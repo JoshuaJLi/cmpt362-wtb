@@ -82,7 +82,8 @@ class ModelFactory() {
 
     fun toScheduledTrip(mongoScheduledTrip: MongoScheduledTrip): ScheduledTrip {
         return ScheduledTrip(
-            id = ScheduledTripId(mongoScheduledTrip.id),
+            id = ScheduledTripId(mongoScheduledTrip.id.toHexString()) ,
+            requestCode = IntentRequestCode(mongoScheduledTrip.requestCode),
             nickname = mongoScheduledTrip.nickname,
             stops = mongoScheduledTrip.stops.map { toFavouriteBusStop(it) } as ArrayList<FavouriteStop>,
             activeTimes = mongoScheduledTrip.activeTimes.map { toSchedule(it) } as ArrayList<Schedule>,
@@ -91,7 +92,8 @@ class ModelFactory() {
 
     fun toMongoScheduledTrip(trip: ScheduledTrip): MongoScheduledTrip {
         return MongoScheduledTrip().apply {
-            id = trip.id.value
+            id = ObjectId(trip.id.value)
+            requestCode = trip.requestCode.value
             nickname = trip.nickname
             stops = trip.stops.map { toMongoFavouriteStop(it) }.toRealmList()
             activeTimes = trip.activeTimes.map { toMongoSchedule(it) }.toRealmList()

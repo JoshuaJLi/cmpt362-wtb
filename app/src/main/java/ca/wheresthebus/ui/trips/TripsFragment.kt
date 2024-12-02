@@ -67,7 +67,8 @@ class TripsFragment : Fragment() {
 
     private fun setUpAdapter() {
 
-        mainDBViewModel._allTripsList.observe(viewLifecycleOwner) {data ->
+        mainDBViewModel._allTripsList.observe(requireActivity()) {data ->
+            Log.d("TripFragment", "$data")
             val currentTime = LocalDateTime.now()
 
 

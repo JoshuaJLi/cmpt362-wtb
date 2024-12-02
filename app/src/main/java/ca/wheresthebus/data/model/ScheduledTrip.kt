@@ -1,6 +1,9 @@
 package ca.wheresthebus.data.model
 
+import ca.wheresthebus.data.IntentRequestCode
 import ca.wheresthebus.data.ScheduledTripId
+import io.realm.kotlin.internal.platform.currentTime
+import org.mongodb.kbson.ObjectId
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -9,6 +12,7 @@ import java.time.temporal.TemporalAdjusters
 
 data class ScheduledTrip(
     val id: ScheduledTripId,
+    val requestCode : IntentRequestCode = IntentRequestCode(currentTime().nanosecondsOfSecond),
     val nickname: String,
     val stops: ArrayList<FavouriteStop>,
     val activeTimes: ArrayList<Schedule>,

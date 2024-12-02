@@ -1,7 +1,6 @@
 package ca.wheresthebus.ui.trips
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +21,7 @@ import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.ActivityAddTripsBinding
 import ca.wheresthebus.ui.home.AddFavBottomSheet
 import com.google.android.material.slider.Slider
+import org.mongodb.kbson.ObjectId
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalTime
@@ -155,7 +155,13 @@ class AddTripsActivity : AppCompatActivity() {
                 .toList()
 
 
-            val trip = ScheduledTrip(ScheduledTripId(""), nickname.text.toString(), addTripsViewModel.selectedTrips, ArrayList(schedules), Duration.ofMinutes(slider.value.toLong()) )
+            val trip = ScheduledTrip(
+                id = ScheduledTripId(ObjectId().toHexString()),
+                nickname = nickname.text.toString(),
+                stops = addTripsViewModel.selectedTrips,
+                activeTimes = ArrayList(schedules),
+                duration = Duration.ofMinutes(slider.value.toLong())
+            )
             mainDBViewModel.insertScheduledTrip(trip)
             finish()
             // do save stuff

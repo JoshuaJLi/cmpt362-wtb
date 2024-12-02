@@ -8,7 +8,8 @@ import org.mongodb.kbson.ObjectId
 
 class MongoScheduledTrip : RealmObject {
     @PrimaryKey
-    var id: String = String()
+    var id: ObjectId = ObjectId()
+    var requestCode = 0
     var nickname : String = String()
     var stops : RealmList<MongoFavouriteStop> = realmListOf()
     var activeTimes: RealmList<MongoSchedule> = realmListOf()

@@ -1,6 +1,7 @@
 package ca.wheresthebus
 
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -47,12 +48,10 @@ class MainDBViewModel : ViewModel() {
 
     private fun loadTrips() {
         _allTripsList.postValue(mutableListOf())
-        val updatedList = mutableListOf<ScheduledTrip>()
         val allMongoScheduledTrip = realm.query<MongoScheduledTrip>().find()
-        for (mongoScheduledTrip in allMongoScheduledTrip) {
-            updatedList.add(modelFactory.toScheduledTrip(mongoScheduledTrip))
-        }
-        _allTripsList.postValue(updatedList)
+            .map { modelFactory.toScheduledTrip((it)) }
+            .toMutableList()
+        _allTripsList.postValue(allMongoScheduledTrip)
     }
 
     private fun loadAllFavoriteStops() {
@@ -119,8 +118,10 @@ class MainDBViewModel : ViewModel() {
     }
 
     fun insertScheduledTrip(scheduledTrip: ScheduledTrip) {
+        Log.d("ScheduledTrip",  "$scheduledTrip")
         val tripList = _allTripsList.value?.toMutableList() ?: mutableListOf()
         tripList.add(scheduledTrip)
+        Log.d("ScheduledTrip", "$tripList")
         _allTripsList.postValue(tripList)
 
         // Write to database in the bg
