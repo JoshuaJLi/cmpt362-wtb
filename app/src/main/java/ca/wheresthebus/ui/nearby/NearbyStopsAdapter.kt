@@ -90,7 +90,9 @@ class NearbyStopsAdapter(
 
         // set dropdown content
         val routesAdapter =
-            ArrayAdapter(activity, R.layout.route_spinner_item, routesMap.keys.toList())
+            ArrayAdapter(activity, R.layout.route_spinner_item, routesMap.values.map {
+                "${it.shortName} - ${it.longName}"
+            })
         routesDropdown.setAdapter(routesAdapter)
 
         // Grab selected dropdown option
@@ -99,7 +101,8 @@ class NearbyStopsAdapter(
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                selectedRoute = routesMap[s.toString()]
+                // index routesMap using the shortname part of the dropdown content
+                selectedRoute = routesMap[s?.split(" - ")?.get(0)?.trim()]
             }
         })
 
