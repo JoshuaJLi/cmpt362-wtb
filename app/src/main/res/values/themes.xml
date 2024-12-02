@@ -48,6 +48,6 @@
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
         <item name="colorAccent">?colorPrimary</item>
         <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
-        <item name="dialogCornerRadius">28dp</item>
+        <item name="dialogCornerRadius">8dp</item>
     </style>
 </resources>

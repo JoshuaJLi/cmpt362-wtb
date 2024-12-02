@@ -21,10 +21,18 @@ class StopSuggestionAdapter(
 
         fun bind(stop: BusStop) {
             stopName.text = stop.name
-            stopCode.text = stop.code.value
+
+            stopCode.text = buildString {
+                append("Stop Code: ")
+                append(stop.code.value)
+            }
 
             val routesMap = stop.routes.associateBy { it.shortName }
-            routesAtStop.text = routesMap.keys.joinToString(", ")
+
+            routesAtStop.text = buildString {
+                append("Buses: ")
+                append(stop.routes.joinToString(", ") { it.shortName })
+            }
 
             view.setOnClickListener {
                 val selectedStop = suggestedStops[adapterPosition]
