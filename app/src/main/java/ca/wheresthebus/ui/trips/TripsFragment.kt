@@ -66,55 +66,59 @@ class TripsFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
-        val currentTime = LocalDateTime.now()
 
-        val trips = mainDBViewModel.getTrips()
-            .sortedBy { it.getClosestTime(currentTime) }
-            .groupBy { trip ->
-                when {
-                    trip.isActive(currentTime) -> TripType.ACTIVE
-                    trip.isToday(currentTime) -> TripType.TODAY
-                    else -> TripType.INACTIVE
+        mainDBViewModel._allTripsList.observe(viewLifecycleOwner) {data ->
+            val currentTime = LocalDateTime.now()
+
+
+            val trips = data.orEmpty()
+                .sortedBy { it.getClosestTime(currentTime) }
+                .groupBy { trip ->
+                    when {
+                        trip.isActive(currentTime) -> TripType.ACTIVE
+                        trip.isToday(currentTime) -> TripType.TODAY
+                        else -> TripType.INACTIVE
+                    }
+                }
+
+            activeTripsView = binding.recyclerActiveTrips
+            inactiveTripsView = binding.recyclerInactiveTrips
+            upcomingTripsView = binding.recyclerUpcomingTrips
+
+            trips[TripType.ACTIVE].orEmpty().let {
+                if (it.isEmpty()) {
+                    binding.labelActive.visibility = View.GONE
+                }
+                activeTripAdapter = TripAdapter(it)
+
+                activeTripsView.apply {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = activeTripAdapter
                 }
             }
 
-        activeTripsView = binding.recyclerActiveTrips
-        inactiveTripsView = binding.recyclerInactiveTrips
-        upcomingTripsView = binding.recyclerUpcomingTrips
+            trips[TripType.TODAY].orEmpty().let {
+                if (it.isEmpty()) {
+                    binding.labelUpcomingTrips.visibility = View.GONE
+                }
+                upcomingTripAdapter = TripAdapter(it)
 
-        trips[TripType.ACTIVE].orEmpty().let {
-            if (it.isEmpty()) {
-                binding.labelActive.visibility = View.GONE
+                upcomingTripsView.apply {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = upcomingTripAdapter
+                }
             }
-            activeTripAdapter = TripAdapter(it)
 
-            activeTripsView.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = activeTripAdapter
-            }
-        }
+            trips[TripType.INACTIVE].orEmpty().let {
+                if (it.isEmpty()) {
+                    binding.labelAllTrips.visibility = View.GONE
+                }
+                inactiveTripAdapter = TripAdapter(it)
 
-        trips[TripType.TODAY].orEmpty().let {
-            if (it.isEmpty()) {
-                binding.labelUpcomingTrips.visibility = View.GONE
-            }
-            upcomingTripAdapter = TripAdapter(it)
-
-            upcomingTripsView.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = upcomingTripAdapter
-            }
-        }
-
-        trips[TripType.INACTIVE].orEmpty().let {
-            if (it.isEmpty()) {
-                binding.labelAllTrips.visibility = View.GONE
-            }
-            inactiveTripAdapter = TripAdapter(it)
-
-            inactiveTripsView.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = inactiveTripAdapter
+                inactiveTripsView.apply {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = inactiveTripAdapter
+                }
             }
         }
     }

@@ -2,6 +2,8 @@ package ca.wheresthebus.ui.trips
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -9,13 +11,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
 import ca.wheresthebus.adapter.AddTripTimeAdapter
 import ca.wheresthebus.adapter.FavStopAdapter
+import ca.wheresthebus.data.ScheduledTripId
 import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.model.Schedule
+import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.ActivityAddTripsBinding
 import ca.wheresthebus.ui.home.AddFavBottomSheet
+import com.google.android.material.slider.Slider
 import java.time.DayOfWeek
+import java.time.Duration
 import java.time.LocalTime
 
 class AddTripsActivity : AppCompatActivity() {
@@ -32,6 +40,15 @@ class AddTripsActivity : AppCompatActivity() {
 
     private lateinit var stopAdapter: FavStopAdapter
 
+    private lateinit var slider : Slider
+
+    private lateinit var sliderValue : TextView
+
+    private lateinit var mainDBViewModel: MainDBViewModel
+
+    private lateinit var nickname : EditText
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -44,16 +61,37 @@ class AddTripsActivity : AppCompatActivity() {
 
         binding = ActivityAddTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        mainDBViewModel = ViewModelProvider(this).get(MainDBViewModel::class.java)
+
 
         addTripsViewModel = ViewModelProvider(this)[AddTripsViewModel::class.java]
 
         setUpTripStopsAdapter()
         setUpTripTimeAdapter()
 
+        setUpNickname()
         setUpAddStop()
         setUpAddTime()
         setUpCancel()
         setUpSave()
+        setUpSlider()
+    }
+
+    private fun setUpNickname() {
+        nickname = findViewById(R.id.text_add_trip_name)
+    }
+
+    private fun setUpSlider() {
+        slider = findViewById(R.id.slider_duration)
+        sliderValue = findViewById(R.id.text_duration_label)
+
+
+        slider.addOnChangeListener { _, value, _ ->
+            val durationText  = "${value.toInt()} minutes"
+            sliderValue.text = durationText
+
+            addTripsViewModel.duration = value.toInt()
+        }
     }
 
     private fun setUpTripStopsAdapter() {
@@ -111,6 +149,14 @@ class AddTripsActivity : AppCompatActivity() {
 
     private fun setUpSave() {
         binding.fabNewTrip.setOnClickListener {
+            val schedules = addTripsViewModel.schedulePairs
+                .flatMap { (days, time) -> days.map { day -> day to time }  }
+                .map { (day, time) -> Schedule(day, time) }
+                .toList()
+
+
+            val trip = ScheduledTrip(ScheduledTripId(""), nickname.text.toString(), addTripsViewModel.selectedTrips, ArrayList(schedules), Duration.ofMinutes(slider.value.toLong()) )
+            mainDBViewModel.insertScheduledTrip(trip)
             finish()
             // do save stuff
         }

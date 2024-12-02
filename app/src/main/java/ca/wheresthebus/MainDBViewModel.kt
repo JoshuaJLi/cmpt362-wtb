@@ -37,11 +37,22 @@ class MainDBViewModel : ViewModel() {
     // change to LiveData instead of MutableLiveDataLater, since we will only be accessing this part of the DB?
     val _allBusStopsList = MutableLiveData<MutableList<BusStop>>()
 
-    val allTripsList = realm.query<MongoScheduledTrip>().find()
+    val _allTripsList = MutableLiveData<MutableList<ScheduledTrip>>()
 
     init {
         loadAllStops()
         loadAllFavoriteStops()
+        loadTrips()
+    }
+
+    private fun loadTrips() {
+        _allTripsList.postValue(mutableListOf())
+        val updatedList = mutableListOf<ScheduledTrip>()
+        val allMongoScheduledTrip = realm.query<MongoScheduledTrip>().find()
+        for (mongoScheduledTrip in allMongoScheduledTrip) {
+            updatedList.add(modelFactory.toScheduledTrip(mongoScheduledTrip))
+        }
+        _allTripsList.postValue(updatedList)
     }
 
     private fun loadAllFavoriteStops() {
@@ -107,6 +118,23 @@ class MainDBViewModel : ViewModel() {
         }
     }
 
+    fun insertScheduledTrip(scheduledTrip: ScheduledTrip) {
+        val tripList = _allTripsList.value?.toMutableList() ?: mutableListOf()
+        tripList.add(scheduledTrip)
+        _allTripsList.postValue(tripList)
+
+        // Write to database in the bg
+        viewModelScope.launch(Dispatchers.IO) {
+            realm.write {
+                copyToRealm(
+                    modelFactory.toMongoScheduledTrip(scheduledTrip),
+                    updatePolicy = UpdatePolicy.ALL
+                )
+            }
+        }
+
+    }
+
     fun deleteFavouriteStop(_id: ObjectId) {
         viewModelScope.launch(Dispatchers.IO) {
             val favList = _favouriteBusStopsList.value?.toMutableList() ?: mutableListOf()
@@ -150,63 +178,5 @@ class MainDBViewModel : ViewModel() {
 
         // Return result as a List<BusStops> instead of List<MongoBusStops>
         return result.map { modelFactory.toBusStop(it) }
-    }
-
-    fun getTrips(): ArrayList<ScheduledTrip> {
-        val trips = ArrayList<ScheduledTrip>()
-
-
-        // Schedule, Stop, Route setup
-        val schedule1 = Schedule(DayOfWeek.SUNDAY, LocalTime.of(23, 0))
-        val schedule2 = Schedule(DayOfWeek.SUNDAY, LocalTime.of(23, 30))
-        val schedule3 = Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 45))
-        val schedule4 = Schedule(DayOfWeek.TUESDAY, LocalTime.of(7, 45))
-        val schedule5 = Schedule(DayOfWeek.WEDNESDAY, LocalTime.of(8, 45))
-        val stop = BusStop(
-            StopId("test"),
-            StopCode("test"),
-            "Bus Stop",
-            Location("Test Location"),
-            ArrayList()
-        )
-        val route1 = Route(RouteId("route1"), "20", "Morning Trip")
-        val route2 = Route(RouteId("route2"), "15", "Classes")
-        val route3 = Route(RouteId("route3"), "10", "Sunday Classes")
-
-        // Favorite stops setup
-        val favouriteStop1 = FavouriteStop(ObjectId(),"145 @ Production Way", stop, route1)
-        val favouriteStop2 = FavouriteStop(ObjectId(), "R5 @ SFU", stop, route2)
-        val favouriteStop3 = FavouriteStop(ObjectId(), "R5 @ Waterfront", stop, route3)
-
-        // Trip 1
-        val stops1 = ArrayList<FavouriteStop>()
-        val schedules1 = ArrayList<Schedule>()
-        schedules1.add(schedule1)
-        stops1.add(favouriteStop1)
-        val trip1 = ScheduledTrip(ScheduledTripId("trip1"), "CMPT 362", stops1, schedules1)
-
-        // Trip 2
-        val stops2 = ArrayList<FavouriteStop>()
-        val schedules2 = ArrayList<Schedule>()
-        schedules2.add(schedule2)
-        stops2.add(favouriteStop2)
-        stops2.add(favouriteStop1)
-        val trip2 = ScheduledTrip(ScheduledTripId("trip2"), "Office Hours", stops2, schedules2)
-
-        // Trip 3
-        val stops3 = ArrayList<FavouriteStop>()
-        val schedules3 = ArrayList<Schedule>()
-        schedules3.add(schedule3)
-        schedules3.add(schedule4)
-        schedules3.add(schedule5)
-        stops3.add(favouriteStop3)
-        val trip3 = ScheduledTrip(ScheduledTripId("trip3"), "Board Games", stops3, schedules3)
-
-        // Add trips to the list
-        trips.add(trip1)
-        trips.add(trip2)
-        trips.add(trip3)
-
-        return trips
     }
 }

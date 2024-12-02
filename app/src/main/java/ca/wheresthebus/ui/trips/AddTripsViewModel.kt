@@ -16,4 +16,6 @@ class AddTripsViewModel: ViewModel() {
     val schedulePairs: MutableList<Pair<MutableList<DayOfWeek>, LocalTime>> = mutableListOf()
 
     val selectedTrips: ArrayList<FavouriteStop> = arrayListOf()
+
+    var duration : Int = 60
 }
