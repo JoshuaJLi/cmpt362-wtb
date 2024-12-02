@@ -83,6 +83,7 @@ class HomeFragment : Fragment() {
             // Avoid refreshing bus times or notifying adapter view changes otherwise
             // Updates to adapter for deletion is handled in onSwiped()
 
+            if (_binding == null) return@observe
             if (newFavStopsList.size == 0) {
                 binding.layoutFavEmpty.visibility = View.VISIBLE
             } else {
