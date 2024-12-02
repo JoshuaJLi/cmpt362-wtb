@@ -1,19 +1,11 @@
 package ca.wheresthebus.adapter
 
-import android.content.Intent
-import android.net.Uri
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.data.StopRequest
@@ -22,9 +14,10 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.utils.TextUtils
 
 class FavStopAdapter(
-    private val dataSet: ArrayList<FavouriteStop>,
+    private val dataSet: MutableList<FavouriteStop>,
     private val type: Type = Type.HOME,
-    private val busTimesMap: MutableMap<StopRequest, List<UpcomingTime>> = mutableMapOf()
+    private val busTimesMap: MutableMap<StopRequest, List<UpcomingTime>> = mutableMapOf(),
+    private val onMoreOptionsClick: (View, FavouriteStop) -> Unit
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
 
     enum class Type {
@@ -32,7 +25,6 @@ class FavStopAdapter(
         TRIP_ACTIVE,
         TRIP_INACTIVE
     }
-
 
     abstract inner class BindingFavStopHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bind(stop: FavouriteStop)
@@ -54,6 +46,9 @@ class FavStopAdapter(
                 if (stop.nickname.isNotEmpty()) {
                     append(" - ")
                     append(stop.nickname)
+                } else {
+                    append(" - ")
+                    append(stop.busStop.name)
                 }
             }
 
@@ -66,45 +61,9 @@ class FavStopAdapter(
             upcoming.text = TextUtils.upcomingBusesString(context = itemView.context, busTimes)
 
             moreOptionsButton.setOnClickListener {
-                showPopupMenu(it, stop)
+                onMoreOptionsClick(it, stop)
             }
         }
-    }
-
-    private fun showPopupMenu(view: View, stop: FavouriteStop) {
-        val popupMenu = PopupMenu(view.context, view)
-        popupMenu.inflate(R.menu.fav_bus_overflow_menu)
-
-        popupMenu.gravity = Gravity.END
-
-        // change delete to red
-        val deleteItem = popupMenu.menu.findItem(R.id.option_delete)
-        val spannableTitle = SpannableString(deleteItem.title)
-        spannableTitle.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(view.context, android.R.color.holo_red_dark)),
-            0,
-            spannableTitle.length,
-            Spannable.SPAN_INCLUSIVE_INCLUSIVE
-        )
-        deleteItem.title = spannableTitle
-
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.option_open_schedule -> {
-                    val url = "https://www.translink.ca/schedules-and-maps/stop/${stop.busStop.code.value}/schedule"
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    view.context.startActivity(intent)
-                    true
-                }
-                R.id.option_delete -> {
-                    // do something
-                    true
-                }
-                else -> false
-            }
-        }
-
-        popupMenu.show()
     }
 
     inner class TripListViewHolder(view: View) : BindingFavStopHolder(view) {
@@ -162,5 +121,12 @@ class FavStopAdapter(
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
         notifyItemRangeChanged(0, itemCount)
+    }
+
+    fun removeItem(position: Int) {
+        if (position in dataSet.indices) {
+            dataSet.removeAt(position)
+            notifyItemRemoved(position)
+        }
     }
 }
