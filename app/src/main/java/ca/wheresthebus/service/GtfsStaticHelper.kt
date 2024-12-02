@@ -6,8 +6,8 @@ import ca.wheresthebus.Globals.BUS_RETRIEVAL_MAX
 import ca.wheresthebus.Globals.SERVICE_ID_MON_TO_FRI
 import ca.wheresthebus.Globals.SERVICE_ID_SAT
 import ca.wheresthebus.Globals.SERVICE_ID_SUN
-import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.StopRequest
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.mongo_model.MongoArrivalTime
 import ca.wheresthebus.data.mongo_model.MongoStopTime
@@ -26,10 +26,10 @@ class GtfsStaticHelper {
             else -> SERVICE_ID_MON_TO_FRI
         }
 
-        fun getBusTimes(stopsInfo: List<Pair<StopId, RouteId>>): MutableMap<StopId, List<Duration>> {
+        fun getBusTimes(stopsInfo: List<StopRequest>): MutableMap<StopRequest, List<UpcomingTime>> {
             return try {
                 stopsInfo.associate { (stopId, routeId) ->
-                    stopId to getTimeUntilNextBus(stopId.value.toInt(), routeId.value.toInt())
+                    (stopId to routeId) to getTimeUntilNextBus(stopId.value.toInt(), routeId.value.toInt())
                 }.toMutableMap()
             } catch (e: Exception) {
                 Log.e("GTFS", "Error fetching GTFS static data", e)
@@ -37,7 +37,7 @@ class GtfsStaticHelper {
             }
         }
 
-        private fun getTimeUntilNextBus(stopId: Int, routeId: Int): List<Duration> {
+        private fun getTimeUntilNextBus(stopId: Int, routeId: Int): List<UpcomingTime> {
             return convertBusTimes(getStaticArrivalTime(stopId, routeId))
         }
 
@@ -80,14 +80,13 @@ class GtfsStaticHelper {
         }
 
         // Return future scheduled times as time until
-        private fun convertBusTimes(arrivalTimes: List<LocalTime>): List<Duration> {
+        private fun convertBusTimes(arrivalTimes: List<LocalTime>): List<UpcomingTime> {
             val currentTime = LocalTime.now()
             val futureTimes = arrivalTimes.filter { it.isAfter(currentTime) }
 
-            return futureTimes
-                .sorted()
-                .take(BUS_RETRIEVAL_MAX)
-                .map { Duration.between(currentTime, it) }
+            return futureTimes.sorted().take(BUS_RETRIEVAL_MAX).map {
+                UpcomingTime(false, Duration.between(currentTime, it))
+            }
         }
     }
 }
