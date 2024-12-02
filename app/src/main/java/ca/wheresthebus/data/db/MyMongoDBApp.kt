@@ -1,7 +1,6 @@
 package ca.wheresthebus.data.db
 
 import android.app.Application
-import ca.wheresthebus.data.mongo_model.MongoArrivalTime
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
@@ -22,7 +21,6 @@ class MyMongoDBApp: Application() {
                         MongoRoute::class,
                         MongoSchedule::class,
                         MongoStopTime::class,
-                        MongoArrivalTime::class,
                         MongoScheduledTrip::class
                     )
                 ).initialRealmFile("default.realm").build()
@@ -42,7 +40,6 @@ class MyMongoDBApp: Application() {
 //                        MongoRoute::class,
 //                        MongoSchedule::class,
 //                        MongoStopTime::class,
-//                        MongoArrivalTime::class,
 //                        MongoScheduledTrip::class
 //                    )
 //                )

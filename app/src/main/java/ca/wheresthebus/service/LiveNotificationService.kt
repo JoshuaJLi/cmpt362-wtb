@@ -161,7 +161,7 @@ class LiveNotificationService : LifecycleService() {
 
     private fun updateNotification(nickname: String, notificationId: Int, stopTimes: Map<StopWatches, List<UpcomingTime>?>) {
         val content = stopTimes.map {
-            "${it.key.nickname}: ${TextUtils.upcomingBusesString(it.value)}"
+            "${it.key.nickname}: ${TextUtils.upcomingBusesString(context = this, it.value)}"
         }.joinToString(separator = "\n")
 
         val notificationManager =

@@ -3,6 +3,7 @@ package ca.wheresthebus.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,9 +14,10 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.utils.TextUtils
 
 class FavStopAdapter(
-    private val dataSet: ArrayList<FavouriteStop>,
+    private val dataSet: MutableList<FavouriteStop>,
     private val type: Type = Type.HOME,
-    private val busTimesMap: MutableMap<StopRequest, List<UpcomingTime>> = mutableMapOf()
+    private val busTimesMap: MutableMap<StopRequest, List<UpcomingTime>> = mutableMapOf(),
+    private val onMoreOptionsClick: (View, FavouriteStop) -> Unit
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
 
     enum class Type {
@@ -23,7 +25,6 @@ class FavStopAdapter(
         TRIP_ACTIVE,
         TRIP_INACTIVE
     }
-
 
     abstract inner class BindingFavStopHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bind(stop: FavouriteStop)
@@ -34,6 +35,7 @@ class FavStopAdapter(
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
         private val foregroundView: CardView = view.findViewById(R.id.fav_card_view)
+        private val moreOptionsButton: ImageButton = view.findViewById(R.id.options_button)
 
         override fun bind(stop: FavouriteStop) {
             // Reset the swipe animation in case the view was reused
@@ -44,6 +46,9 @@ class FavStopAdapter(
                 if (stop.nickname.isNotEmpty()) {
                     append(" - ")
                     append(stop.nickname)
+                } else {
+                    append(" - ")
+                    append(stop.busStop.name)
                 }
             }
 
@@ -53,7 +58,11 @@ class FavStopAdapter(
             }
 
             val busTimes = busTimesMap[Pair(stop.busStop.id, stop.route.id)]
-            upcoming.text = TextUtils.upcomingBusesString(busTimes)
+            upcoming.text = TextUtils.upcomingBusesString(context = itemView.context, busTimes)
+
+            moreOptionsButton.setOnClickListener {
+                onMoreOptionsClick(it, stop)
+            }
         }
     }
 

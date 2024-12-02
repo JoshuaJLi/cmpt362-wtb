@@ -1,16 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <fragment
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/NearbyFragment_nearbyMap"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
@@ -19,22 +20,25 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:layout_margin="16dp"
-            android:orientation="horizontal">
+            android:layout_gravity="bottom|end"
+            android:layout_margin="24dp"
+            android:orientation="horizontal"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/NearbyFragment_expandListButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expand List" />
+                android:text="@string/expand_list"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/NearbyFragment_recenterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                app:icon="@drawable/baseline_gps_fixed_24" />
+                android:contentDescription="@string/center_map_on_current_location"
+                app:icon="@drawable/baseline_gps_fixed_24"/>
 
         </LinearLayout>
 

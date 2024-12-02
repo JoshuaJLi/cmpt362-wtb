@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="General">
+    <PreferenceCategory
+        app:title="General"
+        app:iconSpaceReserved="false">
+
             <ListPreference
                 app:key="@string/key_tap_action"
                 android:title="Compass Tap Action"
@@ -10,19 +14,24 @@
                 app:defaultValue="@string/preference_tap_action_all_value"
                 app:entryValues="@array/tap_action_values"
                 app:entries="@array/tap_action_entries"
+                app:iconSpaceReserved="false"
                 />
 
-        <ListPreference
-            app:key="@string/key_trip_poll_time"
-            android:title="Trip Polling Interval"
-            app:summary="How often an active trip will check bus times"
-            app:defaultValue="1"
-            app:entryValues="@array/trip_polling_values"
-            app:entries="@array/trip_polling_entries"
-            />
+            <ListPreference
+                app:key="@string/key_trip_poll_time"
+                android:title="Trip Polling Interval"
+                app:summary="How often an active trip will check bus times"
+                app:defaultValue="1"
+                app:entryValues="@array/trip_polling_values"
+                app:entries="@array/trip_polling_entries"
+                app:iconSpaceReserved="false"
+                />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Appearance">
+    <PreferenceCategory
+        app:title="Appearance"
+        app:iconSpaceReserved="false">
+
         <ListPreference
             app:key="appearance"
             android:title="Theme"
@@ -30,27 +39,34 @@
             app:useSimpleSummaryProvider="true"
             app:entryValues="@array/appearance_values"
             app:entries="@array/appearance_entries"
+            app:iconSpaceReserved="false"
             />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/category_about">
+    <PreferenceCategory
+        app:title="@string/category_about"
+        app:iconSpaceReserved="false">
+
         <Preference
             app:title="@string/preference_webpage"
-            app:summary="@string/wtb_url">
+            app:summary="@string/wtb_url"
+            app:iconSpaceReserved="false">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://wheres-the-bus.pages.dev/" />
         </Preference>
 
         <Preference
             app:title="@string/preference_repo"
-            app:summary="@string/wtb_repo">
+            app:summary="@string/wtb_repo"
+            app:iconSpaceReserved="false">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/JoshuaJLi/cmpt362-wtb/" />
         </Preference>
 
         <Preference
             app:title="@string/send_feedback"
-            app:summary="@string/wtb_feedback">
+            app:summary="@string/wtb_feedback"
+            app:iconSpaceReserved="false">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
         </Preference>
