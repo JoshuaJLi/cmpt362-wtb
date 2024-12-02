@@ -3,6 +3,7 @@ package ca.wheresthebus.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,8 @@ class FavStopAdapter(
     enum class Type {
         HOME,
         TRIP_ACTIVE,
-        TRIP_INACTIVE
+        TRIP_INACTIVE,
+        CREATE_TRIP
     }
 
 
@@ -62,7 +64,7 @@ class FavStopAdapter(
         private val upcoming: TextView = view.findViewById(R.id.text_trip_stop_next_time)
 
         override fun bind(stop: FavouriteStop) {
-            nickname.text = stop.nickname
+            nickname.text = stop.nickname.ifEmpty { stop.busStop.name }
             upcoming.text = stop.busStop.location.toString()
         }
     }
@@ -71,7 +73,20 @@ class FavStopAdapter(
         private val nickname: TextView = view.findViewById(R.id.text_trip_inactive_stop_nickname)
 
         override fun bind(stop: FavouriteStop) {
-            nickname.text = stop.nickname
+            nickname.text = stop.nickname.ifEmpty { stop.busStop.name }
+        }
+    }
+
+    inner class AddBusToTripViewHolder(view: View) : BindingFavStopHolder(view) {
+        private val nickname: TextView = view.findViewById(R.id.text_trip_add_stop_nickname)
+        private val delete : Button = view.findViewById(R.id.button_delete_trip_fav)
+
+        init {
+            delete.setOnClickListener { handleDeleteButtonClick(this) }
+        }
+
+        override fun bind(stop : FavouriteStop) {
+            nickname.text = stop.nickname.ifEmpty { stop.busStop.name }
         }
     }
 
@@ -87,6 +102,12 @@ class FavStopAdapter(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_trip_stop_inactive, parent, false)
                     .let {
                         return InactiveTripListViewHolder(it)
+                    }
+            }
+            Type.CREATE_TRIP -> {
+                LayoutInflater.from(parent.context).inflate(R.layout.item_trip_create_busses, parent, false)
+                    .let {
+                        return AddBusToTripViewHolder(it)
                     }
             }
             else -> {
@@ -112,5 +133,10 @@ class FavStopAdapter(
         busTimesMap.clear()
         busTimesMap.putAll(busTimes)
         notifyItemRangeChanged(0, itemCount)
+    }
+
+    private fun handleDeleteButtonClick(holder: BindingFavStopHolder) {
+        dataSet.removeAt(holder.adapterPosition)
+        notifyItemRemoved(holder.adapterPosition)
     }
 }

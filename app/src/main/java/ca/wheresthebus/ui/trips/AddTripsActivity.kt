@@ -58,7 +58,7 @@ class AddTripsActivity : AppCompatActivity() {
 
     private fun setUpTripStopsAdapter() {
 
-        stopAdapter = FavStopAdapter(addTripsViewModel.selectedTrips, FavStopAdapter.Type.TRIP_INACTIVE)
+        stopAdapter = FavStopAdapter(addTripsViewModel.selectedTrips, FavStopAdapter.Type.CREATE_TRIP)
         addBusView = binding.recyclerViewBusses
         addBusView.apply {
             layoutManager = LinearLayoutManager(context)
