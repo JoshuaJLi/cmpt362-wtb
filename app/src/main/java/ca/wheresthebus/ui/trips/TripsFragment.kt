@@ -17,11 +17,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Visibility
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.TripAdapter
+import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.Schedule
 import ca.wheresthebus.data.model.ScheduledTrip
+import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
 import ca.wheresthebus.service.AlarmService
 import ca.wheresthebus.service.LiveNotificationService
+import io.realm.kotlin.ext.query
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -66,8 +69,8 @@ class TripsFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
-
-        mainDBViewModel._allTripsList.observe(requireActivity()) {data ->
+        Log.d("Testing", "Set up adapter called")
+        mainDBViewModel._allTripsList.observe(viewLifecycleOwner) {data ->
             Log.d("TripFragment", "$data")
             val currentTime = LocalDateTime.now()
 

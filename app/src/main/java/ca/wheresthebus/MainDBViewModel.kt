@@ -1,20 +1,13 @@
 package ca.wheresthebus
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.wheresthebus.data.ModelFactory
-import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.ScheduledTripId
-import ca.wheresthebus.data.StopCode
-import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
-import ca.wheresthebus.data.model.Route
-import ca.wheresthebus.data.model.Schedule
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
@@ -23,11 +16,12 @@ import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.notifications.InitialResults
+import io.realm.kotlin.notifications.ResultsChange
+import io.realm.kotlin.notifications.UpdatedResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
-import java.time.DayOfWeek
-import java.time.LocalTime
 
 class MainDBViewModel : ViewModel() {
     private val realm = MyMongoDBApp.realm
@@ -44,6 +38,24 @@ class MainDBViewModel : ViewModel() {
         loadAllStops()
         loadAllFavoriteStops()
         loadTrips()
+        listenForTripChanges()
+    }
+
+    private fun listenForTripChanges() = viewModelScope.launch(Dispatchers.IO) {
+        realm.query<MongoScheduledTrip>().asFlow()
+            .collect{change : ResultsChange<MongoScheduledTrip> ->
+                    when (change) {
+                        is UpdatedResults -> {
+                            _allTripsList.postValue(change.list
+                                .map { modelFactory.toScheduledTrip(it) }
+                                .toMutableList())
+                        }
+
+                        is InitialResults -> {
+                            // do nothing
+                        }
+                    }
+            }
     }
 
     private fun loadTrips() {
@@ -118,11 +130,8 @@ class MainDBViewModel : ViewModel() {
     }
 
     fun insertScheduledTrip(scheduledTrip: ScheduledTrip) {
-        Log.d("ScheduledTrip",  "$scheduledTrip")
         val tripList = _allTripsList.value?.toMutableList() ?: mutableListOf()
         tripList.add(scheduledTrip)
-        Log.d("ScheduledTrip", "$tripList")
-        _allTripsList.postValue(tripList)
 
         // Write to database in the bg
         viewModelScope.launch(Dispatchers.IO) {

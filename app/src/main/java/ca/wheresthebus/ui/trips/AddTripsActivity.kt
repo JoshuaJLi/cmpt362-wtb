@@ -44,7 +44,7 @@ class AddTripsActivity : AppCompatActivity() {
 
     private lateinit var sliderValue : TextView
 
-    private lateinit var mainDBViewModel: MainDBViewModel
+    private lateinit var mainDBViewModel : MainDBViewModel
 
     private lateinit var nickname : EditText
 
@@ -61,9 +61,8 @@ class AddTripsActivity : AppCompatActivity() {
 
         binding = ActivityAddTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         mainDBViewModel = ViewModelProvider(this).get(MainDBViewModel::class.java)
-
-
         addTripsViewModel = ViewModelProvider(this)[AddTripsViewModel::class.java]
 
         setUpTripStopsAdapter()
