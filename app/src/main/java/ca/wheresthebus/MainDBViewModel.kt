@@ -15,11 +15,11 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.model.Schedule
 import ca.wheresthebus.data.model.ScheduledTrip
-import ca.wheresthebus.data.mongo_model.MongoArrivalTime
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
 import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
+import ca.wheresthebus.data.mongo_model.MongoStopTime
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
@@ -75,7 +75,7 @@ class MainDBViewModel : ViewModel() {
     // Returns true if both MongoRoutes and MongoBusStops have already been initialized
     fun isStaticDataLoaded(): Boolean {
         return !(realm.query<MongoRoute>().find().isEmpty() && realm.query<MongoBusStop>().find()
-            .isEmpty() && realm.query<MongoArrivalTime>().find().isEmpty())
+            .isEmpty() && realm.query<MongoStopTime>().find().isEmpty())
     }
 
     fun getAllStops(): List<BusStop>? {
