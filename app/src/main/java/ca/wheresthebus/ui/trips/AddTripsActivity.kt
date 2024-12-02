@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
 import ca.wheresthebus.adapter.AddTripTimeAdapter
+import ca.wheresthebus.adapter.FavStopAdapter
+import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.databinding.ActivityAddTripsBinding
+import ca.wheresthebus.ui.home.AddFavBottomSheet
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -21,11 +24,13 @@ class AddTripsActivity : AppCompatActivity() {
 
     private lateinit var addTripsViewModel: AddTripsViewModel
 
-    private val schedulePairs: MutableList<Pair<MutableList<DayOfWeek>, LocalTime>> = mutableListOf()
-
     private lateinit var addTripsView : RecyclerView
 
+    private lateinit var addBusView : RecyclerView
+
     private lateinit var tripTimeAdapter: AddTripTimeAdapter
+
+    private lateinit var stopAdapter: FavStopAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,13 +57,19 @@ class AddTripsActivity : AppCompatActivity() {
     }
 
     private fun setUpTripStopsAdapter() {
-        // do trip stops stuff
+
+        stopAdapter = FavStopAdapter(addTripsViewModel.selectedTrips, FavStopAdapter.Type.TRIP_INACTIVE)
+        addBusView = binding.recyclerViewBusses
+        addBusView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = stopAdapter
+        }
     }
 
     private fun setUpTripTimeAdapter() {
         binding.recyclerViewTimes.itemAnimator = null
 
-        tripTimeAdapter = AddTripTimeAdapter(schedulePairs, supportFragmentManager, binding.root)
+        tripTimeAdapter = AddTripTimeAdapter(addTripsViewModel.schedulePairs, supportFragmentManager, binding.root)
 
         addTripsView = binding.recyclerViewTimes
         addTripsView.apply {
@@ -67,9 +78,18 @@ class AddTripsActivity : AppCompatActivity() {
         }
     }
 
+    private fun addStop(favouriteStop : FavouriteStop) {
+        addTripsViewModel.selectedTrips.add(favouriteStop)
+
+        stopAdapter.notifyItemInserted(addTripsViewModel.selectedTrips.size - 1)
+    }
+
     private fun setUpAddStop() {
+        val bottom = AddFavBottomSheet()
+            .assignAddFavourite(::addStop)
+
         binding.buttonAddStop.setOnClickListener {
-            Log.d("AddTripsActivity", "Add stop button clicked")
+                bottom.show(supportFragmentManager, AddFavBottomSheet.TAG)
         }
     }
 

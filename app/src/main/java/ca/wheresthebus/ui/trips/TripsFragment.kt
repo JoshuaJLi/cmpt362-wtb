@@ -60,7 +60,7 @@ class TripsFragment : Fragment() {
         setUpAdapter()
         setUpFab()
 
-        AlarmService.scheduleTripNotifications(mainDBViewModel.getTrips(), requireContext())
+//        AlarmService.scheduleTripNotifications(mainDBViewModel.getTrips(), requireContext())
 
         return root
     }
