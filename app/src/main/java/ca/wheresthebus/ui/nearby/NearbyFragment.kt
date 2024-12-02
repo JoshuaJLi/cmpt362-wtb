@@ -152,7 +152,7 @@ class NearbyFragment :
                 }
 
                 // sort the nearby stops by distance, then by name
-                val sortedList = nearbyStops.sortedWith(compareBy { it.name })
+                val sortedList = sortNearbyStopsByDistance(nearbyStops, cameraPosition)
 
                 nearbyBottomSheet = NearbyBottomSheet(sortedList)
                 nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
@@ -329,6 +329,19 @@ class NearbyFragment :
             nearbyBottomSheet = NearbyBottomSheet(nearbyStops, markerId) // create a new bottom sheet with the stop
             nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
         }
+    }
+
+    private fun sortNearbyStopsByDistance(nearbyStops: ArrayList<BusStop>, userLocation: LatLng): List<BusStop> {
+        return nearbyStops.sortedWith(compareBy { stop ->
+            val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
+            val results = FloatArray(1)
+            Location.distanceBetween(
+                userLocation.latitude, userLocation.longitude,
+                stopLocation.latitude, stopLocation.longitude,
+                results
+            )
+            results[0] // distance in meters
+        })
     }
 
 }
