@@ -82,6 +82,12 @@ class HomeFragment : Fragment() {
             }
             // Avoid refreshing bus times or notifying adapter view changes otherwise
             // Updates to adapter for deletion is handled in onSwiped()
+
+            if (newFavStopsList.size == 0) {
+                binding.layoutFavEmpty.visibility = View.VISIBLE
+            } else {
+                binding.layoutFavEmpty.visibility = View.GONE
+            }
         }
 
         homeViewModel.busTimes.observe(requireActivity()){
@@ -185,6 +191,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun deleteFavouriteStop(favStop: FavouriteStop) {
+        if (favouriteStopsList.size == 1) {
+            Log.d("HomeFragment", "Deleting last favourite stop")
+            binding.layoutFavEmpty.visibility = View.VISIBLE
+        }
         mainDBViewModel.deleteFavouriteStop(favStop._id)
     }
 

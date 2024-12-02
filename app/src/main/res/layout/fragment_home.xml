@@ -14,6 +14,36 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
+        <LinearLayout
+            android:id="@+id/layout_fav_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="64sp"
+            android:layout_marginHorizontal="42dp"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Ready to add your first stop?"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="18dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Click on the + to get started! Any bus stops you add will appear here." />
+
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_fav_stops"
             android:layout_width="match_parent"
@@ -23,6 +53,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         </androidx.recyclerview.widget.RecyclerView>
+
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_new_fav"
