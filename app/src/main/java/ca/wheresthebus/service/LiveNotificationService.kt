@@ -43,7 +43,13 @@ class LiveNotificationService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             val tripId = it.getStringExtra(EXTRA_TRIP_ID) ?: return STOP_FOREGROUND_REMOVE
+
+            if (activeIds.keys.contains(ScheduledTripId(tripId))) {
+                return START_STICKY
+            }
+
             val trip = MainDBViewModel.getTripById(ScheduledTripId(tripId)) ?: return STOP_FOREGROUND_REMOVE
+            activeIds[trip.id] = System.currentTimeMillis().toInt()
 
             if (intent.action == ACTION_STOP) {
                 cancelForegroundService(trip)
@@ -112,9 +118,6 @@ class LiveNotificationService : LifecycleService() {
             it.description = "Live trip notifications"
             notificationManager.createNotificationChannel(it)
         }
-
-        activeIds[trip.id] = System.currentTimeMillis().toInt()
-
         // notification for telling the user the app is running
         val notification = getBasicNotification(trip)
             .setContentTitle(trip.nickname)
