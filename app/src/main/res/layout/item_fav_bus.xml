@@ -35,25 +35,38 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                <TextView
-                    android:id="@+id/text_stop_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="28sp"
-                    android:text="Stop Nickname"
-                    />
-                <TextView
-                    android:id="@+id/text_stop_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Stop ID"
-                    />
-                <TextView
-                    android:id="@+id/text_stop_upcoming"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Upcoming Buses"
-                    />
+
+                        <TextView
+                            android:id="@+id/text_stop_nickname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:textSize="16sp"
+                            android:layout_marginBottom="6dp"
+                            android:text="Stop Nickname"
+                            android:textStyle="bold"
+                            android:singleLine="true"
+                            android:ellipsize="end"
+                            />
+
+                        <TextView
+                            android:id="@+id/text_stop_upcoming"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Upcoming Buses"
+                            android:textSize="16sp"
+                            android:layout_marginBottom="6dp"
+                            android:singleLine="true"
+                            android:ellipsize="end"
+                            />
+
+                        <TextView
+                            android:id="@+id/text_stop_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Stop ID"
+                            android:textSize="11sp"
+                            />
+
                 </LinearLayout>
         </androidx.cardview.widget.CardView>
 </FrameLayout>

@@ -53,7 +53,7 @@ class FavStopAdapter(
             }
 
             val busTimes = busTimesMap[Pair(stop.busStop.id, stop.route.id)]
-            upcoming.text = TextUtils.upcomingBusesString(busTimes)
+            upcoming.text = TextUtils.upcomingBusesString(context = itemView.context, busTimes)
         }
     }
 

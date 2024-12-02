@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import java.time.Duration
-import kotlin.math.min
 
 class LiveNotificationService : LifecycleService() {
     private val activeIds: MutableList<Int> = mutableListOf()
@@ -163,7 +161,7 @@ class LiveNotificationService : LifecycleService() {
 
     private fun updateNotification(nickname: String, notificationId: Int, stopTimes: Map<StopWatches, List<UpcomingTime>?>) {
         val content = stopTimes.map {
-            "${it.key.nickname}: ${TextUtils.upcomingBusesString(it.value)}"
+            "${it.key.nickname}: ${TextUtils.upcomingBusesString(context = this, it.value)}"
         }.joinToString(separator = "\n")
 
         val notificationManager =
