@@ -3,6 +3,7 @@ package ca.wheresthebus.ui.nearby
 import android.animation.ValueAnimator
 import android.content.res.Configuration
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -150,7 +151,10 @@ class NearbyFragment :
                     }
                 }
 
-                nearbyBottomSheet = NearbyBottomSheet(nearbyStops)
+                // sort the nearby stops by distance, then by name
+                val sortedList = nearbyStops.sortedWith(compareBy { it.name })
+
+                nearbyBottomSheet = NearbyBottomSheet(sortedList)
                 nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
             } catch (e: Exception) {
                 Log.e("NearbyFragment", "${e.message}")
@@ -317,6 +321,10 @@ class NearbyFragment :
             // create a nearbyStops list with ONLY the stop that was clicked
             val nearbyStops = ArrayList<BusStop>()
             nearbyStops.add(stop)
+
+            // sort the nearby stops by distance, then by name
+            nearbyStops.sortedWith(compareBy { it.name })
+            Log.d("NearbyFragment", "Nearby stops: $nearbyStops")
 
             nearbyBottomSheet = NearbyBottomSheet(nearbyStops, markerId) // create a new bottom sheet with the stop
             nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
