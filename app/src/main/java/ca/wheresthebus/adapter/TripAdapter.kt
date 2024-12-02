@@ -15,7 +15,7 @@ import com.google.android.material.button.MaterialButton
 import java.time.LocalDateTime
 
 class TripAdapter(
-    private val dataSet : List<ScheduledTrip>
+    private val dataSet : ArrayList<ScheduledTrip> = arrayListOf()
 ) : RecyclerView.Adapter<TripAdapter.ActiveTripViewHolder>() {
 
     companion object {
@@ -86,5 +86,11 @@ class TripAdapter(
         }
 
         return ViewType.LATER
+    }
+
+    fun updateData(trips : List<ScheduledTrip>) {
+        dataSet.clear()
+        dataSet.addAll(trips)
+        notifyDataSetChanged()
     }
 }

@@ -1,33 +1,18 @@
 package ca.wheresthebus.ui.trips
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Visibility
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.TripAdapter
-import ca.wheresthebus.data.db.MyMongoDBApp
-import ca.wheresthebus.data.model.Schedule
-import ca.wheresthebus.data.model.ScheduledTrip
-import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
-import ca.wheresthebus.service.AlarmService
-import ca.wheresthebus.service.LiveNotificationService
-import io.realm.kotlin.ext.query
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 
 class TripsFragment : Fragment() {
 
@@ -60,6 +45,7 @@ class TripsFragment : Fragment() {
 
         mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
 
+        listenForChanges()
         setUpAdapter()
         setUpFab()
 
@@ -69,11 +55,33 @@ class TripsFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
-        Log.d("Testing", "Set up adapter called")
-        mainDBViewModel._allTripsList.observe(viewLifecycleOwner) {data ->
-            Log.d("TripFragment", "$data")
-            val currentTime = LocalDateTime.now()
+        activeTripsView = binding.recyclerActiveTrips
+        inactiveTripsView = binding.recyclerInactiveTrips
+        upcomingTripsView = binding.recyclerUpcomingTrips
 
+        activeTripAdapter = TripAdapter()
+        activeTripsView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = activeTripAdapter
+        }
+
+        upcomingTripAdapter = TripAdapter()
+        upcomingTripsView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = upcomingTripAdapter
+        }
+
+        inactiveTripAdapter = TripAdapter()
+        inactiveTripsView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = inactiveTripAdapter
+        }
+
+    }
+
+    private fun listenForChanges() {
+        mainDBViewModel._allTripsList.observe(viewLifecycleOwner) {data ->
+            val currentTime = LocalDateTime.now()
 
             val trips = data.orEmpty()
                 .sortedBy { it.getClosestTime(currentTime) }
@@ -85,44 +93,25 @@ class TripsFragment : Fragment() {
                     }
                 }
 
-            activeTripsView = binding.recyclerActiveTrips
-            inactiveTripsView = binding.recyclerInactiveTrips
-            upcomingTripsView = binding.recyclerUpcomingTrips
-
             trips[TripType.ACTIVE].orEmpty().let {
                 if (it.isEmpty()) {
                     binding.labelActive.visibility = View.GONE
                 }
-                activeTripAdapter = TripAdapter(it)
-
-                activeTripsView.apply {
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = activeTripAdapter
-                }
+                activeTripAdapter.updateData(it)
             }
 
             trips[TripType.TODAY].orEmpty().let {
                 if (it.isEmpty()) {
                     binding.labelUpcomingTrips.visibility = View.GONE
                 }
-                upcomingTripAdapter = TripAdapter(it)
-
-                upcomingTripsView.apply {
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = upcomingTripAdapter
-                }
+                upcomingTripAdapter.updateData(it)
             }
 
             trips[TripType.INACTIVE].orEmpty().let {
                 if (it.isEmpty()) {
                     binding.labelAllTrips.visibility = View.GONE
                 }
-                inactiveTripAdapter = TripAdapter(it)
-
-                inactiveTripsView.apply {
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = inactiveTripAdapter
-                }
+                inactiveTripAdapter.updateData(it)
             }
         }
     }
@@ -138,6 +127,52 @@ class TripsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+//    private fun setUpSwipeToDelete() {
+//        val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+//            override fun onMove(
+//                recyclerView: RecyclerView,
+//                viewHolder: RecyclerView.ViewHolder,
+//                target: RecyclerView.ViewHolder
+//            ): Boolean {
+//                swipeRefreshLayout.isEnabled = false
+//                return false
+//            }
+//
+//            // Delete on swipe left of card
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                if (direction == ItemTouchHelper.LEFT){
+//                    val position = viewHolder.adapterPosition
+//                    val stopToDelete = favouriteStopsList[position]
+//                    deleteFavouriteStop(stopToDelete)
+//                    favouriteStopsList.removeAt(position)
+//                    stopAdapter.notifyItemRemoved(position)
+//                    swipeRefreshLayout.isEnabled = true
+//                }
+//            }
+//
+//            override fun onChildDraw(
+//                c: Canvas,
+//                recyclerView: RecyclerView,
+//                viewHolder: RecyclerView.ViewHolder,
+//                dX: Float,
+//                dY: Float,
+//                actionState: Int,
+//                isCurrentlyActive: Boolean
+//            ) {
+//                // only move the foreground?
+//                val itemView = viewHolder.itemView.findViewById<View>(R.id.fav_card_view)
+//                itemView.translationX = dX
+//            }
+//
+//            // user has to swipe 75% the width of the view to delete
+//            override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
+//                return 0.75f
+//            }
+//        }
+//        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+//        itemTouchHelper.attachToRecyclerView(stopsView)
+//    }
 
     companion object {
         object TripType {
