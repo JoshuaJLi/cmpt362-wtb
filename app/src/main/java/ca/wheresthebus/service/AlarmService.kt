@@ -9,6 +9,8 @@ import android.util.Log
 import ca.wheresthebus.data.IntentRequestCode
 import ca.wheresthebus.data.model.ScheduledTrip
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 
 class AlarmService : BroadcastReceiver() {
@@ -54,31 +56,31 @@ class AlarmService : BroadcastReceiver() {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
 
-//                alarmManager.setInexactRepeating(
-//                    AlarmManager.RTC_WAKEUP,
-//                    time.toEpochSecond(ZoneOffset.of(ZoneId.systemDefault().id)) * 1000,
-//                    AlarmManager.INTERVAL_DAY * 7,
-//                    pendingIntent
-//                    )
-
-                    //                alarmManager.setInexactRepeating(
-//                    AlarmManager.RTC_WAKEUP,
-//                    time.toEpochSecond(ZoneOffset.of(ZoneId.systemDefault().id)) * 1000,
-//                    AlarmManager.INTERVAL_DAY * 7 + (trip.duration.toMillis()),
-//                    pendingStopIntent
-//                    )
-
-                    alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + (1000 * 5),
-                        pendingLaunchIntent
+                alarmManager.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+                    AlarmManager.INTERVAL_DAY * 7,
+                    pendingLaunchIntent
                     )
 
-                    alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + (1000 * 15),
-                        pendingStopIntent
+                                    alarmManager.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                                        time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+                    AlarmManager.INTERVAL_DAY * 7 + (trip.duration.toMillis()),
+                    pendingStopIntent
                     )
+
+//                    alarmManager.setExactAndAllowWhileIdle(
+//                        AlarmManager.RTC_WAKEUP,
+//                        System.currentTimeMillis() + (1000 * 5),
+//                        pendingLaunchIntent
+//                    )
+//
+//                    alarmManager.setExactAndAllowWhileIdle(
+//                        AlarmManager.RTC_WAKEUP,
+//                        System.currentTimeMillis() + (1000 * 15),
+//                        pendingStopIntent
+//                    )
                 }
             }
         }
