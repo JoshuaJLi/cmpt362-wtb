@@ -5,12 +5,12 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.preference.PreferenceManager
 import ca.wheresthebus.R
 import ca.wheresthebus.data.ModelFactory
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.db.MyMongoDBApp
 import ca.wheresthebus.data.model.BusStop
 import ca.wheresthebus.data.model.FavouriteStop
@@ -29,8 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import java.time.Duration
-
 
 class BusNotifierService : LifecycleService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -176,19 +174,21 @@ class BusNotifierService : LifecycleService() {
         return nearestStop
     }
     private fun notifyNextBusses(stop: FavouriteStop) = serviceScope.launch {
-        val busTimes =
-            GtfsRealtimeHelper.getBusTimes(listOf( Pair(stop.busStop.id, stop.route.id)) )
+        val busTimes = GtfsData.getBusTimes(listOf( Pair(stop.busStop.id, stop.route.id)) )
         val routeTimePair = mapOf(busTimes[Pair(stop.busStop.id, stop.route.id)] to stop.route)
+
+        print(busTimes.forEach{it.value})
 
         sendNotification(stop.nickname, routeTimeToString(routeTimePair))
     }
 
     private fun notifyNextBusses(stop: BusStop) = serviceScope.launch {
-        val busTimes =
-            GtfsRealtimeHelper.getBusTimes(stop.routes.map { Pair(stop.id, it.id) })
+        val busTimes = GtfsData.getBusTimes(stop.routes.map { Pair(stop.id, it.id) })
         val routeTimePair = stop.routes.associateBy {
             busTimes[Pair(stop.id, it.id)]
         }
+
+        print(busTimes.forEach{it.value})
 
         sendNotification(stop.name, routeTimeToString(routeTimePair))
     }
@@ -209,7 +209,7 @@ class BusNotifierService : LifecycleService() {
         notificationManager.notify(20, notification)
     }
 
-    private fun routeTimeToString(routeTimePair: Map<List<Duration>?, Route>) =
+    private fun routeTimeToString(routeTimePair: Map<List<UpcomingTime>?, Route>) =
         routeTimePair.map {
             "${it.value.shortName}: ${TextUtils.upcomingBusesString(it.key)}"
         }.joinToString(separator = "\n")

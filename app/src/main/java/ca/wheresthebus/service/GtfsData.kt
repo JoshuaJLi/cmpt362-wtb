@@ -7,6 +7,11 @@ import ca.wheresthebus.data.UpcomingTime
 class GtfsData {
     companion object {
 
+        // Requests GTFS arrival times data from both realtime and static sources
+        suspend fun getBusTimes(stopsInfo: List<StopRequest>): MutableMap< StopRequest, List<UpcomingTime>> {
+            return combine(GtfsStaticHelper.getBusTimes(stopsInfo), GtfsRealtimeHelper.getBusTimes(stopsInfo))
+        }
+
         // Function to help supplement missing realtime GTFS data with static
         fun combine(
             static: MutableMap<StopRequest, List<UpcomingTime>>,

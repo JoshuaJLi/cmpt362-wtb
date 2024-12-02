@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
@@ -13,8 +12,8 @@ import androidx.preference.PreferenceManager
 import ca.wheresthebus.MainActivity
 import ca.wheresthebus.R
 import ca.wheresthebus.data.RouteId
-import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.utils.TextUtils
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import java.time.Duration
-import kotlin.math.min
 
 class LiveNotificationService : LifecycleService() {
     private val activeIds: MutableList<Int> = mutableListOf()
@@ -124,7 +122,7 @@ class LiveNotificationService : LifecycleService() {
     private fun pollBuses(watches: List<StopWatches>): Flow<Map<StopRequest, List<UpcomingTime>>> =
         flow {
             while (true) {
-                emit(GtfsRealtimeHelper.getBusTimes(watches.map { Pair(it.stopId, it.routeId) }))
+                emit(GtfsData.getBusTimes(watches.map { Pair(it.stopId, it.routeId) }))
 
                 val minutes = determineDelay()
                 delay(Duration.ofMinutes(minutes))
