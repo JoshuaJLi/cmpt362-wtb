@@ -122,11 +122,4 @@ class FavStopAdapter(
         busTimesMap.putAll(busTimes)
         notifyItemRangeChanged(0, itemCount)
     }
-
-    fun removeItem(position: Int) {
-        if (position in dataSet.indices) {
-            dataSet.removeAt(position)
-            notifyItemRemoved(position)
-        }
-    }
 }

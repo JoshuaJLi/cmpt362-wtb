@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         app:endIconMode="clear_text"
         android:hint="Set a Stop Nickname"
-        app:helperText="e.g Morning Commute">
+        app:helperText="e.g morning commute">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nicknameEditText"
+            android:id="@+id/nicknameEditTsext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
