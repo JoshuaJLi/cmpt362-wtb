@@ -18,7 +18,7 @@ class FavStopAdapter(
     private val dataSet: MutableList<FavouriteStop>,
     private val type: Type = Type.HOME,
     private val busTimesMap: MutableMap<StopRequest, List<UpcomingTime>> = mutableMapOf(),
-    private val onMoreOptionsClick: (View, FavouriteStop) -> Unit
+    private val onMoreOptionsClick: (View, FavouriteStop) -> Unit = { _,_ -> }
 ) : RecyclerView.Adapter<FavStopAdapter.BindingFavStopHolder>() {
 
     enum class Type {
@@ -76,7 +76,7 @@ class FavStopAdapter(
         override fun bind(stop: FavouriteStop) {
             nickname.text = stop.nickname.ifEmpty { stop.busStop.name }
             val busTimes = busTimesMap[Pair(stop.busStop.id, stop.route.id)]
-            upcoming.text = TextUtils.upcomingBusesString(busTimes)
+            upcoming.text = TextUtils.upcomingBusesString(context = itemView.context, busTimes)
         }
     }
 

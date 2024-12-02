@@ -4,6 +4,7 @@ import android.location.Location
 import ca.wheresthebus.data.model.*
 import ca.wheresthebus.data.mongo_model.*
 import io.realm.kotlin.ext.toRealmList
+import org.mongodb.kbson.ObjectId
 import java.time.DayOfWeek
 import java.time.Duration
 

@@ -42,7 +42,8 @@ class MyMongoDBApp: Application() {
 //                        MongoRoute::class,
 //                        MongoSchedule::class,
 //                        MongoStopTime::class,
-//                        MongoScheduledTrip::class
+//                        MongoScheduledTrip::class,
+//                        MongoScheduledTripStop::class
 //                    )
 //                )
 //            )
