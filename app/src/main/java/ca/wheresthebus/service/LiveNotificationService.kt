@@ -136,6 +136,8 @@ class LiveNotificationService : LifecycleService() {
         val notification = getBasicNotification(trip)
             .setContentTitle(trip.nickname)
             .setContentText(content)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(content))
 
         notificationManager.notify(activeIds[trip.id]!!, notification.build())
     }

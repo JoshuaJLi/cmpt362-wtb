@@ -79,15 +79,6 @@ object TextUtils {
                 else -> "Now"
             }
 
-            // Set bold if isRealtime
-//            val formatTimeString = if (it.isRealtime) {
-//                SpannableString(timeString).apply {
-//                    setSpan(StyleSpan(Typeface.BOLD), 0, timeString.length, 0)
-//                }
-//            } else {
-//                SpannableString(timeString)
-//            }
-//            stringBuilder.append(formatTimeString)
 
             val appendedString = SpannableStringBuilder(timeString).apply {
                 if (it.isRealtime) {
