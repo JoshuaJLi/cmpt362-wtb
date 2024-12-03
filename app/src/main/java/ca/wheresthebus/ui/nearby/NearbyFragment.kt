@@ -51,6 +51,7 @@ class NearbyFragment :
     private var currentLocationMarker: Marker? = null
     private var currentLocationRadius: Circle? = null
     private lateinit var nearbyMarkerManager: NearbyMarkerManager
+    private var isInitialCameraMove = true;
 
     private lateinit var expandListButton: ExtendedFloatingActionButton
     private lateinit var recenterButton: FloatingActionButton
@@ -85,6 +86,11 @@ class NearbyFragment :
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
             googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_dark_mode))
         }
+
+        // set the initial camera position to vancouver bc
+        val vancouver = LatLng(49.19664043305816, -122.84714899957181)
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(vancouver, 10f))
+        googleMap.clear()
 
         // disable location updates when a marker is clicked
         googleMap.setOnMarkerClickListener { marker ->
@@ -139,34 +145,40 @@ class NearbyFragment :
         recenterButton = requireView().findViewById(R.id.NearbyFragment_recenterButton)
 
         expandListButton.setOnClickListener {
-            try {
-                // with the implementation of free movement, get the location of the camera's position instead
-                val cameraPosition: LatLng = googleMap.cameraPosition.target
-
-                val nearbyStops: ArrayList<BusStop> = ArrayList()
-                for (stop in nearbyViewModel.busStopList) {
-                    val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
-                    if (nearbyViewModel.isInRange(cameraPosition, stopLocation, NEARBY_DISTANCE_THRESHOLD)) {
-                        nearbyStops.add(stop)
-                    }
-                }
-
-                // sort the nearby stops by distance, then by name
-                val sortedList = sortNearbyStopsByDistance(nearbyStops, cameraPosition)
-
-                nearbyBottomSheet = NearbyBottomSheet(sortedList)
-                nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
-            } catch (e: Exception) {
-                Log.e("NearbyFragment", "${e.message}")
-                Toast.makeText(context, "Failed to load nearby stops, please wait a moment.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            expandListButtonOnClickListener()
         }
 
         recenterButton.setOnClickListener {
-            nearbyViewModel.startLocationUpdates(requireContext())
-            Toast.makeText(context, "Recentering...", Toast.LENGTH_SHORT).show()
+            recenterButtonOnClickListener()
         }
+    }
+
+    private fun animateMarker(marker: Marker, toPosition: LatLng) {
+        val fromPosition = marker.position
+
+        // represents the fraction of the animation that has been completed (like percentage of animation shown)
+        val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
+
+        valueAnimator.duration = 1000 // duration of the animation in milliseconds
+
+        // call a listener on each frame of the animation
+        valueAnimator.addUpdateListener { animation ->
+            // on every frame of the animation
+            val fraction = animation.animatedFraction // get the fraction of the animation that has been completed
+
+            // interpolate the position of the marker from the previous position to the new position
+            /**
+             * calculates the intermediate latitude/longitude and finds the difference between it and the target latitude/longitude
+             * multiplies the difference by the fraction and adds the starting latitude to calculate where the marker should be in between
+             */
+            val lat = (toPosition.latitude - fromPosition.latitude) * fraction + fromPosition.latitude
+            val lng = (toPosition.longitude - fromPosition.longitude) * fraction + fromPosition.longitude
+
+            // set the position of the marker to the new interpolated position
+            marker.position = LatLng(lat, lng)
+        }
+
+        valueAnimator.start()
     }
 
     private fun observeLocationUpdates() {
@@ -182,6 +194,7 @@ class NearbyFragment :
                 updateNearbyStopMarkers(currentLocation)
 
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, NEARBY_ZOOM_LEVEL))
+                isInitialCameraMove = false
             } catch (e: Exception) {
                 Log.e("NearbyFragment", "${e.message}")
             }
@@ -213,15 +226,21 @@ class NearbyFragment :
     }
 
     private fun updateNearbyStopMarkers(currentLocation: LatLng) {
+        if (isInitialCameraMove == true) {
+            return // don't show markers before the camera initially centers to user
+        }
+
+        val location: Location = Location("")
+        location.latitude = currentLocation.latitude
+        location.longitude = currentLocation.longitude
+        nearbyViewModel.loadNearbyStopsFromDatabase(location)
+
         // calculate the distance between the user and the stops
         // if within distance, add the stop to the nearby stops list
-        val nearbyStops = ArrayList<BusStop>()
-        for (stop in nearbyViewModel.busStopList) {
-            val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
-            if (nearbyViewModel.isInRange(currentLocation, stopLocation, NEARBY_DISTANCE_THRESHOLD)) {
-                nearbyStops.add(stop)
-            }
-        }
+        val nearbyStops: ArrayList<BusStop> = filterStopsInRange(
+            currentLocation,
+            nearbyViewModel.busStopList
+        )
 
         // on each interval of a location update, update the markers for the nearby stops
         val stopIds = nearbyStops.map { it.id.value } // get the IDs of the nearby stops
@@ -241,34 +260,6 @@ class NearbyFragment :
                 nearbyMarkerManager.removeMarker(id)
             }
         }
-    }
-
-    private fun animateMarker(marker: Marker, toPosition: LatLng) {
-        val fromPosition = marker.position
-
-        // represents the fraction of the animation that has been completed (like percentage of animation shown)
-        val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
-
-        valueAnimator.duration = 1000 // duration of the animation in milliseconds
-
-        // call a listener on each frame of the animation
-        valueAnimator.addUpdateListener { animation ->
-            // on every frame of the animation
-            val fraction = animation.animatedFraction // get the fraction of the animation that has been completed
-
-            // interpolate the position of the marker from the previous position to the new position
-            /**
-             * calculates the intermediate latitude/longitude and finds the difference between it and the target latitude/longitude
-             * multiplies the difference by the fraction and adds the starting latitude to calculate where the marker should be in between
-             */
-            val lat = (toPosition.latitude - fromPosition.latitude) * fraction + fromPosition.latitude
-            val lng = (toPosition.longitude - fromPosition.longitude) * fraction + fromPosition.longitude
-
-            // set the position of the marker to the new interpolated position
-            marker.position = LatLng(lat, lng)
-        }
-
-        valueAnimator.start()
     }
 
     private fun updateCurrentLocationMarker(currentLocation: LatLng) {
@@ -310,14 +301,6 @@ class NearbyFragment :
         if (stop != null) { // if a stop is found
             Log.d("NearbyFragment", "Expanding bottom sheet to stop: ${stop.name}")
 
-//            val userLocation = googleMap.cameraPosition.target
-
-            // Filter the nearby stops based on the user's last known location
-//            val nearbyStops = nearbyViewModel.busStopList.filter {
-//                val stopLocation = LatLng(it.location.latitude, it.location.longitude);
-//                nearbyViewModel.isInRange(userLocation, stopLocation, 300.0);
-//            }
-
             // create a nearbyStops list with ONLY the stop that was clicked
             val nearbyStops = ArrayList<BusStop>()
             nearbyStops.add(stop)
@@ -329,6 +312,58 @@ class NearbyFragment :
             nearbyBottomSheet = NearbyBottomSheet(nearbyStops, markerId) // create a new bottom sheet with the stop
             nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
         }
+    }
+
+    private fun recenterButtonOnClickListener() {
+        nearbyViewModel.startLocationUpdates(requireContext())
+        Toast.makeText(context, "Recentering...", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun expandListButtonOnClickListener() {
+        try {
+            // with the implementation of free movement, get the location of the camera's position instead
+            val cameraPosition: LatLng = googleMap.cameraPosition.target
+
+            val currentLocation: Location = Location("")
+            currentLocation.latitude = cameraPosition.latitude
+            currentLocation.longitude = cameraPosition.longitude
+            nearbyViewModel.loadNearbyStopsFromDatabase(currentLocation)
+
+            val nearbyStops: ArrayList<BusStop> = filterStopsInRange(
+                cameraPosition,
+                nearbyViewModel.busStopList
+            )
+
+            // sort the nearby stops by distance, then by name
+            val sortedList = sortNearbyStopsByDistance(nearbyStops, cameraPosition)
+
+            nearbyBottomSheet = NearbyBottomSheet(sortedList)
+            nearbyBottomSheet.show(parentFragmentManager, "NearbyBottomSheet")
+        } catch (e: Exception) {
+            Log.e("NearbyFragment", "${e.message}")
+            Toast.makeText(
+                context,
+                "Failed to load nearby stops, please wait a moment.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+    }
+
+    private fun filterStopsInRange(userLocation: LatLng, stops: List<BusStop>): ArrayList<BusStop> {
+        val nearbyStops: ArrayList<BusStop> = ArrayList()
+        for (stop in stops) {
+            val stopLocation = LatLng(stop.location.latitude, stop.location.longitude)
+            if (nearbyViewModel.isInRange(
+                userLocation,
+                stopLocation,
+                NEARBY_DISTANCE_THRESHOLD
+            )) {
+                nearbyStops.add(stop)
+            }
+        }
+
+        return nearbyStops
     }
 
     private fun sortNearbyStopsByDistance(nearbyStops: ArrayList<BusStop>, userLocation: LatLng): List<BusStop> {

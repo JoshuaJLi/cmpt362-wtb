@@ -1,21 +1,25 @@
 package ca.wheresthebus.adapter
 
+import android.graphics.Canvas
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import ca.wheresthebus.R
-import ca.wheresthebus.data.model.FavouriteStop
+import ca.wheresthebus.data.StopRequest
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.utils.TextUtils
 import com.google.android.material.button.MaterialButton
 import java.time.LocalDateTime
 
 class TripAdapter(
-    private val dataSet : List<ScheduledTrip>
+    private val dataSet : ArrayList<ScheduledTrip> = arrayListOf(),
+    private val onDeleteSwipe: (ScheduledTrip) -> Unit
 ) : RecyclerView.Adapter<TripAdapter.ActiveTripViewHolder>() {
 
     companion object {
@@ -25,7 +29,6 @@ class TripAdapter(
             const val LATER = 2
         }
     }
-
 
     inner class ActiveTripViewHolder(view: View, private val viewType: Int) : ViewHolder(view) {
         private val nickname : TextView = view.findViewById(R.id.text_trip_nickname)
@@ -46,13 +49,7 @@ class TripAdapter(
 
             active.text = TextUtils.ScheduledTripText.getActivityStatus(trip)
             nickname.text = trip.nickname
-            stopAdapter = FavStopAdapter(
-                trip.stops,
-                adapterType,
-                onMoreOptionsClick = { view, stop ->
-                    showPopupMenu(view, stop)
-                }
-            )
+            stopAdapter = FavStopAdapter(trip.stops, adapterType)
 
             stops.apply {
                 layoutManager = LinearLayoutManager(context)
@@ -62,10 +59,10 @@ class TripAdapter(
         init {
             view.setOnClickListener {  }
         }
-    }
 
-    private fun showPopupMenu(view: View, stop: FavouriteStop) {
-        // do nothing
+        fun updateBusTimes(busTimes: MutableMap<StopRequest, List<UpcomingTime>>) {
+            stopAdapter.updateBusTimes(busTimes)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActiveTripViewHolder {
@@ -88,7 +85,6 @@ class TripAdapter(
         val trip = dataSet[position]
         val currentTime = LocalDateTime.now()
 
-
         if (trip.isActive(currentTime)) {
             return ViewType.ACTIVE
         } else if (trip.isToday(currentTime)) {
@@ -96,5 +92,48 @@ class TripAdapter(
         }
 
         return ViewType.LATER
+    }
+
+    fun updateData(trips : List<ScheduledTrip>) {
+        dataSet.clear()
+        dataSet.addAll(trips)
+        notifyDataSetChanged()
+    }
+
+    // Builds and returns an ItemTouchHelper for TripAdapter cards
+    // Sets the onSwiped callback to delete a ScheduledTrip object from the dataset
+    fun getSwipeHandler(): ItemTouchHelper.SimpleCallback {
+        return object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: ViewHolder,
+                target: ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            // Delete on swipe left of card
+            override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
+                if (direction == ItemTouchHelper.LEFT){
+                    val position = viewHolder.adapterPosition
+                    val tripToDelete = dataSet[position]
+                    onDeleteSwipe(tripToDelete)
+                }
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                // only move the foreground
+                val itemView = viewHolder.itemView.findViewById<View>(R.id.trip_card_foreground)
+                itemView.translationX = dX
+            }
+        }
     }
 }

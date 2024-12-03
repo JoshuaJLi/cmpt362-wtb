@@ -105,8 +105,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpFab() {
+        val bottomSheet = AddFavBottomSheet()
+            .assignAddFavourite { mainDBViewModel.insertFavouriteStop(it) }
         binding.fabNewFav.setOnClickListener {
-            AddFavBottomSheet().show(parentFragmentManager, AddFavBottomSheet.TAG)
+                bottomSheet.show(parentFragmentManager, AddFavBottomSheet.TAG)
         }
     }
 
@@ -206,13 +208,8 @@ class HomeFragment : Fragment() {
                 isCurrentlyActive: Boolean
             ) {
                 // only move the foreground?
-                val itemView = viewHolder.itemView.findViewById<View>(R.id.fav_card_view)
+                val itemView = viewHolder.itemView.findViewById<View>(R.id.fav_card_foreground)
                 itemView.translationX = dX
-            }
-
-            // user has to swipe 75% the width of the view to delete
-            override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-                return 0.75f
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
@@ -229,8 +226,6 @@ class HomeFragment : Fragment() {
 
                 val realtime = GtfsRealtimeHelper.getBusTimes(stopRoutePairs)
                 val static = GtfsStaticHelper.getBusTimes(stopRoutePairs)
-
-                // todo: combine the static and realtime results
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     homeViewModel.busTimes.value = GtfsData.combine(static, realtime)

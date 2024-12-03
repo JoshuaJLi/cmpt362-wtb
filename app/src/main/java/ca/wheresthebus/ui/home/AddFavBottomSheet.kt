@@ -39,6 +39,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
     private var nearbyStops: ArrayList<BusStop> = arrayListOf()
 
     private lateinit var mainDBViewModel: MainDBViewModel
+    private lateinit var addStop: (FavouriteStop) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -110,6 +111,11 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         return root
     }
 
+    fun assignAddFavourite(func : (FavouriteStop) -> Unit): AddFavBottomSheet {
+        this.addStop = func
+        return this
+    }
+
     // Create and show a dialogue to add a favorite stop
     private fun onSearchItemClick(
         routesMap: Map<String, Route>,
@@ -142,7 +148,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         // Build the dialog
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(customView)
-            .setTitle("Adding New Favourite Stop")
+            .setTitle("Adding New Stop")
             .setMessage(selectedStop.name)
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .setPositiveButton("Confirm", null)
@@ -154,13 +160,11 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
             confirmButton.setOnClickListener {
                 if (selectedRoute != null) {
                     routesDropdownLayout.error = null
-                    mainDBViewModel.insertFavouriteStop(
-                        FavouriteStop(
-                            nickname = nicknameEditText.text.toString(),
-                            busStop = selectedStop,
-                            route =  selectedRoute!!
-                        )
-                    )
+                    addStop( FavouriteStop(
+                        nickname = nicknameEditText.text.toString(),
+                        busStop = selectedStop,
+                        route =  selectedRoute!!
+                    ))
                     dialog.dismiss() // dismiss this dialog
                     this.dismiss() // close the bottom sheet fragment
                 } else {

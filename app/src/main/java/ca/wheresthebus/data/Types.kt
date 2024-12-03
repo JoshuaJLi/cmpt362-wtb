@@ -23,6 +23,9 @@ value class TripId(val value : String)
 @JvmInline
 value class ScheduledTripId(val value : String)
 
+@JvmInline
+value class IntentRequestCode(val value : Int)
+
 typealias StopRequest = Pair<StopId, RouteId>
 
 typealias StopTimestamp = Int

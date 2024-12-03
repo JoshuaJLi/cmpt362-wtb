@@ -4,6 +4,7 @@ import android.location.Location
 import ca.wheresthebus.data.model.*
 import ca.wheresthebus.data.mongo_model.*
 import io.realm.kotlin.ext.toRealmList
+import org.mongodb.kbson.ObjectId
 import java.time.DayOfWeek
 import java.time.Duration
 
@@ -36,6 +37,15 @@ class ModelFactory() {
     }
 
     fun toFavouriteBusStop(mongoFavouriteStop: MongoFavouriteStop): FavouriteStop {
+        return FavouriteStop(
+            _id = mongoFavouriteStop._id,
+            nickname = mongoFavouriteStop.nickname,
+            busStop = toBusStop(mongoFavouriteStop.mongoBusStop!!),
+            route = toRoute(mongoFavouriteStop.mongoRoute!!)
+        )
+    }
+
+    fun toFavouriteBusStop(mongoFavouriteStop: MongoScheduledTripStop): FavouriteStop {
         return FavouriteStop(
             _id = mongoFavouriteStop._id,
             nickname = mongoFavouriteStop.nickname,
@@ -78,7 +88,8 @@ class ModelFactory() {
 
     fun toScheduledTrip(mongoScheduledTrip: MongoScheduledTrip): ScheduledTrip {
         return ScheduledTrip(
-            id = ScheduledTripId(mongoScheduledTrip.id),
+            id = ScheduledTripId(mongoScheduledTrip.id.toHexString()) ,
+            requestCode = IntentRequestCode(mongoScheduledTrip.requestCode),
             nickname = mongoScheduledTrip.nickname,
             stops = mongoScheduledTrip.stops.map { toFavouriteBusStop(it) } as ArrayList<FavouriteStop>,
             activeTimes = mongoScheduledTrip.activeTimes.map { toSchedule(it) } as ArrayList<Schedule>,
@@ -87,11 +98,21 @@ class ModelFactory() {
 
     fun toMongoScheduledTrip(trip: ScheduledTrip): MongoScheduledTrip {
         return MongoScheduledTrip().apply {
-            id = trip.id.value
+            id = ObjectId(trip.id.value)
+            requestCode = trip.requestCode.value
             nickname = trip.nickname
-            stops = trip.stops.map { toMongoFavouriteStop(it) }.toRealmList()
+            stops = trip.stops.map { toMongoTripStop(it) }.toRealmList()
             activeTimes = trip.activeTimes.map { toMongoSchedule(it) }.toRealmList()
             duration = trip.duration.toMinutes()
+        }
+    }
+
+    private fun toMongoTripStop(stop: FavouriteStop) : MongoScheduledTripStop {
+        return MongoScheduledTripStop().apply {
+            _id = stop._id
+            nickname = stop.nickname
+            mongoBusStop = toMongoBusStop(stop.busStop)
+            mongoRoute = toMongoRoute(stop.route)
         }
     }
 

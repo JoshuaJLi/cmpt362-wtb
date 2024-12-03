@@ -1,55 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp">
-    <LinearLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.home.HomeFragment"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
+    <LinearLayout
+        android:id="@+id/layout_trip_empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context=".ui.trips.TripsFragment">
+        android:layout_marginTop="64dp"
+        android:layout_marginHorizontal="42dp"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
 
         <TextView
-            android:id="@+id/label_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Ready to add a trip?"/>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:layout_marginVertical="10dp"
-            android:text="@string/recycler_active_trips" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_active_trips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/label_upcoming_trips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginVertical="10dp"
-            android:text="@string/recycler_upcoming_trips" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_upcoming_trips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/label_all_trips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginVertical="10dp"
-            android:text="@string/recycler_all_trips" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_inactive_trips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_marginTop="18dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Click on the + to get started.\nAny trips you add will appear here." />
 
     </LinearLayout>
-</ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="12dp">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:context=".ui.trips.TripsFragment"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/label_active"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginVertical="6dp"
+                android:text="@string/recycler_active_trips" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_active_trips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/label_upcoming_trips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginVertical="6dp"
+                android:text="@string/recycler_upcoming_trips" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_upcoming_trips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/label_all_trips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginVertical="6dp"
+                android:text="@string/recycler_all_trips" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_inactive_trips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_new_trip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:layout_gravity="bottom|end"
+        android:contentDescription="@string/desc_fab_new_trip"
+        app:icon="@drawable/ic_add_black_dp24"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
