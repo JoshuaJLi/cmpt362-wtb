@@ -44,16 +44,16 @@ import java.time.LocalDateTime
 class TripsFragment : Fragment() {
 
     private var _binding: FragmentTripsBinding? = null
-    private val tripsViewModel : TripsViewModel  by viewModels<TripsViewModel>()
+    private val tripsViewModel: TripsViewModel by viewModels<TripsViewModel>()
     private val mainDBViewModel: MainDBViewModel by viewModels<MainDBViewModel>()
 
     private lateinit var activeTripAdapter: TripAdapter
     private lateinit var upcomingTripAdapter: TripAdapter
     private lateinit var inactiveTripAdapter: TripAdapter
 
-    private lateinit var activeTripsView : RecyclerView
-    private lateinit var upcomingTripsView : RecyclerView
-    private lateinit var inactiveTripsView : RecyclerView
+    private lateinit var activeTripsView: RecyclerView
+    private lateinit var upcomingTripsView: RecyclerView
+    private lateinit var inactiveTripsView: RecyclerView
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private val activeTripsList: MutableList<ScheduledTrip> = mutableListOf()
@@ -84,24 +84,30 @@ class TripsFragment : Fragment() {
         inactiveTripsView = binding.recyclerInactiveTrips
         upcomingTripsView = binding.recyclerUpcomingTrips
 
-        activeTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
+        activeTripAdapter =
+            TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
         activeTripsView.apply {
-            layoutManager = object : LinearLayoutManager(context)
-            { override fun canScrollVertically() = false }
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun canScrollVertically() = false
+            }
             adapter = activeTripAdapter
         }
 
-        upcomingTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
+        upcomingTripAdapter =
+            TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
         upcomingTripsView.apply {
-            layoutManager = object : LinearLayoutManager(context)
-            { override fun canScrollVertically() = false }
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun canScrollVertically() = false
+            }
             adapter = upcomingTripAdapter
         }
 
-        inactiveTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
+        inactiveTripAdapter =
+            TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
         inactiveTripsView.apply {
-            layoutManager = object : LinearLayoutManager(context)
-            { override fun canScrollVertically() = false }
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun canScrollVertically() = false
+            }
             adapter = inactiveTripAdapter
         }
 
@@ -115,7 +121,12 @@ class TripsFragment : Fragment() {
         val deleteItem = popupMenu.menu.findItem(R.id.option_delete)
         val spannableTitle = SpannableString(deleteItem.title)
         spannableTitle.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(view.context, android.R.color.holo_red_dark)),
+            ForegroundColorSpan(
+                ContextCompat.getColor(
+                    view.context,
+                    android.R.color.holo_red_dark
+                )
+            ),
             0,
             spannableTitle.length,
             Spannable.SPAN_INCLUSIVE_INCLUSIVE
@@ -128,6 +139,7 @@ class TripsFragment : Fragment() {
                     deleteTrip(trip)
                     true
                 }
+
                 else -> false
             }
         }
@@ -136,7 +148,7 @@ class TripsFragment : Fragment() {
     }
 
     private fun listenForChanges() {
-        mainDBViewModel._allTripsList.observe(viewLifecycleOwner) {data ->
+        mainDBViewModel._allTripsList.observe(viewLifecycleOwner) { data ->
             val currentTime = LocalDateTime.now()
 
             val trips = data.orEmpty()
@@ -150,27 +162,33 @@ class TripsFragment : Fragment() {
                 }
 
             trips[TripType.ACTIVE].orEmpty().let {
-                if (it.isEmpty()) {
-                    binding.labelActive.visibility = View.GONE
-                }
                 activeTripAdapter.updateData(it)
                 activeTripsList.clear()
                 activeTripsList.addAll(it)
+                if (it.isEmpty()) {
+                    binding.labelActive.visibility = View.GONE
+                } else {
+                    binding.labelActive.visibility = View.VISIBLE
+                }
                 refreshBusTimes()
             }
 
             trips[TripType.TODAY].orEmpty().let {
+                upcomingTripAdapter.updateData(it)
                 if (it.isEmpty()) {
                     binding.labelUpcomingTrips.visibility = View.GONE
+                } else {
+                    binding.labelUpcomingTrips.visibility = View.VISIBLE
                 }
-                upcomingTripAdapter.updateData(it)
             }
 
             trips[TripType.INACTIVE].orEmpty().let {
+                inactiveTripAdapter.updateData(it)
                 if (it.isEmpty()) {
                     binding.labelAllTrips.visibility = View.GONE
+                } else {
+                    binding.labelAllTrips.visibility = View.VISIBLE
                 }
-                inactiveTripAdapter.updateData(it)
             }
 
             AlarmService.scheduleTripNotifications(data, requireContext())
@@ -189,7 +207,8 @@ class TripsFragment : Fragment() {
 
     private fun updateBusTimes(busTimes: MutableMap<StopRequest, List<UpcomingTime>>) {
         for (i in 0..activeTripAdapter.itemCount) {
-            val viewHolder = activeTripsView.findViewHolderForAdapterPosition(i) as? ActiveTripViewHolder
+            val viewHolder =
+                activeTripsView.findViewHolderForAdapterPosition(i) as? ActiveTripViewHolder
             viewHolder?.updateBusTimes(busTimes)
         }
     }
@@ -237,16 +256,16 @@ class TripsFragment : Fragment() {
         // Add the swipe handlers to each recycler view
         ItemTouchHelper(activeTripAdapter.getSwipeHandler())
             .attachToRecyclerView(
-            activeTripsView
-        )
+                activeTripsView
+            )
         ItemTouchHelper(upcomingTripAdapter.getSwipeHandler())
             .attachToRecyclerView(
-            upcomingTripsView
-        )
+                upcomingTripsView
+            )
         ItemTouchHelper(inactiveTripAdapter.getSwipeHandler())
             .attachToRecyclerView(
-            inactiveTripsView
-        )
+                inactiveTripsView
+            )
     }
 
     private fun deleteTrip(trip: ScheduledTrip) {

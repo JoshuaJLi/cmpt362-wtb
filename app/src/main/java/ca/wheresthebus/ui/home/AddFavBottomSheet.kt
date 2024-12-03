@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,7 +39,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
     private lateinit var nearbyAdapter: StopSuggestionAdapter
     private var nearbyStops: ArrayList<BusStop> = arrayListOf()
 
-    private lateinit var mainDBViewModel: MainDBViewModel
+    private val mainDBViewModel: MainDBViewModel by viewModels<MainDBViewModel>()
     private lateinit var addStop: (FavouriteStop) -> Unit
 
     override fun onCreateView(
@@ -47,7 +48,6 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         inflater.inflate(R.layout.bottom_sheet_add_fav, container, false)
-        mainDBViewModel = ViewModelProvider(requireActivity()).get(MainDBViewModel::class.java)
         _binding = BottomSheetAddFavBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
