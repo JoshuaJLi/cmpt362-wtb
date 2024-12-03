@@ -44,6 +44,11 @@ class LiveNotificationService : LifecycleService() {
         intent?.let {
             val tripId = it.getStringExtra(EXTRA_TRIP_ID) ?: return STOP_FOREGROUND_REMOVE
 
+            if (intent.action == ACTION_STOP) {
+                cancelForegroundService(ScheduledTripId(tripId))
+                return STOP_FOREGROUND_REMOVE
+            }
+
             if (activeIds.keys.contains(ScheduledTripId(tripId))) {
                 return START_STICKY
             }
@@ -51,10 +56,6 @@ class LiveNotificationService : LifecycleService() {
             val trip = MainDBViewModel.getTripById(ScheduledTripId(tripId)) ?: return STOP_FOREGROUND_REMOVE
             activeIds[trip.id] = System.currentTimeMillis().toInt()
 
-            if (intent.action == ACTION_STOP) {
-                cancelForegroundService(trip)
-                return STOP_FOREGROUND_REMOVE
-            }
 
 
             startBusPolling(trip)
@@ -64,11 +65,11 @@ class LiveNotificationService : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun cancelForegroundService(trip: ScheduledTrip) {
+    private fun cancelForegroundService(tripId: ScheduledTripId) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        activeIds[trip.id]?.let {
+        activeIds[tripId]?.let {
             notificationManager.cancel(it)
-            activeIds.remove(trip.id)
+            activeIds.remove(tripId)
             Log.d("Notification", "Killed $it, remaining $activeIds")
         }
 
@@ -94,7 +95,7 @@ class LiveNotificationService : LifecycleService() {
     private fun pollBuses(trip: ScheduledTrip): Flow<Map<StopRequest, List<UpcomingTime>>> =
         flow {
             while (activeIds.contains(trip.id)) {
-                emit(GtfsRealtimeHelper.getBusTimes(trip.stops.map { Pair(it.busStop.id, it.route.id) }))
+                emit(GtfsData.getBusTimes(trip.stops.map { Pair(it.busStop.id, it.route.id) }))
 
                 val minutes = determineDelay()
                 delay(Duration.ofMinutes(minutes))

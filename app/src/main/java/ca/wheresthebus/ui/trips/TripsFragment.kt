@@ -171,6 +171,7 @@ class TripsFragment : Fragment() {
                     binding.labelActive.visibility = View.VISIBLE
                 }
                 refreshBusTimes()
+                AlarmService.startTripNow(it, requireContext())
             }
 
             trips[TripType.TODAY].orEmpty().let {
@@ -190,8 +191,6 @@ class TripsFragment : Fragment() {
                     binding.labelAllTrips.visibility = View.VISIBLE
                 }
             }
-
-            AlarmService.scheduleTripNotifications(data, requireContext())
 
             if (data.size > 0) {
                 binding.layoutTripEmpty.visibility = View.GONE
