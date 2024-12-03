@@ -15,7 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import ca.wheresthebus.databinding.ActivityMainBinding
-import ca.wheresthebus.service.NfcService
+import ca.wheresthebus.service.BusNotifierService
 import com.google.android.material.navigation.NavigationBarView
 import android.Manifest
 import android.util.Log
@@ -63,8 +63,11 @@ class MainActivity : AppCompatActivity() {
                 .navigate(R.id.action_trip_fragment)
 
             NfcAdapter.ACTION_TECH_DISCOVERED -> {
-                NfcService.handleTap(this)
+                Intent(this, BusNotifierService::class.java).also {
+                    startService(it)
+                }
                 moveTaskToBack(true)
+                finish()
             }
         }
     }

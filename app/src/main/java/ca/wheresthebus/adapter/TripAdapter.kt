@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import ca.wheresthebus.R
+import ca.wheresthebus.data.StopRequest
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.utils.TextUtils
 import com.google.android.material.button.MaterialButton
@@ -56,6 +58,10 @@ class TripAdapter(
         }
         init {
             view.setOnClickListener {  }
+        }
+
+        fun updateBusTimes(busTimes: MutableMap<StopRequest, List<UpcomingTime>>) {
+            stopAdapter.updateBusTimes(busTimes)
         }
     }
 

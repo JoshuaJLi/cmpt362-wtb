@@ -8,10 +8,10 @@
         app:iconSpaceReserved="false">
 
             <ListPreference
-                app:key="tap_action"
+                app:key="@string/key_tap_action"
                 android:title="Compass Tap Action"
                 app:useSimpleSummaryProvider="true"
-                app:defaultValue="@string/preference_tap_action_all"
+                app:defaultValue="@string/preference_tap_action_all_value"
                 app:entryValues="@array/tap_action_values"
                 app:entries="@array/tap_action_entries"
                 app:iconSpaceReserved="false"
