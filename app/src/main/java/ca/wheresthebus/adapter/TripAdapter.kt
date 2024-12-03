@@ -3,12 +3,12 @@ package ca.wheresthebus.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import ca.wheresthebus.R
+import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.utils.TextUtils
 import com.google.android.material.button.MaterialButton
@@ -46,7 +46,13 @@ class TripAdapter(
 
             active.text = TextUtils.ScheduledTripText.getActivityStatus(trip)
             nickname.text = trip.nickname
-            stopAdapter = FavStopAdapter(trip.stops, adapterType)
+            stopAdapter = FavStopAdapter(
+                trip.stops,
+                adapterType,
+                onMoreOptionsClick = { view, stop ->
+                    showPopupMenu(view, stop)
+                }
+            )
 
             stops.apply {
                 layoutManager = LinearLayoutManager(context)
@@ -56,6 +62,10 @@ class TripAdapter(
         init {
             view.setOnClickListener {  }
         }
+    }
+
+    private fun showPopupMenu(view: View, stop: FavouriteStop) {
+        // do nothing
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActiveTripViewHolder {

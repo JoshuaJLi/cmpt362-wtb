@@ -5,6 +5,7 @@ import ca.wheresthebus.Globals.BUS_RETRIEVAL_MAX
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.UpcomingTime
 import com.google.transit.realtime.GtfsRealtime.FeedMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +27,7 @@ class GtfsRealtimeHelper {
         private val client = OkHttpClient()
         private const val GTFS_API_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime?apikey=${ca.wheresthebus.BuildConfig.GTFS_KEY}"
 
-        suspend fun getBusTimes(stopsInfo: List<StopRequest>): MutableMap< StopRequest, List<Duration>> {
+        suspend fun getBusTimes(stopsInfo: List<StopRequest>): MutableMap< StopRequest, List<UpcomingTime>> {
             return try {
                 val feedMessage = callGtfsRealtime()
                 stopsInfo.associate { (stopId, routeId) ->
@@ -73,11 +74,14 @@ class GtfsRealtimeHelper {
                 .toList()
         }
 
-        private fun convertBusTimes(busTimes: List<Long>): List<Duration> {
-            return busTimes
-                .sorted()
-                .take(BUS_RETRIEVAL_MAX)
-                .map { Duration.between(Instant.now(), Instant.ofEpochSecond(it))}
+        private fun convertBusTimes(busTimes: List<Long>): List<UpcomingTime> {
+            return busTimes.sorted().take(BUS_RETRIEVAL_MAX).map {
+                UpcomingTime(
+                    true, Duration.between(
+                        Instant.now(), Instant.ofEpochSecond(it)
+                    )
+                )
+            }
         }
     }
 }

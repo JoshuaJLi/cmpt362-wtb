@@ -15,7 +15,7 @@ class MyMongoDBApp: Application() {
     companion object {
         val realm: Realm by lazy {
             Realm.open(
-                configuration = RealmConfiguration.create(
+                configuration = RealmConfiguration.Builder(
                     schema = setOf(
                         MongoBusStop::class,
                         MongoFavouriteStop::class,
@@ -25,9 +25,30 @@ class MyMongoDBApp: Application() {
                         MongoScheduledTrip::class,
                         MongoScheduledTripStop::class
                     )
-                )
+                ).initialRealmFile("default.realm").build()
             )
         }
+
+        // NOTE: Change the above to the following
+        // Only if you need to regenerate the database for some reason
+        // If the schema changed or the default.realm file in the assets folder is broken
+
+//        val realm: Realm by lazy {
+//            Realm.open(
+//                configuration = RealmConfiguration.create(
+//                    schema = setOf(
+//                        MongoBusStop::class,
+//                        MongoFavouriteStop::class,
+//                        MongoRoute::class,
+//                        MongoSchedule::class,
+//                        MongoStopTime::class,
+//                        MongoScheduledTrip::class,
+//                        MongoScheduledTripStop::class
+//                    )
+//                )
+//            )
+//        }
+
     }
 
     override fun onCreate() {

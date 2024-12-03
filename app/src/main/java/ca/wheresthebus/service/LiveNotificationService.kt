@@ -15,6 +15,7 @@ import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
 import ca.wheresthebus.data.ScheduledTripId
 import ca.wheresthebus.data.StopRequest
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.utils.TextUtils
@@ -24,7 +25,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import java.time.Duration
-import java.time.LocalDateTime
 
 class LiveNotificationService : LifecycleService() {
     private val activeIds: MutableMap<ScheduledTripId, Int> = mutableMapOf()
@@ -91,7 +91,7 @@ class LiveNotificationService : LifecycleService() {
     }
 
 
-    private fun pollBuses(trip: ScheduledTrip): Flow<Map<StopRequest, List<Duration>>> =
+    private fun pollBuses(trip: ScheduledTrip): Flow<Map<StopRequest, List<UpcomingTime>>> =
         flow {
             while (activeIds.contains(trip.id)) {
                 emit(GtfsRealtimeHelper.getBusTimes(trip.stops.map { Pair(it.busStop.id, it.route.id) }))
@@ -126,9 +126,9 @@ class LiveNotificationService : LifecycleService() {
         startForeground(activeIds[trip.id]!!, notification)
     }
 
-    private fun updateNotification(trip: ScheduledTrip, stopTimes: Map<FavouriteStop, List<Duration>?>) {
+    private fun updateNotification(trip: ScheduledTrip, stopTimes: Map<FavouriteStop, List<UpcomingTime>?>) {
         val content = stopTimes.map {
-            "${it.key.nickname.ifEmpty { it.key.route.shortName }}: ${TextUtils.upcomingBusesString(it.value)}"
+            "${it.key.nickname.ifEmpty { it.key.route.shortName }}: ${TextUtils.upcomingBusesString(this, it.value)}"
         }.joinToString(separator = "\n")
 
         val notificationManager =
