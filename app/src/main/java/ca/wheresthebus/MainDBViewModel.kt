@@ -1,5 +1,6 @@
 package ca.wheresthebus
 
+import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -122,16 +123,6 @@ class MainDBViewModel : ViewModel() {
     fun getBusStopByCode(stopCode: String) : BusStop? {
         return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
             ?.let { modelFactory.toBusStop(it) }
-    }
-
-    fun getBusStopWithinRange(userLocation: Location, distanceThreshold: Double): List<BusStop> {
-        val allBusStops = getAllStops() ?: return emptyList()
-        return allBusStops.filter { busStop ->
-            val stopLocation = Location("")
-            stopLocation.latitude = busStop.location.latitude
-            stopLocation.longitude = busStop.location.longitude
-            userLocation.distanceTo(stopLocation) < distanceThreshold
-        }
     }
 
     // copied and modified from BusNotifierService.kt
