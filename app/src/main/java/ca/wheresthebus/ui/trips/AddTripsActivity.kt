@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -32,8 +33,6 @@ class AddTripsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddTripsBinding
 
-    private lateinit var addTripsViewModel: AddTripsViewModel
-
     private lateinit var addTripsView : RecyclerView
 
     private lateinit var addBusView : RecyclerView
@@ -46,7 +45,9 @@ class AddTripsActivity : AppCompatActivity() {
 
     private lateinit var sliderValue : TextView
 
-    private lateinit var mainDBViewModel : MainDBViewModel
+    private val addTripsViewModel: AddTripsViewModel by viewModels<AddTripsViewModel>()
+
+    private val mainDBViewModel : MainDBViewModel by viewModels<MainDBViewModel>()
 
     private lateinit var nickname : EditText
 
@@ -63,9 +64,6 @@ class AddTripsActivity : AppCompatActivity() {
 
         binding = ActivityAddTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        mainDBViewModel = ViewModelProvider(this).get(MainDBViewModel::class.java)
-        addTripsViewModel = ViewModelProvider(this)[AddTripsViewModel::class.java]
 
         setUpTripStopsAdapter()
         setUpTripTimeAdapter()
