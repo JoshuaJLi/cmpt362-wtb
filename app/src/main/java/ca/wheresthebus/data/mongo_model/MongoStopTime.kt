@@ -6,7 +6,6 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.Index
 
-// Represents stop_times and trips
 class MongoStopTime : RealmObject {
     @Index var stopId: Int = 0
     @Index var routeId : Int = 0
