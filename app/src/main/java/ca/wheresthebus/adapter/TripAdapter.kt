@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ca.wheresthebus.R
 import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.UpcomingTime
@@ -115,13 +116,14 @@ class TripAdapter(
 
     // Builds and returns an ItemTouchHelper for TripAdapter cards
     // Sets the onSwiped callback to delete a ScheduledTrip object from the dataset
-    fun getSwipeHandler(): ItemTouchHelper.SimpleCallback {
+    fun getSwipeHandler(swipeRefreshLayout: SwipeRefreshLayout): ItemTouchHelper.SimpleCallback {
         return object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: ViewHolder,
                 target: ViewHolder
             ): Boolean {
+                swipeRefreshLayout.isEnabled = false
                 return false
             }
 
@@ -131,6 +133,7 @@ class TripAdapter(
                     val position = viewHolder.adapterPosition
                     val tripToDelete = dataSet[position]
                     onDeleteSwipe(tripToDelete)
+                    swipeRefreshLayout.isEnabled = true
                 }
             }
 

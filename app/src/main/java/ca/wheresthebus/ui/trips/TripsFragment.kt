@@ -221,7 +221,7 @@ class TripsFragment : Fragment() {
 
     private fun setUpSwipeRefresh() {
         swipeRefreshLayout = binding.swipeRefreshLayout
-        swipeRefreshLayout.setDistanceToTriggerSync(resources.getDimensionPixelSize(R.dimen.swipe_refresh_trigger_distance))
+        swipeRefreshLayout.setDistanceToTriggerSync(resources.getDimensionPixelSize(R.dimen.swipe_refresh_trip_trigger_distance))
         swipeRefreshLayout.setOnRefreshListener {
             refreshBusTimes()
         }
@@ -253,15 +253,15 @@ class TripsFragment : Fragment() {
 
     private fun setUpSwipeToDelete() {
         // Add the swipe handlers to each recycler view
-        ItemTouchHelper(activeTripAdapter.getSwipeHandler())
+        ItemTouchHelper(activeTripAdapter.getSwipeHandler(swipeRefreshLayout))
             .attachToRecyclerView(
                 activeTripsView
             )
-        ItemTouchHelper(upcomingTripAdapter.getSwipeHandler())
+        ItemTouchHelper(upcomingTripAdapter.getSwipeHandler(swipeRefreshLayout))
             .attachToRecyclerView(
                 upcomingTripsView
             )
-        ItemTouchHelper(inactiveTripAdapter.getSwipeHandler())
+        ItemTouchHelper(inactiveTripAdapter.getSwipeHandler(swipeRefreshLayout))
             .attachToRecyclerView(
                 inactiveTripsView
             )

@@ -3,6 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="swipe_refresh_trigger_distance">200dp</dimen>
+    <dimen name="swipe_refresh_trip_trigger_distance">200dp</dimen>
     <dimen name="card_corner">8dp</dimen>
     <dimen name="card_elevation">4dp</dimen>
 </resources>
