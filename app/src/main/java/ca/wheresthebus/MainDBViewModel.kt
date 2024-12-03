@@ -120,11 +120,6 @@ class MainDBViewModel : ViewModel() {
         return _allBusStopsList.value
     }
 
-    fun getBusStopByCode(stopCode: String) : BusStop? {
-        return realm.query<MongoBusStop>("code == $0", stopCode).find().firstOrNull()
-            ?.let { modelFactory.toBusStop(it) }
-    }
-
     // copied and modified from BusNotifierService.kt
     fun getNearbyStops(currentLocation: Location): List<BusStop> {
         val nearbyQuery = "(lat >= $0 AND lat <= $1) AND (lng >= $2 AND lng <= $3)"
