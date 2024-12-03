@@ -69,7 +69,7 @@ class GtfsRealtimeHelper {
                 .map { update -> update.stopTimeUpdateList }
                 .flatten()
                 .filter { update -> update.stopId == stopId.value  }
-                .map { stopTime -> stopTime.arrival?.time }
+                .map { stopTime -> (stopTime.arrival?.time ?: 0) + (stopTime.arrival?.delay ?: 0) }
                 .filterNotNull()
                 .toList()
         }
