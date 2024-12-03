@@ -21,7 +21,7 @@
             android:layout_margin="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout"
+                android:id="@+id/name_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_trip_name"
@@ -50,6 +50,15 @@
                     android:text="@string/heading_trip_stop"
                     android:textSize="16sp" />
 
+                <TextView
+                    android:id="@+id/stops_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/md_theme_error"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:text="Must have at least one stop." />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_busses"
                     android:layout_width="match_parent"
@@ -76,6 +85,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/heading_trip_calendar"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/calendar_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/md_theme_error"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:text="Must have at least one scheduled time." />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_times"

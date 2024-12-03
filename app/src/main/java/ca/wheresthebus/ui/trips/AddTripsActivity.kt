@@ -1,6 +1,7 @@
 package ca.wheresthebus.ui.trips
 
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +22,7 @@ import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.ActivityAddTripsBinding
 import ca.wheresthebus.ui.home.AddFavBottomSheet
 import com.google.android.material.slider.Slider
+import com.google.android.material.textfield.TextInputLayout
 import org.mongodb.kbson.ObjectId
 import java.time.DayOfWeek
 import java.time.Duration
@@ -148,22 +150,66 @@ class AddTripsActivity : AppCompatActivity() {
 
     private fun setUpSave() {
         binding.fabNewTrip.setOnClickListener {
+            val name = nickname.text.toString()
+            val stops = addTripsViewModel.selectedTrips
             val schedules = addTripsViewModel.schedulePairs
                 .flatMap { (days, time) -> days.map { day -> day to time }  }
                 .map { (day, time) -> Schedule(day, time) }
                 .toList()
 
-
-            val trip = ScheduledTrip(
-                id = ScheduledTripId(ObjectId().toHexString()),
-                nickname = nickname.text.toString(),
-                stops = addTripsViewModel.selectedTrips,
-                activeTimes = ArrayList(schedules),
-                duration = Duration.ofMinutes(slider.value.toLong())
-            )
-            mainDBViewModel.insertScheduledTrip(trip)
-            finish()
-            // do save stuff
+            // Check valid inputs
+            if (validateInputs(name, stops, schedules)) {
+                // do save stuff
+                val trip = ScheduledTrip(
+                    id = ScheduledTripId(ObjectId().toHexString()),
+                    nickname = nickname.text.toString(),
+                    stops = addTripsViewModel.selectedTrips,
+                    activeTimes = ArrayList(schedules),
+                    duration = Duration.ofMinutes(slider.value.toLong())
+                )
+                mainDBViewModel.insertScheduledTrip(trip)
+                finish()
+            }
         }
+    }
+
+    private fun validateInputs(
+        name: String,
+        stops: ArrayList<FavouriteStop>,
+        schedules: List<Schedule>
+    ) : Boolean {
+        var isNameValid = true
+        var isStopsValid = true
+        var isSchedulesValid = true
+
+        val nameInput = findViewById<TextInputLayout>(R.id.name_error)
+        val stopsErrorMessage = findViewById<TextView>(R.id.stops_error)
+        val calendarErrorMessage = findViewById<TextView>(R.id.calendar_error)
+
+        if (name.isBlank() || name.isEmpty()) {
+            isNameValid = false
+            nameInput.error = "Trips must have a name."
+        }
+        else {
+            nameInput.error = null
+        }
+
+        if (stops.isEmpty()) {
+            isStopsValid = false
+            stopsErrorMessage.visibility = View.VISIBLE
+        }
+        else {
+            stopsErrorMessage.visibility = View.GONE
+        }
+
+        if (schedules.isEmpty()) {
+            isSchedulesValid = false
+            calendarErrorMessage.visibility = View.VISIBLE
+        }
+        else {
+            calendarErrorMessage.visibility = View.GONE
+        }
+
+        return (isNameValid && isStopsValid && isSchedulesValid)
     }
 }
