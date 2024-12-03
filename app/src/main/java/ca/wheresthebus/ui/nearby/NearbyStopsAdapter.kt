@@ -38,6 +38,7 @@ class NearbyStopsAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val stopNickname: TextView = view.findViewById(R.id.NearbyBottomSheet_stopNickname)
         val buses: TextView = view.findViewById(R.id.NearbyBottomSheet_buses)
+        val stopCode: TextView = view.findViewById(R.id.NearbyBottomSheet_stopCode)
         val extraInfo: LinearLayout = view.findViewById(R.id.extra_info)
         val saveButton: Button = view.findViewById(R.id.save_button)
     }
@@ -56,6 +57,10 @@ class NearbyStopsAdapter(
         holder.buses.text = buildString {
             append("Buses: ")
             append(stop.routes.joinToString(", ") { it.shortName })
+        }
+        holder.stopCode.text = buildString {
+            append("Stop Code: ")
+            append(stop.code.value)
         }
 
         val isExpanded = position == expandedPosition
