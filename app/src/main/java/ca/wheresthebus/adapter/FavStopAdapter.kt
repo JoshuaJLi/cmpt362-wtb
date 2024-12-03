@@ -28,7 +28,6 @@ class FavStopAdapter(
         CREATE_TRIP
     }
 
-
     abstract inner class BindingFavStopHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bind(stop: FavouriteStop)
     }
@@ -37,7 +36,7 @@ class FavStopAdapter(
         private val nickname: TextView = view.findViewById(R.id.text_stop_nickname)
         private val id: TextView = view.findViewById(R.id.text_stop_id)
         private val upcoming: TextView = view.findViewById(R.id.text_stop_upcoming)
-        private val foregroundView: CardView = view.findViewById(R.id.fav_card_view)
+        private val foregroundView: CardView = view.findViewById(R.id.fav_card_foreground)
         private val moreOptionsButton: ImageButton = view.findViewById(R.id.options_button)
 
         override fun bind(stop: FavouriteStop) {

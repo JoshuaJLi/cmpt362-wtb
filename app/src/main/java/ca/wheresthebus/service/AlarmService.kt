@@ -5,12 +5,10 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import ca.wheresthebus.data.IntentRequestCode
 import ca.wheresthebus.data.model.ScheduledTrip
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 
 
 class AlarmService : BroadcastReceiver() {
@@ -56,18 +54,18 @@ class AlarmService : BroadcastReceiver() {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
 
-                alarmManager.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
-                    AlarmManager.INTERVAL_DAY * 7,
-                    pendingLaunchIntent
+                    alarmManager.setInexactRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+                        AlarmManager.INTERVAL_DAY * 7,
+                        pendingLaunchIntent
                     )
 
-                                    alarmManager.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                                        time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
-                    AlarmManager.INTERVAL_DAY * 7 + (trip.duration.toMillis()),
-                    pendingStopIntent
+                    alarmManager.setInexactRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+                        AlarmManager.INTERVAL_DAY * 7 + (trip.duration.toMillis()),
+                        pendingStopIntent
                     )
 
 //                    alarmManager.setExactAndAllowWhileIdle(
