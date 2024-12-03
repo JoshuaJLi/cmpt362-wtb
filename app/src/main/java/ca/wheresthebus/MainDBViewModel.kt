@@ -1,6 +1,5 @@
 package ca.wheresthebus
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -180,6 +179,28 @@ class MainDBViewModel : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    fun deleteScheduledTrip(id: ScheduledTripId) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val tripList = _allTripsList.value
+
+            if (tripList?.removeIf { it.id == id} == true) {
+                val idToDelete = ObjectId(id.value)
+                val toDelete = realm.query<MongoScheduledTrip>("id == $0", idToDelete).find().firstOrNull()
+
+                realm.write {
+                    if (toDelete != null) {
+                        findLatest(toDelete)?.also { delete(it) }
+                    }
+                    else {
+                        println("deleteScheduledTrip: Could not find the right record to delete for some reason")
+                    }
+                }
+
+            }
+
         }
     }
 

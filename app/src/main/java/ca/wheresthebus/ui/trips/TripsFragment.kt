@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.adapter.TripAdapter
+import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
 import ca.wheresthebus.service.AlarmService
 import java.time.LocalDateTime
@@ -49,6 +50,7 @@ class TripsFragment : Fragment() {
 
         listenForChanges()
         setUpAdapter()
+        setUpSwipeToDelete()
         setUpFab()
 
         return root
@@ -59,21 +61,21 @@ class TripsFragment : Fragment() {
         inactiveTripsView = binding.recyclerInactiveTrips
         upcomingTripsView = binding.recyclerUpcomingTrips
 
-        activeTripAdapter = TripAdapter()
+        activeTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip)
         activeTripsView.apply {
             layoutManager = object : LinearLayoutManager(context)
             { override fun canScrollVertically() = false }
             adapter = activeTripAdapter
         }
 
-        upcomingTripAdapter = TripAdapter()
+        upcomingTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip)
         upcomingTripsView.apply {
             layoutManager = object : LinearLayoutManager(context)
             { override fun canScrollVertically() = false }
             adapter = upcomingTripAdapter
         }
 
-        inactiveTripAdapter = TripAdapter()
+        inactiveTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip)
         inactiveTripsView.apply {
             layoutManager = object : LinearLayoutManager(context)
             { override fun canScrollVertically() = false }
@@ -127,6 +129,26 @@ class TripsFragment : Fragment() {
             val intent = Intent(context, AddTripsActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun setUpSwipeToDelete() {
+        // Add the swipe handlers to each recycler view
+        ItemTouchHelper(activeTripAdapter.getSwipeHandler())
+            .attachToRecyclerView(
+            activeTripsView
+        )
+        ItemTouchHelper(upcomingTripAdapter.getSwipeHandler())
+            .attachToRecyclerView(
+            upcomingTripsView
+        )
+        ItemTouchHelper(inactiveTripAdapter.getSwipeHandler())
+            .attachToRecyclerView(
+            inactiveTripsView
+        )
+    }
+
+    private fun deleteTrip(trip: ScheduledTrip) {
+        mainDBViewModel.deleteScheduledTrip(trip.id)
     }
 
     override fun onDestroyView() {
