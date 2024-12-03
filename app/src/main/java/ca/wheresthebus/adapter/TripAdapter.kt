@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,9 +34,13 @@ class TripAdapter(
         private val active : TextView = view.findViewById(R.id.text_trip_active_time)
         private var stops : RecyclerView = view.findViewById(R.id.recycler_trips_recycler_stops)
         private var bell : MaterialButton = view.findViewById(R.id.button_trip_do_notifications)
+        private val foregroundView: CardView = view.findViewById(R.id.trip_card_foreground)
         private lateinit var stopAdapter: FavStopAdapter
 
         fun bind(trip : ScheduledTrip) {
+            // Reset the swipe animation in case the view was reused
+            foregroundView.translationX = 0f
+
             val adapterType = when(viewType) {
                 (ViewType.ACTIVE) -> FavStopAdapter.Type.TRIP_ACTIVE
                 else -> FavStopAdapter.Type.TRIP_INACTIVE
