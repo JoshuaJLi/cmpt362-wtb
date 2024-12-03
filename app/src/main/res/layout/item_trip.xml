@@ -45,12 +45,15 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <Button
+
+                <ImageView
                     android:id="@+id/button_trip_do_notifications"
-                    style="?attr/materialIconButtonFilledStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/baseline_notifications_active_12"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/baseline_notifications_active_12"
+                    android:layout_gravity="center"
+                    app:tint="@color/material_dynamic_secondary40"
+                    android:layout_marginEnd="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -59,8 +62,8 @@
                     card_view:layout_constraintEnd_toEndOf="parent"
                     card_view:layout_constraintHorizontal_bias="1.0"
                     card_view:layout_constraintStart_toEndOf="@+id/text_trip_nickname"
-                    card_view:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="4dp"/>
+                    card_view:layout_constraintTop_toTopOf="parent"/>
+
 
                 <TextView
                     android:id="@+id/text_trip_nickname"
