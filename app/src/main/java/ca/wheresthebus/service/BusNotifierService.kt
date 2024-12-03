@@ -2,12 +2,14 @@ package ca.wheresthebus.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.preference.PreferenceManager
+import ca.wheresthebus.MainActivity
 import ca.wheresthebus.R
 import ca.wheresthebus.data.ModelFactory
 import ca.wheresthebus.data.UpcomingTime
@@ -17,6 +19,7 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
+import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
 import ca.wheresthebus.utils.TextUtils
 import ca.wheresthebus.utils.Utils
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -188,8 +191,6 @@ class BusNotifierService : LifecycleService() {
             busTimes[Pair(stop.id, it.id)]
         }
 
-        print(busTimes.forEach{it.value})
-
         sendNotification(stop.name, routeTimeToString(routeTimePair))
     }
 
@@ -199,8 +200,18 @@ class BusNotifierService : LifecycleService() {
             .setSmallIcon(R.drawable.ic_nearby_black_dp24)
             .setContentTitle(title)
             .setContentText(content)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(content))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(this, MainActivity::class.java),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
             .build()
 
         val notificationManager =
@@ -211,6 +222,6 @@ class BusNotifierService : LifecycleService() {
 
     private fun routeTimeToString(routeTimePair: Map<List<UpcomingTime>?, Route>) =
         routeTimePair.map {
-            "${it.value.shortName}: ${TextUtils.upcomingBusesString(it.key)}"
+            "${it.value.shortName}: ${TextUtils.upcomingBusesString(this, it.key)}"
         }.joinToString(separator = "\n")
 }
