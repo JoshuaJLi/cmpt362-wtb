@@ -63,6 +63,7 @@ class AddTripsActivity : AppCompatActivity() {
         }
 
         binding = ActivityAddTripsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setUpTripStopsAdapter()
         setUpTripTimeAdapter()
