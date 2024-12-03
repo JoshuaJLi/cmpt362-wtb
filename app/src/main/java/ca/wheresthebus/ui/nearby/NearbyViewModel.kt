@@ -52,6 +52,11 @@ class NearbyViewModel : ViewModel() {
         }
     }
 
+    fun loadNearbyStopsFromDatabase(currentLocation: Location) {
+        // this has to be synchronous as if the map loads before all the markers do, stops won't properly show up
+        busStopList = mainDBViewModel.getNearbyStops(currentLocation) as ArrayList<BusStop>
+    }
+
     // all calculations will be done in meters
     // https://stackoverflow.com/questions/43080343/calculate-distance-between-two-locations-in-metre
     fun isInRange(userLocation: LatLng, stopLocation: LatLng, distanceThreshold: Double): Boolean {
