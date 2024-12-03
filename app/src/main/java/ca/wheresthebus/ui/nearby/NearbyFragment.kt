@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import ca.wheresthebus.Globals.NEARBY_DISTANCE_THRESHOLD
 import ca.wheresthebus.Globals.NEARBY_ZOOM_LEVEL
@@ -45,7 +46,7 @@ class NearbyFragment :
     private val binding get() = _binding!!
     private var _binding: FragmentNearbyBinding? = null
 
-    private lateinit var nearbyViewModel: NearbyViewModel
+    private val nearbyViewModel: NearbyViewModel by viewModels<NearbyViewModel>()
 
     private lateinit var googleMap: GoogleMap
     private var currentLocationMarker: Marker? = null
@@ -60,9 +61,6 @@ class NearbyFragment :
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNearbyBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        nearbyViewModel = ViewModelProvider(this)[NearbyViewModel::class.java]
-
         return root
     }
 

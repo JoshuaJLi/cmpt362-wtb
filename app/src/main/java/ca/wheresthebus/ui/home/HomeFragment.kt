@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
     private lateinit var stopAdapter: FavStopAdapter
     private lateinit var stopsView : RecyclerView
 
-    private lateinit var mainDBViewModel: MainDBViewModel
+    private val mainDBViewModel: MainDBViewModel by viewModels<MainDBViewModel>()
 
     private val favouriteStopsList : ArrayList<FavouriteStop> = arrayListOf()
     private lateinit var modelFactory: ModelFactory
@@ -59,7 +59,6 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mainDBViewModel = ViewModelProvider(requireActivity()).get(MainDBViewModel::class.java)
         modelFactory = ModelFactory()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root

@@ -6,7 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -34,8 +36,8 @@ import java.time.LocalDateTime
 class TripsFragment : Fragment() {
 
     private var _binding: FragmentTripsBinding? = null
-    private lateinit var tripsViewModel : TripsViewModel
-    private lateinit var mainDBViewModel: MainDBViewModel
+    private val tripsViewModel : TripsViewModel  by viewModels<TripsViewModel>()
+    private val mainDBViewModel: MainDBViewModel by viewModels<MainDBViewModel>()
 
     private lateinit var activeTripAdapter: TripAdapter
     private lateinit var upcomingTripAdapter: TripAdapter
@@ -57,12 +59,8 @@ class TripsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        tripsViewModel = ViewModelProvider(this)[TripsViewModel::class.java]
-
         _binding = FragmentTripsBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
 
         setUpAdapter()
         listenForChanges()
