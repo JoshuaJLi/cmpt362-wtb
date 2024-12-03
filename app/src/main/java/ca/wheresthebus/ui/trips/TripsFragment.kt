@@ -16,8 +16,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ca.wheresthebus.MainDBViewModel
 import ca.wheresthebus.R
 import ca.wheresthebus.adapter.TripAdapter
+import ca.wheresthebus.adapter.TripAdapter.ActiveTripViewHolder
 import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopId
+import ca.wheresthebus.data.StopRequest
+import ca.wheresthebus.data.UpcomingTime
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
 import ca.wheresthebus.service.AlarmService
@@ -59,11 +62,10 @@ class TripsFragment : Fragment() {
         _binding = FragmentTripsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
         mainDBViewModel = ViewModelProvider(requireActivity())[MainDBViewModel::class]
 
-        listenForChanges()
         setUpAdapter()
+        listenForChanges()
         setUpSwipeRefresh()
         setUpSwipeToDelete()
         setUpFab()
@@ -146,9 +148,16 @@ class TripsFragment : Fragment() {
             }
         }
 
-//        tripsViewModel.busTimes.observe(requireActivity()) {
-//            activeTripAdapter.
-//        }
+        tripsViewModel.busTimes.observe(requireActivity()) {
+            updateBusTimes(it)
+        }
+    }
+
+    private fun updateBusTimes(busTimes: MutableMap<StopRequest, List<UpcomingTime>>) {
+        for (i in 0..activeTripAdapter.itemCount) {
+            val viewHolder = activeTripsView.findViewHolderForAdapterPosition(i) as? ActiveTripViewHolder
+            viewHolder?.updateBusTimes(busTimes)
+        }
     }
 
     private fun setUpFab() {

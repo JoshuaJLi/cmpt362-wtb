@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:text="Here is a nickname that will go too long oh no"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:singleLine="true"
                     android:ellipsize="end"
