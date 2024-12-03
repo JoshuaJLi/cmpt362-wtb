@@ -148,7 +148,7 @@ class AddFavBottomSheet : BottomSheetDialogFragment() {
         // Build the dialog
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(customView)
-            .setTitle("Adding New Favourite Stop")
+            .setTitle("Adding New Stop")
             .setMessage(selectedStop.name)
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .setPositiveButton("Confirm", null)

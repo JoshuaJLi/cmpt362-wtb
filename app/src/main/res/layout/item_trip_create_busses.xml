@@ -6,15 +6,15 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:src="@drawable/baseline_circle_24"
         android:layout_gravity="center"
         app:tint="@color/material_dynamic_secondary40" />
 
     <Space
-        android:layout_width="15dp"
-        android:layout_height="15dp" />
+        android:layout_width="10dp"
+        android:layout_height="0dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,8 +27,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="0.5"
-            android:text="Imagine this is a bus stop @ streetname but its really long"
-            android:textSize="18sp" />
+            android:text="this is a bus stop @ streetname but its really long"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="end"/>
 
         <Button
             android:id="@+id/button_delete_trip_fav"
