@@ -27,17 +27,13 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text="this is a text nickname"
-            android:textStyle="bold"
-            android:singleLine="true"
-            android:ellipsize="end"/>
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/text_trip_stop_next_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="this is next stop time"
-            android:textSize="16sp"
-            android:singleLine="true"
-            android:ellipsize="end"/>
+            android:textSize="16sp"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -28,9 +28,7 @@
             android:layout_gravity="center"
             android:layout_weight="0.5"
             android:text="this is a bus stop @ streetname but its really long"
-            android:textSize="16sp"
-            android:singleLine="true"
-            android:ellipsize="end"/>
+            android:textSize="16sp"/>
 
         <Button
             android:id="@+id/button_delete_trip_fav"
