@@ -41,10 +41,7 @@ class MainDBViewModel : ViewModel() {
     private val modelFactory = ModelFactory()
 
     val _favouriteBusStopsList = MutableLiveData<MutableList<FavouriteStop>>()
-
-    // change to LiveData instead of MutableLiveDataLater, since we will only be accessing this part of the DB?
     val _allBusStopsList = MutableLiveData<MutableList<BusStop>>()
-
     val _allTripsList = MutableLiveData<MutableList<ScheduledTrip>>()
 
     init {
@@ -169,7 +166,6 @@ class MainDBViewModel : ViewModel() {
                 )
             }
         }
-
     }
 
     fun deleteFavouriteStop(_id: ObjectId) {
@@ -213,9 +209,7 @@ class MainDBViewModel : ViewModel() {
                         println("deleteScheduledTrip: Could not find the right record to delete for some reason")
                     }
                 }
-
             }
-
         }
     }
 
