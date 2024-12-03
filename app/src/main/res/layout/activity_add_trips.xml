@@ -7,8 +7,7 @@
     android:id="@+id/main"
     tools:context=".ui.home.HomeFragment"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:fitsSystemWindows="true"
-    android:windowSoftInputMode="adjustResize">
+    android:fitsSystemWindows="true">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,7 +20,7 @@
             android:layout_margin="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout"
+                android:id="@+id/name_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_trip_name"
@@ -50,6 +49,15 @@
                     android:text="@string/heading_trip_stop"
                     android:textSize="16sp" />
 
+                <TextView
+                    android:id="@+id/stops_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/md_theme_error"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:text="Must have at least one stop." />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_busses"
                     android:layout_width="match_parent"
@@ -76,6 +84,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/heading_trip_calendar"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/calendar_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/md_theme_error"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:text="Must have at least one scheduled time." />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_times"
@@ -134,7 +151,8 @@
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="bottom"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        app:layout_anchorGravity="bottom">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_cancel_trip"
@@ -143,7 +161,7 @@
             android:contentDescription="@string/desc_fab_save_trip"
             android:text="@string/fab_cancel_trip"
             android:layout_weight="1"
-            android:layout_marginEnd="10sp"/>
+            android:layout_marginEnd="10sp" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_new_trip"
@@ -151,7 +169,9 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/desc_fab_save_trip"
             android:text="@string/fab_save_trip"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:textColor="@color/md_theme_onPrimary"
+            android:backgroundTint="@color/md_theme_primary"/>
 
     </LinearLayout>
 

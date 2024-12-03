@@ -2,7 +2,6 @@ package ca.wheresthebus.ui.trips
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,12 +99,10 @@ class TripsFragment : Fragment() {
                 }
 
             trips[TripType.ACTIVE].orEmpty().let {
-                Log.d("TripsFragment", "Got some data for active to load")
                 if (it.isEmpty()) {
                     binding.labelActive.visibility = View.GONE
                 }
                 activeTripAdapter.updateData(it)
-                AlarmService.startTripNow(it, requireContext())
             }
 
             trips[TripType.TODAY].orEmpty().let {
@@ -120,6 +117,14 @@ class TripsFragment : Fragment() {
                     binding.labelAllTrips.visibility = View.GONE
                 }
                 inactiveTripAdapter.updateData(it)
+            }
+
+            AlarmService.scheduleTripNotifications(data, requireContext())
+
+            if (data.size > 0) {
+                binding.layoutTripEmpty.visibility = View.GONE
+            } else {
+                binding.layoutTripEmpty.visibility = View.VISIBLE
             }
         }
     }
