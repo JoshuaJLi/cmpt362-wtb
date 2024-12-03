@@ -138,6 +138,12 @@ class TripsFragment : Fragment() {
             }
 
             AlarmService.scheduleTripNotifications(data, requireContext())
+
+            if (data.size > 0) {
+                binding.layoutTripEmpty.visibility = View.GONE
+            } else {
+                binding.layoutTripEmpty.visibility = View.VISIBLE
+            }
         }
 
 //        tripsViewModel.busTimes.observe(requireActivity()) {

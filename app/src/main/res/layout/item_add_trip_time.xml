@@ -12,7 +12,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_trip_days_button"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
             android:textColor="@color/material_on_surface_emphasis_high_type"
@@ -32,7 +32,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_trip_time_button"
-            android:layout_width="110sp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
             android:textColor="@color/material_on_surface_emphasis_high_type"
