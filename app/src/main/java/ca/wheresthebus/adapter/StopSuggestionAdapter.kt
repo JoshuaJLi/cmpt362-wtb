@@ -27,8 +27,6 @@ class StopSuggestionAdapter(
                 append(stop.code.value)
             }
 
-
-
             val routesMap = stop.routes.associateBy { it.shortName }
 
             routesAtStop.text = buildString {
@@ -38,7 +36,7 @@ class StopSuggestionAdapter(
 
             view.setOnClickListener {
                 val selectedStop = suggestedStops[adapterPosition]
-                onSearchItemClick(routesMap, selectedStop)
+                onSearchItemClick(routesMap, selectedStop) // open a dialog for the stop
             }
         }
     }

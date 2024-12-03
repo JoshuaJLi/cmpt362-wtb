@@ -8,8 +8,6 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 
 // Each realm object has to have its own EMPTY constructor.
 class MongoBusStop : RealmObject {
-    //default required for realm objects
-    //@PrimaryKey var _id: ObjectId = ObjectId()
     @PrimaryKey var id: String = ""
     @Index var code: String = ""
     @Index var name: String = ""
