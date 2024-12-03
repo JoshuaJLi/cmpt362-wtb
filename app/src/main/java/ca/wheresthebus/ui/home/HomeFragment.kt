@@ -105,8 +105,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpFab() {
+        val bottomSheet = AddFavBottomSheet()
+            .assignAddFavourite { mainDBViewModel.insertFavouriteStop(it) }
         binding.fabNewFav.setOnClickListener {
-            AddFavBottomSheet().show(parentFragmentManager, AddFavBottomSheet.TAG)
+                bottomSheet.show(parentFragmentManager, AddFavBottomSheet.TAG)
         }
     }
 

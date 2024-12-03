@@ -36,4 +36,32 @@
     <string name="expand_list">Expand List</string>
     <string name="center_map_on_current_location">Center map on current location</string>
 
+    <string name="fab_new_trip_text">Add Trip</string>
+    <string name="desc_fab_new_trip">Add Trip</string>
+    <string name="heading_trip_calendar">Starts On</string>
+    <string name="heading_trip_notification">Notification Duration</string>
+    <string name="desc_fab_save_trip">Save Trip</string>
+    <string name="fab_save_trip">Save</string>
+    <string name="hint_trip_name">New Trip Name</string>
+    <string name="add_stop_button_text">Add a stop</string>
+    <string name="add_trip_time_button_text">Add a time</string>
+    <string name="send_notifications">Send Notifications</string>
+    <string name="heading_trip_stop">Bus Stops</string>
+    <string name="fab_cancel_trip">Cancel</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="at">\@</string>
+    <string name="notification_duration_minutes">Notification Duration (minutes)</string>
+    <string-array name="notification_timer_options">
+        <item>No notification</item>
+        <item>1 minute</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>60 minutes</item>
+    </string-array>
 </resources>

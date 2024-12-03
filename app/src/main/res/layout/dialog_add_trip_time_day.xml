@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="16dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp">
+
+    <CheckBox
+        android:id="@+id/monday_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/monday" />
+
+    <CheckBox
+        android:id="@+id/tuesday_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/tuesday" />
+
+    <CheckBox
+        android:id="@+id/wednesday_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/wednesday" />
+
+    <CheckBox
+        android:id="@+id/thursday_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/thursday" />
+
+    <CheckBox
+        android:id="@+id/friday_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/friday" />
+
+    <CheckBox
+        android:id="@+id/saturday_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/saturday" />
+
+    <CheckBox
+        android:id="@+id/sunday_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/sunday" />
+
+
+</LinearLayout>

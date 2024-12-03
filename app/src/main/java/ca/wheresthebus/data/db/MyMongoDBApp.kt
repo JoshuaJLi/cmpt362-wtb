@@ -6,6 +6,7 @@ import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
 import ca.wheresthebus.data.mongo_model.MongoRoute
 import ca.wheresthebus.data.mongo_model.MongoSchedule
 import ca.wheresthebus.data.mongo_model.MongoScheduledTrip
+import ca.wheresthebus.data.mongo_model.MongoScheduledTripStop
 import ca.wheresthebus.data.mongo_model.MongoStopTime
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -21,7 +22,8 @@ class MyMongoDBApp: Application() {
                         MongoRoute::class,
                         MongoSchedule::class,
                         MongoStopTime::class,
-                        MongoScheduledTrip::class
+                        MongoScheduledTrip::class,
+                        MongoScheduledTripStop::class
                     )
                 ).initialRealmFile("default.realm").build()
             )
@@ -40,7 +42,8 @@ class MyMongoDBApp: Application() {
 //                        MongoRoute::class,
 //                        MongoSchedule::class,
 //                        MongoStopTime::class,
-//                        MongoScheduledTrip::class
+//                        MongoScheduledTrip::class,
+//                        MongoScheduledTripStop::class
 //                    )
 //                )
 //            )
