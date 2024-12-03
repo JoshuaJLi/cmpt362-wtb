@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.wheresthebus.R
@@ -129,7 +130,7 @@ class AddTripTimeAdapter(
 
     fun addTime(schedulePair: Pair<MutableList<DayOfWeek>, LocalTime>) {
         if (schedules.size >= 5) {
-            Snackbar.make(rootView, "Maximum number of schedules reached.", Snackbar.LENGTH_SHORT).show()
+            Toast.makeText(rootView.context, "Maximum number of schedules reached.", Toast.LENGTH_SHORT).show()
             return
         }
         schedules.add(schedulePair)

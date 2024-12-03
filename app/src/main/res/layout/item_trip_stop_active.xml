@@ -3,18 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingVertical="15dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingVertical="6dp">
 
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:src="@drawable/baseline_circle_24"
         android:layout_gravity="center"
         app:tint="@color/material_dynamic_secondary40"/>
 
     <Space
-        android:layout_width="20dp"
+        android:layout_width="10dp"
         android:layout_height="20dp" />
 
     <LinearLayout
@@ -25,11 +25,19 @@
             android:id="@+id/text_trip_stop_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp" />
+            android:textSize="16sp"
+            android:text="this is a text nickname"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end"/>
         <TextView
             android:id="@+id/text_trip_stop_next_time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="this is next stop time"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="end"/>
     </LinearLayout>
 
 </LinearLayout>

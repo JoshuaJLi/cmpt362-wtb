@@ -89,34 +89,18 @@ object TextUtils {
 //            }
 //            stringBuilder.append(formatTimeString)
 
-            val timeStringBuilder = StringBuilder(timeString).apply {
+            val appendedString = SpannableStringBuilder(timeString).apply {
                 if (it.isRealtime) {
-                    append("  ")
+                    append("*")
                 }
             }
 
-            val formatTimeString = SpannableString(timeStringBuilder.toString()).apply {
-                if (it.isRealtime) {
-                    val drawable = ContextCompat.getDrawable(context, R.drawable.baseline_rss_feed_12)
-                    drawable?.let { icon ->
-                        icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-
-                        if (it == busTimes.first()) {
-                            icon.setTint(ContextCompat.getColor(context, R.color.md_theme_primary))
-                        } else {
-                            icon.setTint(ContextCompat.getColor(context, R.color.md_theme_onBackground))
-                        }
-
-                        val imageSpan = ImageSpan(icon, ImageSpan.ALIGN_BASELINE)
-                        setSpan(imageSpan, timeStringBuilder.length - 1, timeStringBuilder.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    }
-                }
+            val formatTimeString = SpannableStringBuilder(appendedString).apply {
                 if (it == busTimes.first()) {
-                    setSpan(StyleSpan(Typeface.BOLD), 0, timeStringBuilder.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.md_theme_primary)), 0, timeStringBuilder.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    setSpan(StyleSpan(Typeface.BOLD), 0, appendedString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.md_theme_primary)), 0, appendedString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
             }
-
 
             stringBuilder.append(formatTimeString)
 

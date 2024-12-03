@@ -47,7 +47,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:text="Here is a nickname that will go too long oh no"
-                    android:textSize="25sp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/button_trip_do_notifications"
                     app:layout_constraintHorizontal_bias="0"
@@ -75,14 +78,14 @@
                 android:id="@+id/text_trip_active_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Here is the active time" />
+                android:text="Here is the active time"
+                android:textSize="16sp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_trips_recycler_stops"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="5dp">
+                android:layout_marginTop="15dp">
 
             </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>

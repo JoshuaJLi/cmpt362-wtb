@@ -109,7 +109,7 @@ class NearbyStopsAdapter(
         // Build the dialog
         val dialog = MaterialAlertDialogBuilder(activity)
             .setView(customView)
-            .setTitle("Adding New Favourite Stop")
+            .setTitle("Adding New Stop")
             .setMessage(busStop.name)
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .setPositiveButton("Confirm", null)

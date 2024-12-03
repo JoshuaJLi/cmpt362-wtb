@@ -96,6 +96,8 @@ class AddTripsActivity : AppCompatActivity() {
     }
 
     private fun setUpTripStopsAdapter() {
+        binding.recyclerViewBusses.itemAnimator = null
+
         stopAdapter =
             FavStopAdapter(addTripsViewModel.selectedTrips, FavStopAdapter.Type.CREATE_TRIP)
         addBusView = binding.recyclerViewBusses
