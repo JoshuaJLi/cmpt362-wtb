@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,7 +21,8 @@ import java.time.LocalDateTime
 
 class TripAdapter(
     private val dataSet : ArrayList<ScheduledTrip> = arrayListOf(),
-    private val onDeleteSwipe: (ScheduledTrip) -> Unit
+    private val onDeleteSwipe: (ScheduledTrip) -> Unit,
+    private val onMoreOptionsClick: (View, ScheduledTrip) -> Unit = { _,_ -> }
 ) : RecyclerView.Adapter<TripAdapter.ActiveTripViewHolder>() {
 
     companion object {
@@ -36,6 +38,7 @@ class TripAdapter(
         private val active : TextView = view.findViewById(R.id.text_trip_active_time)
         private var stops : RecyclerView = view.findViewById(R.id.recycler_trips_recycler_stops)
         private var bell : MaterialButton = view.findViewById(R.id.button_trip_do_notifications)
+        private var moreOptionsButton : ImageButton = view.findViewById(R.id.options_button)
         private val foregroundView: CardView = view.findViewById(R.id.trip_card_foreground)
         private lateinit var stopAdapter: FavStopAdapter
 
@@ -59,6 +62,10 @@ class TripAdapter(
             stops.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = stopAdapter
+            }
+
+            moreOptionsButton.setOnClickListener {
+                onMoreOptionsClick(it, trip)
             }
         }
         init {

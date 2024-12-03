@@ -49,7 +49,6 @@
             android:id="@+id/recycler_fav_stops"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="12dp"
             android:layout_marginTop="16dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 

@@ -7,14 +7,16 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginHorizontal="22dp"
             android:background="@drawable/rounded_red_bg">
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginVertical="8dp"
+                    android:layout_marginHorizontal="22dp"
                     android:src="@drawable/ic_delete_white_24dp"
                     />
 
@@ -27,7 +29,7 @@
             android:orientation="horizontal"
             android:padding="16dp"
             android:layout_marginVertical="8dp"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginHorizontal="22dp"
             card_view:cardCornerRadius="@dimen/card_corner"
             card_view:cardElevation="4dp">
 
