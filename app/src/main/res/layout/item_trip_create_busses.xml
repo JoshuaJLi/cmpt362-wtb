@@ -13,26 +13,32 @@
         app:tint="@color/material_dynamic_secondary40" />
 
     <Space
-        android:layout_width="20dp"
-        android:layout_height="20dp" />
+        android:layout_width="15dp"
+        android:layout_height="15dp" />
 
-    <TextView
-        android:id="@+id/text_trip_add_stop_nickname"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="20sp"
-        android:text="Here is some text"/>
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-    <Button
-        android:id="@+id/button_delete_trip_fav"
-        style="?attr/materialIconButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        app:icon="@drawable/baseline_close_24" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_trip_add_stop_nickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:text="Imagine this is a bus stop @ streetname but its really long"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/button_delete_trip_fav"
+            style="?attr/materialIconButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity=""
+            app:icon="@drawable/baseline_close_24" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
