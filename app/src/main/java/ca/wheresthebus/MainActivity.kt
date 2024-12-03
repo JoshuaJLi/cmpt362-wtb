@@ -22,6 +22,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.preference.PreferenceManager
 import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
 import ca.wheresthebus.utils.StaticDataLoadHelper
@@ -31,6 +32,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var navController : NavController
     private val mainDBViewModel: MainDBViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         when (intent.action) {
-            ACTION_NAVIGATE_TO_TRIP -> binding.navView.findNavController()
+            ACTION_NAVIGATE_TO_TRIP -> navController
                 .navigate(R.id.action_trip_fragment)
 
             NfcAdapter.ACTION_TECH_DISCOVERED -> {
@@ -129,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUpNavBar() {
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
