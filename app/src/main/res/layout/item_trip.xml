@@ -42,7 +42,25 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/button_trip_do_notifications"
+                    style="?attr/materialIconButtonFilledStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/baseline_notifications_active_12"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    card_view:icon="@drawable/baseline_notifications_active_12"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintHorizontal_bias="1.0"
+                    card_view:layout_constraintStart_toEndOf="@+id/text_trip_nickname"
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="4dp"/>
 
                 <TextView
                     android:id="@+id/text_trip_nickname"
@@ -60,21 +78,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <Button
-                    android:id="@+id/button_trip_do_notifications"
-                    style="?attr/materialIconButtonFilledStyle"
+                <ImageButton
+                    android:id="@+id/options_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:icon="@drawable/baseline_notifications_active_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    card_view:icon="@drawable/baseline_notifications_active_24"
-                    card_view:layout_constraintBottom_toBottomOf="parent"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintHorizontal_bias="1.0"
-                    card_view:layout_constraintStart_toEndOf="@+id/text_trip_nickname"
-                    card_view:layout_constraintTop_toTopOf="parent" />
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/baseline_more_horiz_24" />
             </LinearLayout>
 
             <TextView

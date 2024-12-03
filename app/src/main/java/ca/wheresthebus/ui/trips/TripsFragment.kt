@@ -1,11 +1,18 @@
 package ca.wheresthebus.ui.trips
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +28,7 @@ import ca.wheresthebus.data.RouteId
 import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.StopRequest
 import ca.wheresthebus.data.UpcomingTime
+import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
 import ca.wheresthebus.service.AlarmService
@@ -78,27 +86,55 @@ class TripsFragment : Fragment() {
         inactiveTripsView = binding.recyclerInactiveTrips
         upcomingTripsView = binding.recyclerUpcomingTrips
 
-        activeTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip)
+        activeTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
         activeTripsView.apply {
             layoutManager = object : LinearLayoutManager(context)
             { override fun canScrollVertically() = false }
             adapter = activeTripAdapter
         }
 
-        upcomingTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip)
+        upcomingTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
         upcomingTripsView.apply {
             layoutManager = object : LinearLayoutManager(context)
             { override fun canScrollVertically() = false }
             adapter = upcomingTripAdapter
         }
 
-        inactiveTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip)
+        inactiveTripAdapter = TripAdapter(onDeleteSwipe = ::deleteTrip, onMoreOptionsClick = ::showPopupMenu)
         inactiveTripsView.apply {
             layoutManager = object : LinearLayoutManager(context)
             { override fun canScrollVertically() = false }
             adapter = inactiveTripAdapter
         }
 
+    }
+
+    private fun showPopupMenu(view: View, trip: ScheduledTrip) {
+        val popupMenu = PopupMenu(view.context, view)
+        popupMenu.inflate(R.menu.trip_overflow_menu)
+        popupMenu.gravity = Gravity.END
+
+        val deleteItem = popupMenu.menu.findItem(R.id.option_delete)
+        val spannableTitle = SpannableString(deleteItem.title)
+        spannableTitle.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(view.context, android.R.color.holo_red_dark)),
+            0,
+            spannableTitle.length,
+            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+        )
+        deleteItem.title = spannableTitle
+
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.option_delete -> {
+                    deleteTrip(trip)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
     }
 
     private fun listenForChanges() {
