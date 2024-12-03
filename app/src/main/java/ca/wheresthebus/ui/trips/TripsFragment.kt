@@ -2,19 +2,30 @@ package ca.wheresthebus.ui.trips
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ca.wheresthebus.MainDBViewModel
+import ca.wheresthebus.R
 import ca.wheresthebus.adapter.TripAdapter
+import ca.wheresthebus.data.RouteId
+import ca.wheresthebus.data.StopId
 import ca.wheresthebus.data.model.ScheduledTrip
 import ca.wheresthebus.databinding.FragmentTripsBinding
 import ca.wheresthebus.service.AlarmService
+import ca.wheresthebus.service.GtfsData
+import ca.wheresthebus.service.GtfsRealtimeHelper
+import ca.wheresthebus.service.GtfsStaticHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class TripsFragment : Fragment() {
@@ -30,6 +41,9 @@ class TripsFragment : Fragment() {
     private lateinit var activeTripsView : RecyclerView
     private lateinit var upcomingTripsView : RecyclerView
     private lateinit var inactiveTripsView : RecyclerView
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private val activeTripsList: MutableList<ScheduledTrip> = mutableListOf()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -50,6 +64,7 @@ class TripsFragment : Fragment() {
 
         listenForChanges()
         setUpAdapter()
+        setUpSwipeRefresh()
         setUpSwipeToDelete()
         setUpFab()
 
@@ -103,6 +118,9 @@ class TripsFragment : Fragment() {
                     binding.labelActive.visibility = View.GONE
                 }
                 activeTripAdapter.updateData(it)
+                activeTripsList.clear()
+                activeTripsList.addAll(it)
+                refreshBusTimes()
             }
 
             trips[TripType.TODAY].orEmpty().let {
@@ -120,14 +138,49 @@ class TripsFragment : Fragment() {
             }
 
             AlarmService.scheduleTripNotifications(data, requireContext())
-
         }
+
+//        tripsViewModel.busTimes.observe(requireActivity()) {
+//            activeTripAdapter.
+//        }
     }
 
     private fun setUpFab() {
         binding.fabNewTrip.setOnClickListener {
             val intent = Intent(context, AddTripsActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun setUpSwipeRefresh() {
+        swipeRefreshLayout = binding.swipeRefreshLayout
+        swipeRefreshLayout.setDistanceToTriggerSync(resources.getDimensionPixelSize(R.dimen.swipe_refresh_trigger_distance))
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshBusTimes()
+        }
+    }
+
+    private fun refreshBusTimes() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Convert all favorite stops to pairs list and do GTFS realtime call
+                activeTripsList.flatMap { it.stops }
+                val stopRoutePairs = activeTripsList.flatMap { it.stops }.map { stop ->
+                    StopId(stop.busStop.id.value) to RouteId(stop.route.id.value)
+                }
+
+                val realtime = GtfsRealtimeHelper.getBusTimes(stopRoutePairs)
+                val static = GtfsStaticHelper.getBusTimes(stopRoutePairs)
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    tripsViewModel.busTimes.value = GtfsData.combine(static, realtime)
+                }
+
+                swipeRefreshLayout.isRefreshing = false
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "Error refreshing bus times", e)
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 
