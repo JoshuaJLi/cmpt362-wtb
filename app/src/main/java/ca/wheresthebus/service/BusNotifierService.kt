@@ -6,6 +6,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.telephony.SmsManager
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.preference.PreferenceManager
@@ -19,7 +21,6 @@ import ca.wheresthebus.data.model.FavouriteStop
 import ca.wheresthebus.data.model.Route
 import ca.wheresthebus.data.mongo_model.MongoBusStop
 import ca.wheresthebus.data.mongo_model.MongoFavouriteStop
-import ca.wheresthebus.service.LiveNotificationService.Companion.ACTION_NAVIGATE_TO_TRIP
 import ca.wheresthebus.utils.TextUtils
 import ca.wheresthebus.utils.Utils
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -144,7 +145,7 @@ class BusNotifierService : LifecycleService() {
             getString(R.string.preference_tap_action_favourites_value) -> {
                 val closestStop = getNearestFavourite(location)
                 if (closestStop != null) {
-                    notifyNextBusses(closestStop)
+                    notifyNextBusses(closestStop.busStop)
                 } else {
                     sendNotification("Next Favourite Bus", "No favourite buses were found")
                 }
@@ -176,22 +177,51 @@ class BusNotifierService : LifecycleService() {
 
         return nearestStop
     }
+
     private fun notifyNextBusses(stop: FavouriteStop) = serviceScope.launch {
+        if (doSendText()) {
+            sendText(stop.busStop, listOf(stop.route))
+            return@launch
+        }
+
         val busTimes = GtfsData.getBusTimes(listOf( Pair(stop.busStop.id, stop.route.id)) )
         val routeTimePair = mapOf(busTimes[Pair(stop.busStop.id, stop.route.id)] to stop.route)
 
-        print(busTimes.forEach{it.value})
 
         sendNotification(stop.nickname, routeTimeToString(routeTimePair))
     }
 
     private fun notifyNextBusses(stop: BusStop) = serviceScope.launch {
+        if (doSendText()) {
+            sendText(stop, stop.routes)
+            return@launch
+        }
+
         val busTimes = GtfsData.getBusTimes(stop.routes.map { Pair(stop.id, it.id) })
         val routeTimePair = stop.routes.associateBy {
             busTimes[Pair(stop.id, it.id)]
         }
 
         sendNotification(stop.name, routeTimeToString(routeTimePair))
+    }
+
+    private fun sendText(stop : BusStop, routes : List<Route>) {
+        SmsManager.getDefault()
+            .sendTextMessage("33333", null,
+                "${stop.code.value} ${
+                    routes.joinToString(
+                        limit = 2,
+                        separator = " "
+                    ) { it.shortName }
+                }", null, null);
+
+    }
+
+    private fun doSendText() : Boolean {
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this@BusNotifierService)
+
+        return sharedPreferences.getBoolean(getString(R.string.key_trip_text_mode), false)
     }
 
 

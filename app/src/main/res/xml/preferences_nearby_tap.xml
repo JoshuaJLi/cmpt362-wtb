@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ListPreference
+        app:key="@string/key_tap_action"
+        android:title="Compass Tap Action"
+        app:useSimpleSummaryProvider="true"
+        app:defaultValue="@string/preference_tap_action_all_value"
+        app:entryValues="@array/tap_action_values"
+        app:entries="@array/tap_action_entries"
+        app:iconSpaceReserved="false"
+        />
+
+    <ListPreference
+        android:title="Trip Polling Interval"
+        app:defaultValue="1"
+        app:entries="@array/trip_polling_entries"
+        app:entryValues="@array/trip_polling_values"
+        app:iconSpaceReserved="false"
+        app:key="@string/key_trip_poll_time"
+        app:summary="How often an active trip will check bus times" />
+
+    <SwitchPreference
+        android:iconSpaceReserved="false"
+        android:title="Texting Mode"
+        app:defaultValue="false"
+        app:key="trip_text_mode"
+        app:summary="Send SMS text to find nearby bus times" />
+</androidx.preference.PreferenceScreen>

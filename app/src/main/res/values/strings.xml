@@ -17,7 +17,6 @@
     <string name="preference_tap_action_all_value">all</string>
     <string name="preference_tap_action_favourites_value">fav</string>
     <string name="preference_tap_action_hybrid_value">hybrid</string>
-
     <string name="preference_appearance_default_entry">System default</string>
     <string name="preference_appearance_light_entry">Light</string>
     <string name="preference_appearance_dark_entry">Dark</string>
@@ -61,6 +60,7 @@
     <string name="sunday">Sunday</string>
     <string name="at">\@</string>
     <string name="notification_duration_minutes">Notification Duration (minutes)</string>
+    <string name="key_trip_text_mode">trip_text_mode</string>
     <string-array name="notification_timer_options">
         <item>No notification</item>
         <item>1 minute</item>

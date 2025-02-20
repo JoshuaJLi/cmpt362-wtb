@@ -104,6 +104,10 @@ class MainActivity : AppCompatActivity() {
             permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.SEND_SMS)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
